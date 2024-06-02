@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "hhsixhhwkhxh.xposed.bilihook"
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 2
+        versionName "Beta v20240602"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+}
