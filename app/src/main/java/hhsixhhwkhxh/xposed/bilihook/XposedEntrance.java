@@ -267,6 +267,8 @@ public class XposedEntrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("推送过滤非AV", "一刀切直播游戏等等特殊推送", "VideoDetailPagePushFilterNotAV"));
         ItemsList.add(new SwitchFunction("禁用输入框的神人提示语", "千山万水总是情，评论两句行不行 \uD83D\uDC48\uD83E\uDD23", "BanEditTextSBHint"));
         ItemsList.add(new SwitchFunction("禁用收藏按钮单击直接收藏", "开启后单击收藏会先选收藏夹 而不是直接进入默认收藏夹", "BanDirectFavorite"));
+        ItemsList.add(new SwitchFunction("禁用高级乞讨弹幕", "容易误触的三连和投票弹窗弹幕\n代码参考github项目FuckBilibiliVote", "BanBeggingDanmaku"));
+        ItemsList.add(new SwitchFunction("隐藏竖屏视频入口", "横板视频右下角有两种全屏方式:竖屏全屏和横屏全屏 此功能隐藏了前者入口", "HideVerticalVideoEntrance"));
 
         ItemsList.add(new GroupTitle("开屏",true));
         ItemsList.add(new SwitchFunction("去除开屏广告", "和开屏battle了好多次 牢屏别打复活赛了", "BypassSplash"));
@@ -281,7 +283,7 @@ public class XposedEntrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("个人页优化",true));
         ItemsList.add(new SwitchFunction("去除创作中心和推荐服务", "高仿国际版", "UserCenterRemoveExcessiveService"));
         ItemsList.add(new SwitchFunction("去除收藏夹视频循环列表", "重定向Activity至正常视频页面", "FavoritesOpenVideoRedirect"));
-        ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用上面那个功能 此功能就没效果了", "ForceEnableV1Favorites"));
+        ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用此功能 上面重定向功能就没效果了", "ForceEnableV1Favorites"));
 
         ItemsList.add(new GroupTitle("杂项",true));
         ItemsList.add(new ButtonFunction("任意门","跳转到任意注册的Activity","AnywhereDoor",new FunctionOnClickListener(){

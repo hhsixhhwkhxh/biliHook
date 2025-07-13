@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -33,7 +34,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.lang.reflect.Type;
 import de.robv.android.xposed.XposedBridge;
@@ -42,6 +45,7 @@ import java.util.Arrays;
 import android.content.Context;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -85,11 +89,236 @@ public class TestFunctionArea extends FunctionsBase {
         //test24(lpparam);
         //test25(lpparam);
         //test26(lpparam);
+        //test27(lpparam);
+        //test28(lpparam);
+        //test29(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
     }
+
+
+    //隐藏视频详情页的竖屏模式入口
+    public void test29(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        //没效果
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setImmersiveVisibleIds", java.util.HashMap.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                HashMap<?,?> hashMap = (HashMap) param.args[0];
+                if(hashMap==null||hashMap.isEmpty()){return;}
+                HashSet set = (HashSet) hashMap.get(1);
+                Iterator<Integer> iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    int id = iterator.next();
+
+                    // 遍历时安全删除
+                    //0x7f090453
+                    if (id==Integer.valueOf(Utils.getViewID("bbplayer_halfscreen_story"))) {
+                        iterator.remove(); // 安全删除当前元素
+                        log("test29 setImmersiveVisibleIds 删除");
+                    }
+
+
+                }
+                set.add(0x0d000721);
+
+                log("setImmersiveVisibleIds test29:"+param.args[0]);
+
+            }
+
+        });
+
+
+        //懒加载报错
+        Class<?> Function0Class = XposedHelpers.findClass("kotlin.jvm.functions.Function0",lpparam.classLoader);
+        Method invokeMethod = Function0Class.getMethod("invoke");
+        /*[ 2025-07-14T00:28:42.327    10338: 32160: 32160 E/LSPosed-Bridge  ] kotlin.UninitializedPropertyAccessException: lateinit property controlContainerService has not been initialized
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setLayoutView", "kotlin.jvm.functions.Function0", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                //super.beforeHookedMethod(param);
+                //param.setResult(null);
+                ViewGroup viewGroup = (ViewGroup) invokeMethod.invoke(param.args[0]);
+                View view = viewGroup.findViewById(0x7f090453);
+                if(view==null){
+                    log("找不到");
+                    return;
+                }
+                view.setVisibility(View.GONE);
+                log("已隐藏");
+            }
+
+        });
+        */
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setInstance", android.view.View.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                View layoutView = (View) param.args[0];
+                View view = layoutView.findViewById(0x7f090453);
+                if(view==null){
+                    log("setInstance找不到");
+                    return;
+                }
+                //view.setVisibility(View.GONE);
+
+                //log("已隐藏");
+                //view.setLayoutParams(new ViewGroup.LayoutParams(0,0));
+            }
+
+        });
+
+
+
+        // Hook l1() 视图初始化 bili 会重新让控件可见
+        XposedHelpers.findAndHookMethod(
+                "tv.danmaku.biliplayerimpl.controlcontainer.ControlContainer",
+                lpparam.classLoader,
+                "l1",
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        if ((boolean) param.getResult()) {
+                            Object config = XposedHelpers.getObjectField(param.thisObject, "d");
+                            View instance = (View) XposedHelpers.callMethod(config, "getInstance");
+                            View view = instance.findViewById(0x7f090453);
+                            if(view==null){
+                                log("l1找不到");
+                                return;
+                            }
+                            //view.setVisibility(View.GONE);
+                            log("viewClass:"+view.getClass());
+                            //[ 2025-07-14T01:48:44.324    10338: 21475: 21475 I/LSPosed-Bridge  ] TestFunctionArea viewClass:class com.bilibili.app.gemini.player.widget.story.GeminiPlayerFullStoryWidget
+                            //view.setLayoutParams(new ViewGroup.LayoutParams(0,0));
+                            //view.setClipBounds(new Rect(0, 0, 0, 0));
+                            ///ViewGroup parent = (ViewGroup) view.getParent();
+                            //parent.removeView(view); // 彻底移除（需重新添加才能显示）
+                            //log("l1已隐藏");
+
+                        }
+                    }
+                }
+        );
+
+
+        /*查找调用堆栈 谁动了我的setVisibility
+        XposedHelpers.findAndHookMethod("android.widget.ImageView", lpparam.classLoader, "setVisibility", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                View view = (View) param.thisObject;
+                if(view.getId()==0x7f090453){
+                    Utils.printStackTrace("0x7f090453 setVisibility "+param.args[0]);
+                }
+            }
+
+        });
+
+         */
+
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.player.widget.story.GeminiPlayerFullStoryWidget", lpparam.classLoader, "setVisibility", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0] = View.GONE;
+            }
+
+        });
+    }
+
+
+    //禁用剪切板直接跳转 及每次跳转必须询问 这部分是豆包写的 但是把跳转功能直接整废了
+    public void test28(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        // 1. Hook ClipboardResult的setMode方法，强制将popupMode改为2（弹窗模式）
+        // 原本popupMode=1为直接跳转，改为2后会触发弹窗逻辑（见T方法）
+        Class<?> clipboardResultClass = XposedHelpers.findClass("tv.danmaku.bili.ui.clipboard.ClipboardResult", lpparam.classLoader);
+        XposedHelpers.findAndHookMethod(clipboardResultClass, "setMode", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                int originalMode = (int) param.args[0];
+                if (originalMode == 1) { // 拦截直接跳转模式
+                    param.args[0] = 2; // 改为弹窗模式
+                }
+            }
+        });
+
+        // 2. Hook ClipboardResult的checkPage方法，强制返回false
+        // 原本checkPage()=true会直接跳转，改为false后会执行弹窗（见V方法）
+        XposedHelpers.findAndHookMethod(clipboardResultClass, "checkPage", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(false); // 强制不直接跳转，走弹窗
+            }
+        });
+
+        // 3. Hook ClipboardChecker的x0方法，让BVNEW/COMMON_JUMP也走弹窗
+        // 原本x0()=true会跳过弹窗直接跳转，改为false后触发弹窗逻辑
+        Class<?> clipboardCheckerClass = XposedHelpers.findClass("tv.danmaku.bili.ui.clipboard.ClipboardChecker", lpparam.classLoader);
+        XposedHelpers.findAndHookMethod(clipboardCheckerClass, "x0", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(false); // 禁用BVNEW/COMMON_JUMP的直接跳转特权
+            }
+        });
+    }
+
+    //禁用三连弹幕等
+    public void test27(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Class<?> DirectorVersionClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.DirectorVersion",lpparam.classLoader);
+        /*会崩溃 还查不到报错位置
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "setDirectorVersion", "tv.danmaku.biliplayerv2.DirectorVersion", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0] = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V1");
+            }
+
+        });
+        */
+
+        /*
+        XposedHelpers.findAndHookMethod("com.bapis.bilibili.community.service.dm.v1.DmViewReply", lpparam.classLoader, "getSpecialDmsList", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                XposedHelpers.callMethod(param.thisObject,"clearSpecialDms");
+            }
+
+        });*/
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.interact.core.model.DanmakuParams", lpparam.classLoader, "setDmViewReply", "com.bapis.bilibili.community.service.dm.v1.DmViewReply", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                Object commandObject = XposedHelpers.getObjectField(param.args[0],"command_");
+
+                List<?> rawList = (List) XposedHelpers.getObjectField(commandObject,"commandDms_");
+                List<?> newList = (List) XposedHelpers.callMethod(rawList,"mutableCopyWithCapacity",rawList.size());
+                //Lcom/google/protobuf/Internal$ProtobufList;->mutableCopyWithCapacity(I)Lcom/google/protobuf/Internal$ProtobufList;
+
+                for (int i = newList.size()-1; i >= 0; i--) {
+                    Object CommandDmObject = newList.get(i);
+                    String command = (String) XposedHelpers.getObjectField(CommandDmObject,"command_");
+                    if(!command.contains("UP")){
+                        newList.remove(i);
+                    }
+                }
+
+                XposedHelpers.setObjectField(commandObject,"commandDms_",newList);
+            }
+
+        });
+
+
+    }
+
 
     //草 我这模块在onCreate函数之后才启动 然而这个routesBean函数早在此前就调用完了 排查了半天bug
     public void test26(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{

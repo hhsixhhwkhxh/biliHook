@@ -28,6 +28,8 @@ public class RemoveVideoDetailPageAD extends FunctionsBase {
         boolean VideoDetailPageRemoveAD =sharedPreferences.getBoolean("VideoDetailPageRemoveAD",false);
         boolean BanEditTextSBHint = sharedPreferences.getBoolean("BanEditTextSBHint",false);
         boolean BanDirectFavorite = sharedPreferences.getBoolean("BanDirectFavorite",false);
+        boolean BanBeggingDanmaku =  sharedPreferences.getBoolean("BanBeggingDanmaku",false);
+        boolean HideVerticalVideoEntrance = sharedPreferences.getBoolean("HideVerticalVideoEntrance",false);
 
         if(VideoDetailPageRemoveAD){
             VideoDetailPageRemoveAD(lpparam);
@@ -40,7 +42,13 @@ public class RemoveVideoDetailPageAD extends FunctionsBase {
             BanDirectFavorite(lpparam);
         }
 
+        if(BanBeggingDanmaku){
+            BanBeggingDanmaku(lpparam);
+        }
 
+        if(HideVerticalVideoEntrance){
+            HideVerticalVideoEntrance(lpparam);
+        }
 
     }
     public void VideoDetailPageRemoveAD(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -131,5 +139,68 @@ public class RemoveVideoDetailPageAD extends FunctionsBase {
             }
 
         }));
+    }
+
+    public void BanBeggingDanmaku(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        /*
+        final Class<?> DmViewReplyClass = XposedHelpers.findClass("com.bapis.bilibili.community.service.dm.v1.DmViewReply",lpparam.classLoader);
+        //Lcom/bapis/bilibili/community/service/dm/v1/DmViewReply;->command_:Lcom/bapis/bilibili/community/service/dm/v1/Command;
+        final Field command_Field = XposedHelpers.findFieldIfExists(DmViewReplyClass,"command_");
+
+
+        if(command_Field==null){
+            Utils.reportError("RemoveVideoDetailPageAD中command_Field为空");
+            return;
+        }
+
+        command_Field.setAccessible(true);
+
+        Class<?> CommandClass = XposedHelpers.findClass("com.bapis.bilibili.community.service.dm.v1.Command",lpparam.classLoader);
+        //Lcom/bapis/bilibili/community/service/dm/v1/Command;->commandDms_:Lcom/google/protobuf/Internal$ProtobufList;
+        final Field commandDms_Field = XposedHelpers.findFieldIfExists(DmViewReplyClass,"commandDms_");
+
+        if(commandDms_Field==null){
+            Utils.reportError("RemoveVideoDetailPageAD中commandDms_Field为空");
+            return;
+        }
+        commandDms_Field.setAccessible(true);
+        */
+        //上面我想用java反射的api尽可能代替xposedApi 以期提高性能 但发现可读性急剧下降 询问DeepSeek得知xposed对getObjectField有缓存Field对象减少反射优化 于是作罢
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.interact.core.model.DanmakuParams", lpparam.classLoader, "setDmViewReply", "com.bapis.bilibili.community.service.dm.v1.DmViewReply", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                Object commandObject = XposedHelpers.getObjectField(param.args[0],"command_");
+
+                List<?> rawList = (List) XposedHelpers.getObjectField(commandObject,"commandDms_");
+                List<?> newList = (List) XposedHelpers.callMethod(rawList,"mutableCopyWithCapacity",rawList.size());
+                //Lcom/google/protobuf/Internal$ProtobufList;->mutableCopyWithCapacity(I)Lcom/google/protobuf/Internal$ProtobufList;
+
+                for (int i = newList.size()-1; i >= 0; i--) {
+                    Object CommandDmObject = newList.get(i);
+                    String command = (String) XposedHelpers.getObjectField(CommandDmObject,"command_");
+                    if(!command.contains("UP")){
+                        newList.remove(i);
+                    }
+                }
+
+                XposedHelpers.setObjectField(commandObject,"commandDms_",newList);
+            }
+
+        });
+    }
+
+
+    public void HideVerticalVideoEntrance(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.player.widget.story.GeminiPlayerFullStoryWidget", lpparam.classLoader, "setVisibility", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0] = View.GONE;
+            }
+
+        });
     }
 } 
