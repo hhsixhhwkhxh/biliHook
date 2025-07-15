@@ -97,11 +97,48 @@ public class RemoveVideoDetailPageAD extends FunctionsBase {
         });
     }
     public void BanEditTextSBHint(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        final Class<?> jsonClass = XposedHelpers.findClass("com.alibaba.fastjson.JSON", lpparam.classLoader);
+        final Class<?> InputConfigClass = XposedHelpers.findClass("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply$InputConfig",lpparam.classLoader);
+        List<Field> TextFieldsList = new ArrayList<>();
+        for(Field field : InputConfigClass.getDeclaredFields()){
+            if(field.getName().contains("Text")){
+                field.setAccessible(true);
+                TextFieldsList.add(field);
+            }
+        }
         XposedHelpers.findAndHookMethod("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply", lpparam.classLoader, "getInput", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //param.setResult(null);
+
+                Object InputConfigObject = param.getResult();
+                if(InputConfigObject==null){
+                    return;
+                }
+                //XposedHelpers.setObjectField(InputConfigObject,"funcButtons_",null);
+                XposedHelpers.setObjectField(InputConfigObject,"editorIconConfig_",null);
+                for(Field field : TextFieldsList){
+                    field.set(InputConfigObject,null);
+                }
+
+                //Utils.printStackTrace("BanEditTextSBHint");
+
+                //禁言相关
+                //XposedHelpers.setBooleanField(InputConfigObject,"disabled_",false);
+
+
+            }
+
+        });
+
+
+        //禁用推荐表情
+        XposedHelpers.findAndHookMethod("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply$EmoteConfig", lpparam.classLoader, "getSuggestEmotesList", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                param.setResult(null);
+                param.setResult(new ArrayList<>());
             }
 
         });

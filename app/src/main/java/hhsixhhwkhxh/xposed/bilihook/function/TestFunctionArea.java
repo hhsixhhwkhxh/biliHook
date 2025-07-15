@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.lang.reflect.Type;
 import de.robv.android.xposed.XposedBridge;
+import hhsixhhwkhxh.xposed.bilihook.XposedEntrance;
 
 import java.util.Arrays;
 import android.content.Context;
@@ -56,7 +58,6 @@ import android.widget.TextView;
 public class TestFunctionArea extends FunctionsBase {
 /*
     这里是功能成熟前的测试的地方 有许多废弃代码
-    理论上不接受关于TestFunctionArea的bug报告
 */
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -92,10 +93,381 @@ public class TestFunctionArea extends FunctionsBase {
         //test27(lpparam);
         //test28(lpparam);
         //test29(lpparam);
+        //test30(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
+    }
+
+    //研究旧版播放器
+    public void test30(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        Class<?> DirectorVersionClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.DirectorVersion",lpparam.classLoader);
+        Object DirectorVersionV1 = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V1");
+        Object DirectorVersionV3 = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V3");
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "setDirectorVersion", "tv.danmaku.biliplayerv2.DirectorVersion", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0] = DirectorVersionV1;
+            }
+
+        });
+        */
+
+        /*
+        *Crash unexpectedly: java.lang.RuntimeException: Unable to start activity ComponentInfo{tv.danmaku.bili/com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity}: java.lang.IllegalArgumentException: illegal useVideoDirectorV3:V1
+	        ...
+            Caused by: java.lang.IllegalArgumentException: illegal useVideoDirectorV3:V1
+	        at el5.j.getPlayDirectorServiceV3(BL:81) 这个方法校验传入的DirectorVersion如果不是V3就报错
+	        at com.bilibili.ship.theseus.united.player.oldway.playercontainer.b.q(BL:1) Dagger模块 用于提供各种播放器相关的服务实例 q方法无条件调用上一个V3方法
+	        at com.bilibili.ship.theseus.united.player.oldway.playercontainer.s.a(BL:3) Dagger工厂类 用于提供`p`类型的实例
+	        at tv.danmaku.bili.b$d3.p3(BL:9) Dagger 依赖注入组件实现类
+	        at tv.danmaku.bili.b$d3.Q2(BL:1) 中转方法
+	        at tv.danmaku.bili.b$d3$a.a(BL:49) 依赖注入工厂
+	        at tv.danmaku.bili.b$d3$a.get(BL:23)
+	        *
+	        at zy4.c.get(BL:14) 单例模式实现，用于 Dagger 依赖注入框架中的延迟加载（Lazy）和线程安全的单例提供
+	        at tv.danmaku.bili.b$d3$a.a(BL:98)
+	        at tv.danmaku.bili.b$d3$a.get(BL:23)
+	        at zy4.c.get(BL:14)
+	        at tv.danmaku.bili.b$d3.c(BL:3)
+	        at com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity.onCreate(BL:216)
+	        at android.app.Activity.performCreate(Activity.java:9196)
+	        at android.app.Activity.performCreate(Activity.java:9168)
+	        at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1544)
+	        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4351)
+	        ... 13 more
+            */
+            //tv.danmaku.biliplayerimpl.videodirector.PlayDirectorServiceV3
+        /*
+        final XC_MethodHook.Unhook[] unhook = {null};
+        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getPlayDirectorServiceV3", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                unhook[0] = XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "getDirectorVersion", new XC_MethodHook() {
+
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        param.setResult(DirectorVersionV3);
+                    }
+                });
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                unhook[0].unhook();
+            }
+        });
+        */
+        //播放界面右上角的设置按钮是这个类
+        //com.bilibili.playerbizcommonv2.widget.setting.PlayerSettingWidget
+
+
+        /*
+        Class<?> PlayerSettingWidgetClass = XposedHelpers.findClass("com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget",lpparam.classLoader);
+        XposedHelpers.findAndHookMethod("dz.i", lpparam.classLoader, "n", "dz.i", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                ViewGroup viewGroup = (ViewGroup) param.getResult();
+                View rawView = viewGroup.findViewById(0x7f090443);
+                if(rawView == null){
+                    log("test30 没找到");
+                }
+
+                ViewGroup parent = (ViewGroup) rawView.getParent();
+                int index = parent.indexOfChild(rawView);
+                ViewGroup.LayoutParams layoutParams = rawView.getLayoutParams();
+                parent.removeView(rawView);
+
+                View newView = (View) XposedHelpers.newInstance(PlayerSettingWidgetClass,rawView.getContext());
+                parent.addView(newView, index, layoutParams);
+
+                //parent.removeView(view); // 彻底移除（需重新添加才能显示）
+                log("test30 剔除 上位");
+
+            }
+        });*/
+        /*注意到Ldz/i;->n(Ldz/i;)Landroid/view/ViewGroup;
+            public static final ViewGroup n(i iVar) {
+                int i;
+                //h.d()  Lbn5/h;->d()Z false
+                //h.c()  Lbn5/h;->c()Z false
+                if (!h.d() && !h.c()) {
+                    i = d.b;
+                } else {
+                    i = d.c;
+                }
+                ViewGroup viewGroup = null;
+                View inflate = LayoutInflater.from(iVar.a).inflate(i, (ViewGroup) null, false);
+                ...
+            }
+
+          vy.d
+        *.field public static b:I = 0x7f0c1391
+        *.field public static c:I = 0x7f0c1392
+        走else分支是青少年模式或严格模式 控制器阉割了好多功能
+        * */
+
+        /*布局错乱 且 点击报错
+        * Crash unexpectedly: java.lang.IllegalArgumentException: illegal useVideoDirectorV2:V3
+	        at el5.j.getVideoPlayDirectorService(BL:81)
+	        at wd3.i0.E(BL:6)
+	        at wd3.i0.I(BL:11)
+	        at wd3.i0.C(BL:49)
+	        at wd3.i0.onWidgetShow(BL:4)
+	        at tv.danmaku.biliplayerv2.widget.AbsFunctionWidget.onWidgetShow(BL:2)
+	        at hl5.o.L0(BL:172)
+	        at hl5.o.showWidget(BL:45)
+	        at hl5.o.showWidget(BL:22)
+	        at com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget.onClick(BL:88)
+	        at android.view.View.performClick(View.java:8119)
+	        at android.view.View.performClickInternal(View.java:8089)
+	        at android.view.View.-$$Nest$mperformClickInternal(Unknown Source:0)
+	        at android.view.View$PerformClick.run(View.java:31907)
+	        at android.os.Handler.handleCallback(Handler.java:995)
+	        at android.os.Handler.dispatchMessage(Handler.java:105)
+	        at android.os.Looper.loopOnce(Looper.java:288)
+	        at android.os.Looper.loop(Looper.java:393)
+	        at android.app.ActivityThread.main(ActivityThread.java:9549)
+	        at java.lang.reflect.Method.invoke(Native Method)
+	        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+	        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
+
+        * */
+
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.b$d3", lpparam.classLoader, "c", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //com.bilibili.ship.theseus.detail.c
+                param.setResult(null);
+
+
+            }
+
+        });*/
+
+        //com.bilibili.playerbizcommonv2.widget.setting.PlayerSettingWidget 常用的 hl5.o
+        //com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget 想要的
+
+        //狸猫换太子
+        /*
+        XposedHelpers.findAndHookMethod("hl5.o", lpparam.classLoader, "showWidget", Class.class, "tv.danmaku.biliplayerv2.widget.IFunctionContainer$LayoutParams", "tv.danmaku.biliplayerv2.widget.AbsFunctionWidget$Configuration", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0] = XposedHelpers.findClass("wd3.i0",lpparam.classLoader);
+            }
+
+        });*/
+
+
+        /*
+        final XC_MethodHook.Unhook[] unhook = {null};
+        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getVideoPlayDirectorService", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                unhook[0] = XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "getDirectorVersion", new XC_MethodHook() {
+
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        param.setResult(DirectorVersionV1);
+                    }
+                });
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                unhook[0].unhook();
+            }
+        });*/
+
+        /*上面欺骗校验 以避免报错
+        * Crash unexpectedly: java.lang.IllegalArgumentException: illegal useVideoDirectorV2:V3
+	at el5.j.getVideoPlayDirectorService(BL:81)
+	at wd3.i0.E(BL:6)
+	at wd3.i0.I(BL:11)
+	at wd3.i0.C(BL:49)
+	at wd3.i0.onWidgetShow(BL:4)
+	at tv.danmaku.biliplayerv2.widget.AbsFunctionWidget.onWidgetShow(BL:2)
+	at hl5.o.L0(BL:172)
+	at hl5.o.showWidget(BL:45)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at d.R.Yx.f.d.z.Ec.dYK.mW.l.cYAG.HookBridge.invokeOriginalMethod(Native Method)
+	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:187)
+	at LSPHooker_.showWidget(Unknown Source:17)
+	at hl5.o.showWidget(BL:22)
+	at tv.danmaku.biliplayerv2.service.SeekService.F(BL:106)
+	at tv.danmaku.biliplayerv2.service.SeekService.k(BL:11)
+	at tv.danmaku.biliplayerv2.service.SeekService.c(BL:1)
+	at tv.danmaku.biliplayerv2.service.j1.run(BL:3)
+	at android.os.Handler.handleCallback(Handler.java:995)
+	at android.os.Handler.dispatchMessage(Handler.java:105)
+	at android.os.Looper.loopOnce(Looper.java:288)
+	at android.os.Looper.loop(Looper.java:393)
+	at android.app.ActivityThread.main(ActivityThread.java:9549)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
+        * */
+
+        //想看看 v1(2) 控件在堆栈调用中的不同
+        /*
+        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getPlayDirectorServiceV3", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.printStackTrace("getPlayDirectorServiceV3");
+            }
+
+        });*/
+        /*
+        *java.lang.Exception: getPlayDirectorServiceV3
+	at hhsixhhwkhxh.xposed.bilihook.Utils.printStackTrace(Utils.java:223)
+	at hhsixhhwkhxh.xposed.bilihook.function.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:307)
+	at H.EWSn.IKMCeVKfrtWUuuM.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
+	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
+	at LSPHooker_.getPlayDirectorServiceV3(Unknown Source:8)
+	at el5.j.e(BL:51)
+	at el5.j.onCreate(BL:6)
+	at com.bilibili.ship.theseus.united.player.oldway.playercontainer.TheseusPlayerContainerProvider.b(BL:116)
+	at com.bilibili.ship.theseus.united.player.oldway.playercontainer.l0.a(BL:10)
+	at tv.danmaku.bili.b$d3$a.a(BL:102)
+	at tv.danmaku.bili.b$d3$a.get(BL:23)
+	at zy4.c.get(BL:14)
+	at tv.danmaku.bili.b$d3.d(BL:3)
+	at com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity.onCreate(BL:196)
+	at android.app.Activity.performCreate(Activity.java:9196)
+	at android.app.Activity.performCreate(Activity.java:9168)
+	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1544)
+	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4351)
+	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4574)
+	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:126)
+	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:179)
+	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:114)
+	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:86)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2909)
+	at android.os.Handler.dispatchMessage(Handler.java:112)
+	at android.os.Looper.loopOnce(Looper.java:288)
+	at android.os.Looper.loop(Looper.java:393)
+	at android.app.ActivityThread.main(ActivityThread.java:9549)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
+        * */
+
+        Class<?> ScreenModeTypeClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.ScreenModeType",lpparam.classLoader);
+        Object VERTICAL_FULLSCREENObject = XposedHelpers.getStaticObjectField(ScreenModeTypeClass,"VERTICAL_FULLSCREEN");
+
+        Class<?> LayoutParamsClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.widget.IFunctionContainer$LayoutParams",lpparam.classLoader);
+
+        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->setFunctionType(I)V
+        Method setFunctionTypeMethod = LayoutParamsClass.getMethod("setFunctionType",int.class);
+        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->getLayoutType()I
+        Method getLayoutTypeMethod = LayoutParamsClass.getMethod("getLayoutType");
+
+        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->setLayoutType(I)V
+        Method setLayoutTypeMethod = LayoutParamsClass.getMethod("setLayoutType",int.class);
+
+        Class<?> DpUtilsClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.utils.DpUtils",lpparam.classLoader);
+        Method dp2pxMethod = DpUtilsClass.getMethod("dp2px",Context.class,float.class);
+        XposedHelpers.findAndHookMethod("com.bilibili.playerbizcommonv2.widget.base.RightInsetWithShadowFunctionWidget$a", lpparam.classLoader, "c", "tv.danmaku.biliplayerv2.ScreenModeType", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //tv.danmaku.biliplayerv2.ScreenModeType;
+                /*
+                * ScreenModeType screenModeType;
+        IFunctionContainer.LayoutParams layoutParams;
+        int layoutType;
+        IReporterService reporterService;
+        IControlContainerService controlContainerService;
+        PlayerContainer playerContainer = this.e;
+        if (playerContainer == null) {
+            return;
+        }
+        if (playerContainer != null && (controlContainerService = playerContainer.getControlContainerService()) != null) {
+            screenModeType = controlContainerService.getScreenModeType();
+        } else {
+            screenModeType = null;
+        }
+        ScreenModeType screenModeType2 = ScreenModeType.VERTICAL_FULLSCREEN;
+        if (screenModeType == screenModeType2) {
+            layoutParams = new IFunctionContainer.LayoutParams(-1, (int) DpUtils.dp2px(getContext(), 380.0f));
+        } else {
+            layoutParams = new IFunctionContainer.LayoutParams((int) DpUtils.dp2px(getContext(), 320.0f), -1);
+        }
+        layoutParams.setFunctionType(2);
+        if (screenModeType == screenModeType2) {
+            layoutType = layoutParams.getLayoutType() | 8;
+        } else {
+            layoutType = layoutParams.getLayoutType() | 4;
+        }
+        layoutParams.setLayoutType(layoutType);
+        this.e.getFunctionWidgetService().showWidget(i0.class, layoutParams);
+        PlayerContainer playerContainer2 = this.e;
+        if (playerContainer2 != null && (reporterService = playerContainer2.getReporterService()) != null) {
+            reporterService.report(new NeuronsEvents.NormalEvent("player.player.full-more.entrance.player", new String[0]));
+        }
+        * */
+                Object ScreenModeTypeObject = param.args[0];
+                Object layoutParams;
+                int layoutType;
+                if(ScreenModeTypeObject.equals(VERTICAL_FULLSCREENObject)){
+                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass,-1, ((Float) dp2pxMethod.invoke(null,Utils.getMainActivity(), 380.0f)).intValue());
+
+                }else{
+                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass, ((Float) dp2pxMethod.invoke(null,Utils.getMainActivity(), 320.0f)).intValue(),-1);
+                }
+
+                setFunctionTypeMethod.invoke(layoutParams,2);
+
+                if(ScreenModeTypeObject.equals(VERTICAL_FULLSCREENObject)){
+                    layoutType = (int)getLayoutTypeMethod.invoke(layoutParams) | 8;
+                }else{
+                    layoutType = (int)getLayoutTypeMethod.invoke(layoutParams) | 4;
+                }
+
+                setLayoutTypeMethod.invoke(layoutParams,layoutType);
+
+                param.setResult(layoutParams);
+            }
+
+        });
+
+        /*
+        XposedHelpers.findAndHookMethod("hl5.o", lpparam.classLoader, "f0", "hl5.o$b", boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.printStackTrace("f0 禁止隐藏");
+            }
+
+        });
+        */
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.SeekService", lpparam.classLoader, "hideSimpleProgress", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(null);
+            }
+
+        });
+
+
+        Resources resources = Utils.getModuleResources(Utils.getMainActivity());
+        resources.getIdentifier("","id", XposedEntrance.TargetPackageName);
     }
 
 
@@ -366,8 +738,10 @@ public class TestFunctionArea extends FunctionsBase {
                     XposedBridge.log(e);
                 }
             }
-        });/*
+        });*/
     }
+
+
     public void test25(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         /*
         XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.p0", lpparam.classLoader, "h", "tv.danmaku.bili.ui.main2.mine.o0", new XC_MethodHook() {
@@ -617,13 +991,14 @@ public class TestFunctionArea extends FunctionsBase {
                 super.afterHookedMethod(param);
 
                 Object fVarObject = param.args[0];
-
+                Object BasicIndexItemObject = XposedHelpers.callMethod(fVarObject,"g0");
+                Class<?> BasicIndexItemClass = BasicIndexItemObject.getClass();
 
                 InvocationHandler handler = new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                         if ("invoke".equals(method.getName())) {
-                            Object BasicIndexItemObject = XposedHelpers.callMethod(fVarObject,"g0");
+
                             String BasicIndexItemJson = Utils.toJSONString(lpparam,BasicIndexItemObject);
                             Utils.copyText(BasicIndexItemJson);
 
@@ -639,7 +1014,7 @@ public class TestFunctionArea extends FunctionsBase {
                         handler
                 );
 
-                Object NormalMenuItemObject = ImageTitleDataConstructor.newInstance(null,null,"复制json代码",null,false,OnMenuClickListenerObject);
+                Object NormalMenuItemObject = ImageTitleDataConstructor.newInstance(null,null,"复制json代码 "+BasicIndexItemClass.getSimpleName(),null,false,OnMenuClickListenerObject);
                 List list = (List) param.getResult();
                 if(list==null){list=new ArrayList<>();}
                 list.add(NormalMenuItemObject);

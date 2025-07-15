@@ -260,6 +260,7 @@ public class XposedEntrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("过滤bangumi", "哔哩哔哩国漫", "HomePagePushFilterBangumi"));
         ItemsList.add(new SwitchFunction("竖屏视频转横屏", "去抖化", "HomePagePushTransformVerticalVideo"));
         ItemsList.add(new SwitchFunction("去\"x万点赞\"", "这样所有视频都有up主名字", "HomePagePushRemoveVideoLikeCount"));
+        ItemsList.add(new SwitchFunction("严格模式", "所有指向非av的卡片一律丢弃\n此功能对竖屏视频不作处理", "HomePagePushStrictMode"));
 
         ItemsList.add(new GroupTitle("视频详情页简化",true));
         ItemsList.add(new SwitchFunction("去x万点赞", "同上", "VideoDetailPagePushRemoveVideoLikeCount"));
@@ -267,7 +268,7 @@ public class XposedEntrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("推送过滤非AV", "一刀切直播游戏等等特殊推送", "VideoDetailPagePushFilterNotAV"));
         ItemsList.add(new SwitchFunction("禁用输入框的神人提示语", "千山万水总是情，评论两句行不行 \uD83D\uDC48\uD83E\uDD23", "BanEditTextSBHint"));
         ItemsList.add(new SwitchFunction("禁用收藏按钮单击直接收藏", "开启后单击收藏会先选收藏夹 而不是直接进入默认收藏夹", "BanDirectFavorite"));
-        ItemsList.add(new SwitchFunction("禁用高级乞讨弹幕", "容易误触的三连和投票弹窗弹幕\n代码参考github项目FuckBilibiliVote", "BanBeggingDanmaku"));
+        ItemsList.add(new SwitchFunction("禁用高级乞讨弹幕", "屏蔽容易误触的三连和投票弹窗弹幕\n代码参考github项目FuckBilibiliVote", "BanBeggingDanmaku"));
         ItemsList.add(new SwitchFunction("隐藏竖屏视频入口", "横板视频右下角有两种全屏方式:竖屏全屏和横屏全屏 此功能隐藏了前者入口", "HideVerticalVideoEntrance"));
 
         ItemsList.add(new GroupTitle("开屏",true));

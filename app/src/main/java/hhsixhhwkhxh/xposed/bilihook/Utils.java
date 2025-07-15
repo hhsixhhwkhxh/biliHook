@@ -14,8 +14,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
@@ -266,5 +270,47 @@ public class Utils {
 
         // 设置到剪切板
         clipboard.setPrimaryClip(clip);
+    }
+
+    public static int dpToPx(View view, int dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                view.getResources().getDisplayMetrics()
+        );
+    }
+
+    // sp转px
+    public static float spToPx(View view, float sp) {
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                sp,
+                view.getResources().getDisplayMetrics()
+        );
+    }
+
+    public static Resources getModuleResources(Context targetContext) {
+        try {
+            // 获取当前模块的ApplicationInfo
+            String modulePackage = "hhsixhhwkhxh.xposed.bilihook"; // 模块包名
+            ApplicationInfo moduleInfo = targetContext.getPackageManager()
+                    .getApplicationInfo(modulePackage, 0);
+
+            // 创建AssetManager并添加模块APK路径
+            AssetManager assets = AssetManager.class.newInstance();
+            Method addAssetPath = AssetManager.class.getMethod("addAssetPath", String.class);
+            addAssetPath.invoke(assets, moduleInfo.sourceDir); // 加载模块资源
+
+            // 构建Resources对象
+            Resources res = new Resources(
+                    assets,
+                    targetContext.getResources().getDisplayMetrics(),
+                    targetContext.getResources().getConfiguration()
+            );
+            return res;
+        } catch (Exception e) {
+            log("加载模块资源失败: "+e);
+            return null;
+        }
     }
 }
