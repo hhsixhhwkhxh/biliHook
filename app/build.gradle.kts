@@ -10,8 +10,8 @@ android {
         applicationId = "hhsixhhwkhxh.xposed.bilihook"
         minSdk = 28
         targetSdk = 34
-        versionCode = 3
-        versionName = "Beta v20250711"
+        versionCode = 4
+        versionName = "Beta v20250715"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

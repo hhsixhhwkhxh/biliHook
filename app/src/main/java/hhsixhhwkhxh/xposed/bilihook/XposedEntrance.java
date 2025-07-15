@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -245,8 +246,21 @@ public class XposedEntrance implements IXposedHookLoadPackage {
         SwitchFunction.sharedPreferences=sharedPreferences;
         
         ItemsList = new ArrayList<>();
-        ItemsList.add(new GroupTitle("壁虎 开源模块 适配8.51.0"));
+        //ItemsList.add(new GroupTitle("壁虎 开源模块 适配8.51.0"));
+
+        Intent GoToGithubPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hhsixhhwkhxh/biliHook/"));
+        ItemsList.add(new ButtonFunction("壁虎 开源模块 适配8.51.0","点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
+            public void onClick(){
+                try{
+                    activity.startActivity(GoToGithubPageIntent);
+                    activity.finish();
+                }catch(Exception e){
+                    Toast.makeText(activity, "错误:"+e, Toast.LENGTH_LONG).show();
+                }
+            }
+        }));
         ItemsList.add(new GroupTitle("开关设置 重启b站后生效"));
+
 
         ItemsList.add(new GroupTitle("主页导航栏简化",true));
         ItemsList.add(new SwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
