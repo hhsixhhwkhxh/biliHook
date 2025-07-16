@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 import android.view.View;
 import android.content.Context;
 

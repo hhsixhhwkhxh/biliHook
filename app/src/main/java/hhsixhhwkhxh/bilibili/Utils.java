@@ -1,7 +1,6 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
@@ -25,8 +24,6 @@ import android.widget.Toast;
 
 import org.luckypray.dexkit.wrap.DexMethod;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.ParameterizedType;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -189,7 +186,7 @@ public class Utils {
         showToast("biliHook错误\n"+str,1);
     }
     public static int getViewID(String id){
-        return MainActivityV2.getResources().getIdentifier(id,"id",XposedEntrance.TargetPackageName);
+        return MainActivityV2.getResources().getIdentifier(id,"id", Entrance.TargetPackageName);
     }
     public static void log(Object content){
         if(false){return;}
@@ -292,7 +289,7 @@ public class Utils {
     public static Resources getModuleResources(Context targetContext) {
         try {
             // 获取当前模块的ApplicationInfo
-            String modulePackage = "hhsixhhwkhxh.xposed.bilihook"; // 模块包名
+            String modulePackage = "hhsixhhwkhxh.bilibili"; // 模块包名
             ApplicationInfo moduleInfo = targetContext.getPackageManager()
                     .getApplicationInfo(modulePackage, 0);
 

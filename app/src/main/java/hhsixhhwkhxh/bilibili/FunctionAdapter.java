@@ -1,20 +1,9 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 import android.widget.ArrayAdapter;
 import android.content.Context;
 import java.util.List;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.widget.TextView;
-import android.widget.Switch;
-import android.widget.CompoundButton;
-import android.content.SharedPreferences;
-import android.widget.LinearLayout;
-import android.graphics.Color;
-import android.view.Gravity;
-import java.util.ArrayList;
-import java.util.HashMap;
-import de.robv.android.xposed.XposedBridge;
 
 public class FunctionAdapter extends ArrayAdapter<ListItem> {
     //private HashMap<Integer,View> convertViewMap = new HashMap<>();

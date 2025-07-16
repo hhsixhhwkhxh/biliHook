@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("hhsixhhwkhxh.xposed.bilihook", appContext.getPackageName());
+        assertEquals("hhsixhhwkhxh.bilibili", appContext.getPackageName());
     }
 }

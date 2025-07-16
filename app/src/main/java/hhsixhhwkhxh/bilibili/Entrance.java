@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -13,7 +13,6 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Bundle;
@@ -31,38 +30,31 @@ import android.content.DialogInterface;
 import android.widget.Toast;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.Objects;
 
-import hhsixhhwkhxh.xposed.bilihook.function.CommentOptimization;
-import hhsixhhwkhxh.xposed.bilihook.function.HomePageSimplify;
-import hhsixhhwkhxh.xposed.bilihook.function.RemoveNavigationBarSign;
-import hhsixhhwkhxh.xposed.bilihook.function.ManageHomePagePush;
-import hhsixhhwkhxh.xposed.bilihook.function.ManageVideoDetailPagePush;
-import hhsixhhwkhxh.xposed.bilihook.function.RemoveVideoDetailPageAD;
-import hhsixhhwkhxh.xposed.bilihook.function.BypassSplash;
+import hhsixhhwkhxh.bilibili.function.HomePageSimplify;
+import hhsixhhwkhxh.bilibili.function.CommentOptimization;
+import hhsixhhwkhxh.bilibili.function.RemoveNavigationBarSign;
+import hhsixhhwkhxh.bilibili.function.ManageHomePagePush;
+import hhsixhhwkhxh.bilibili.function.ManageVideoDetailPagePush;
+import hhsixhhwkhxh.bilibili.function.RemoveVideoDetailPageAD;
+import hhsixhhwkhxh.bilibili.function.BypassSplash;
 
 import org.luckypray.dexkit.DexKitBridge;
 import org.luckypray.dexkit.query.FindClass;
-import org.luckypray.dexkit.query.FindField;
 import org.luckypray.dexkit.query.FindMethod;
-import org.luckypray.dexkit.query.enums.OpCodeMatchType;
 import org.luckypray.dexkit.query.matchers.ClassMatcher;
-import org.luckypray.dexkit.query.matchers.FieldMatcher;
 import org.luckypray.dexkit.query.matchers.FieldsMatcher;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
-import org.luckypray.dexkit.query.matchers.MethodsMatcher;
 import org.luckypray.dexkit.query.matchers.base.OpCodesMatcher;
-import org.luckypray.dexkit.result.ClassData;
 import org.luckypray.dexkit.result.FieldData;
 import org.luckypray.dexkit.result.MethodData;
 import org.luckypray.dexkit.util.OpCodeUtil;
 
-import hhsixhhwkhxh.xposed.bilihook.function.TestFunctionArea;
-import hhsixhhwkhxh.xposed.bilihook.function.UserCenterOptimization;
+import hhsixhhwkhxh.bilibili.function.TestFunctionArea;
+import hhsixhhwkhxh.bilibili.function.UserCenterOptimization;
 
 
-public class XposedEntrance implements IXposedHookLoadPackage {
+public class Entrance implements IXposedHookLoadPackage {
 
     public static final String TargetPackageName = "tv.danmaku.bili";
     public static final String ModuleSettingsActivityName = "com.bilibili.lib.dblconfig.DblConfigActivity";

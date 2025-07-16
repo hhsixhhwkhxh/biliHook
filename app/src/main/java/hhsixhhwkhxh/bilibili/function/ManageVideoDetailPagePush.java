@@ -1,21 +1,16 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
-import android.view.View;
+package hhsixhhwkhxh.bilibili.function;
 
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XposedHelpers;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XC_MethodHook;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ManageVideoDetailPagePush extends FunctionsBase {
 

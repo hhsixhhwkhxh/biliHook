@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
+package hhsixhhwkhxh.bilibili.function;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,8 +11,8 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 
 public class UserCenterOptimization extends FunctionsBase {
     @Override
@@ -55,7 +55,7 @@ public class UserCenterOptimization extends FunctionsBase {
             Utils.reportError("UserCenterOptimization pf5_e_getLinkMethod为空");
             return;
         }
-        XposedHelpers.findAndHookMethod("pf5.e", lpparam.classLoader, "getLink", new XC_MethodHook() {
+        XposedBridge.hookMethod(getLinkMethod, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -93,6 +93,7 @@ public class UserCenterOptimization extends FunctionsBase {
                 super.beforeHookedMethod(param);
                 Object MenuGroup$ItemObject = param.args[0];
                 String rawUri = (String) uriField.get(MenuGroup$ItemObject);
+                if(rawUri==null){return;}
                 if(!rawUri.contains("favourite")){return;}
                 String newUri = rawUri.substring(0,rawUri.length()-1)+"1";
                 uriField.set(MenuGroup$ItemObject,newUri);

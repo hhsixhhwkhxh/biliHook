@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "hhsixhhwkhxh.xposed.bilihook"
+    namespace = "hhsixhhwkhxh.bilibili"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "hhsixhhwkhxh.xposed.bilihook"
+        applicationId = "hhsixhhwkhxh.bilibili"
         minSdk = 28
         targetSdk = 34
         versionCode = 4
@@ -18,9 +18,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
+
+        }
+        debug {
+
         }
     }
     compileOptions {

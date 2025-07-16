@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 
 public interface FunctionOnClickListener {
     

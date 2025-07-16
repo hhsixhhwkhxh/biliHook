@@ -1,8 +1,9 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
+package hhsixhhwkhxh.bilibili.function;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Method;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
+
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XC_MethodHook;

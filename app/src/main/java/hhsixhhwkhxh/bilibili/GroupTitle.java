@@ -1,9 +1,8 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 import android.view.View;
 import android.content.Context;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.graphics.Color;
 import android.view.Gravity;
 
 public class GroupTitle extends ListItem {
@@ -35,7 +34,7 @@ public class GroupTitle extends ListItem {
         GroupTitleTextView.setId(View.generateViewId());
         GroupTitleTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         GroupTitleTextView.setTextSize(18);
-        GroupTitleTextView.setTextColor(XposedEntrance.contrastColor);
+        GroupTitleTextView.setTextColor(Entrance.contrastColor);
         if(CenterText){
             GroupTitleTextView.setGravity(Gravity.CENTER);
         }

@@ -1,18 +1,14 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
+package hhsixhhwkhxh.bilibili.function;
 import de.robv.android.xposed.XposedBridge;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XC_MethodHook;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
-
-import hhsixhhwkhxh.xposed.bilihook.Utils;
 
 public class BypassSplash extends FunctionsBase {
 

@@ -1,5 +1,7 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
+package hhsixhhwkhxh.bilibili.function;
+import hhsixhhwkhxh.bilibili.Entrance;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import java.io.BufferedWriter;
@@ -12,13 +14,10 @@ import de.robv.android.xposed.XposedHelpers;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.ParameterizedType;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -30,7 +29,7 @@ import android.view.ViewGroup;
 import android.os.Bundle;
 import de.robv.android.xposed.XC_MethodHook;
 import android.view.View;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
@@ -41,13 +40,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.lang.reflect.Type;
 import de.robv.android.xposed.XposedBridge;
-import hhsixhhwkhxh.xposed.bilihook.XposedEntrance;
 
 import java.util.Arrays;
 import android.content.Context;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -100,6 +97,10 @@ public class TestFunctionArea extends FunctionsBase {
         //test26(lpparam);
     }
 
+
+    public void test31(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+    }
     //研究旧版播放器
     public void test30(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
 
@@ -333,8 +334,8 @@ public class TestFunctionArea extends FunctionsBase {
         });*/
         /*
         *java.lang.Exception: getPlayDirectorServiceV3
-	at hhsixhhwkhxh.xposed.bilihook.Utils.printStackTrace(Utils.java:223)
-	at hhsixhhwkhxh.xposed.bilihook.function.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:307)
+	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:223)
+	at hhsixhhwkhxh.bilibili.function.bilihook.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:307)
 	at H.EWSn.IKMCeVKfrtWUuuM.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
 	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
 	at LSPHooker_.getPlayDirectorServiceV3(Unknown Source:8)
@@ -424,7 +425,7 @@ public class TestFunctionArea extends FunctionsBase {
                 Object layoutParams;
                 int layoutType;
                 if(ScreenModeTypeObject.equals(VERTICAL_FULLSCREENObject)){
-                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass,-1, ((Float) dp2pxMethod.invoke(null,Utils.getMainActivity(), 380.0f)).intValue());
+                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass,-1, ((Float) dp2pxMethod.invoke(null, Utils.getMainActivity(), 380.0f)).intValue());
 
                 }else{
                     layoutParams = XposedHelpers.newInstance(LayoutParamsClass, ((Float) dp2pxMethod.invoke(null,Utils.getMainActivity(), 320.0f)).intValue(),-1);
@@ -467,7 +468,7 @@ public class TestFunctionArea extends FunctionsBase {
 
 
         Resources resources = Utils.getModuleResources(Utils.getMainActivity());
-        resources.getIdentifier("","id", XposedEntrance.TargetPackageName);
+        resources.getIdentifier("","id", Entrance.TargetPackageName);
     }
 
 

@@ -1,7 +1,6 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
+package hhsixhhwkhxh.bilibili.function;
 
 import android.icu.text.SimpleDateFormat;
-import android.icu.util.TimeZone;
 
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -9,10 +8,9 @@ import java.util.Locale;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 
 public class CommentOptimization extends FunctionsBase {
     @Override

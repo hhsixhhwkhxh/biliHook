@@ -1,13 +1,9 @@
-package hhsixhhwkhxh.xposed.bilihook;
-import android.content.SharedPreferences;
+package hhsixhhwkhxh.bilibili;
 import android.view.View;
 import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Switch;
-import android.view.Gravity;
 import android.graphics.Color;
-import android.widget.CompoundButton;
 import android.view.View.OnClickListener;
 
 public class ButtonFunction extends ListItem {
@@ -64,7 +60,7 @@ public class ButtonFunction extends ListItem {
         functionName.setId(View.generateViewId());
         functionName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         functionName.setTextSize(18);
-        functionName.setTextColor(XposedEntrance.contrastColor);
+        functionName.setTextColor(Entrance.contrastColor);
 
         functionDescription = new TextView(context);
         functionDescription.setId(View.generateViewId());

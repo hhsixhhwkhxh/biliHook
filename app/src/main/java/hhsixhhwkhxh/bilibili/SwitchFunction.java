@@ -1,4 +1,4 @@
-package hhsixhhwkhxh.xposed.bilihook;
+package hhsixhhwkhxh.bilibili;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.content.Context;
@@ -75,7 +75,7 @@ public class SwitchFunction extends ListItem {
         functionName.setId(View.generateViewId());
         functionName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         functionName.setTextSize(18);
-        functionName.setTextColor(XposedEntrance.contrastColor);
+        functionName.setTextColor(Entrance.contrastColor);
 
         functionDescription = new TextView(context);
         functionDescription.setId(View.generateViewId());
@@ -91,7 +91,7 @@ public class SwitchFunction extends ListItem {
         functionSwitch.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         functionSwitch.setPadding(10, 10, 10, 10);
         functionSwitch.setGravity(Gravity.CENTER_VERTICAL);
-        functionSwitch.getTrackDrawable().setColorFilter(XposedEntrance.contrastColor,PorterDuff.Mode.SRC_ATOP);
+        functionSwitch.getTrackDrawable().setColorFilter(Entrance.contrastColor,PorterDuff.Mode.SRC_ATOP);
 
         layout.addView(textLayout);
         layout.addView(functionSwitch);

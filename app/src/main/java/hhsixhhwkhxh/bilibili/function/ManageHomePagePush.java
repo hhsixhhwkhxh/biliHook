@@ -1,7 +1,7 @@
-package hhsixhhwkhxh.xposed.bilihook.function;
+package hhsixhhwkhxh.bilibili.function;
 import de.robv.android.xposed.XposedBridge;
-import hhsixhhwkhxh.xposed.bilihook.FunctionsBase;
-import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XC_MethodHook;
@@ -10,7 +10,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import hhsixhhwkhxh.xposed.bilihook.Utils;
 
 public class ManageHomePagePush extends FunctionsBase {
 
@@ -121,10 +120,16 @@ public class ManageHomePagePush extends FunctionsBase {
                             PushCardClassRecord.put(clazz,Utils.containField(clazz,"rcmdReason"));
                         }
 
+                        boolean NeedExtraDescButton = false;
 
                         String goTo = (String) goToField.get(BasicIndexItem);
 
                         String cardGoTo = (String) cardGoToField.get(BasicIndexItem);
+
+                        Object args = XposedHelpers.getObjectField(BasicIndexItem,"args");
+
+                        String upName = (String) upNameField.get(args);
+                        long upId = (long) upIdField.get(args);
 
                         if(goTo==null){
                             goTo = "";
@@ -150,17 +155,15 @@ public class ManageHomePagePush extends FunctionsBase {
                                     continue;
                                 }
 
-                                Field argsField = XposedHelpers.findField(clazz,"args");
 
-                                Object args = argsField.get(BasicIndexItem);
-                                Long upId = (Long) upIdField.get(args);
-                                String upName = (String) upNameField.get(args);
+
+
                                 //这里对推送卡片左下角推送原因(几万点赞 几万投币 你可能错过了)进行通杀去除 但要放行竖屏标签
                                 //上个版本没放行竖屏标签 虽然下面竖屏检测的是text不会被清空 但是导致如果不开竖屏过滤 就没有竖屏标签的情况
                                 if(RemoveVideoLikeCount&&!isVerticalAv){
                                     //if((text.contains("点赞")||text.contains("关注")||text.contains("硬币")||text.contains("互动"))&&sharedPreferences.getBoolean("HomePagePushRemoveVideoLikeCount",false)){
                                     rcmdReasonField.set(BasicIndexItem,null);
-
+                                    NeedExtraDescButton=true;
 
                                     XposedHelpers.findField(DescButtonClass,"text").set(DescButtonObjectCache,upName);
                                     XposedHelpers.findField(DescButtonClass,"uri").set(DescButtonObjectCache,"bilibili://space/"+upId);
@@ -173,6 +176,7 @@ public class ManageHomePagePush extends FunctionsBase {
                                 //竖屏视频转横屏
                                 if(isVerticalAv&&TransformVerticalVideo){
                                     rcmdReasonField.set(BasicIndexItem,null);
+                                    NeedExtraDescButton=true;
                                     //goToField = XposedHelpers.findField(clazz,"goTo");
                                     goToField.set(BasicIndexItem,"av");
                                     Field gotoTypeField = XposedHelpers.findField(clazz,"gotoType");
@@ -185,20 +189,7 @@ public class ManageHomePagePush extends FunctionsBase {
 
                                 }
 
-                                //对处理过的视频卡片补上隐去的图标
-                                if(RemoveVideoLikeCount||TransformVerticalVideo){
 
-                                    Field storyCardIconField = XposedHelpers.findField(clazz,"storyCardIcon");
-                                    storyCardIconField.set(BasicIndexItem,storyCardIcon);
-
-                                    String bigCoverJson = Utils.toJSONString(lpparam,BasicIndexItem);
-                                    Object smallCoverObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",bigCoverJson,SmallCoverV2ItemClass);
-                                    String descButtonJson = "{\"event\":\"nickname\",\"follow\":false,\"followed\":false,\"isFollow\":0,\"isFollowed\":0,\"selected\":0,\"text\":\""+upName+"\",\"type\":1,\"uri\":\"bilibili://space/"+upId+"\"}";
-                                    Object descButtonObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",descButtonJson,DescButtonClass);
-                                    //XposedHelpers.setObjectField(smallCoverObject,"descText",upName);
-                                    XposedHelpers.setObjectField(smallCoverObject,"descButton",descButtonObject);
-
-                                }
                             }
 
 
@@ -243,13 +234,11 @@ public class ManageHomePagePush extends FunctionsBase {
                                 XposedHelpers.setIntField(BasicIndexItem,"viewType",0);
 
 
-                                Object args = XposedHelpers.getObjectField(BasicIndexItem,"args");
 
-                                String upName = (String) upNameField.get(args);
-                                long upId = (long) upIdField.get(args);
                                 //XposedHelpers.setObjectField(BasicIndexItem,"cover",((String)XposedHelpers.getObjectField(BasicIndexItem,"cover")).replace("//i0","//i1"));
                                 String bigCoverJson = Utils.toJSONString(lpparam,BasicIndexItem);
                                 Object smallCoverObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",bigCoverJson,SmallCoverV2ItemClass);
+                                /*
                                 String descButtonJson = "{\"event\":\"nickname\",\"follow\":false,\"followed\":false,\"isFollow\":0,\"isFollowed\":0,\"selected\":0,\"text\":\""+upName+"\",\"type\":1,\"uri\":\"bilibili://space/"+upId+"\"}";
                                 Object descButtonObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",descButtonJson,DescButtonClass);
                                 //XposedHelpers.setObjectField(smallCoverObject,"descText",upName);
@@ -257,14 +246,27 @@ public class ManageHomePagePush extends FunctionsBase {
 
 
                                 XposedHelpers.setObjectField(smallCoverObject,"storyCardIcon",storyCardIconObject);
-
+                                */
+                                NeedExtraDescButton=true;
                                 list.add(i, smallCoverObject);
 
                             }
 
                         }
 
+                        //对处理过的视频卡片补上隐去的图标
+                        if(NeedExtraDescButton){
 
+                            Field storyCardIconField = XposedHelpers.findField(clazz,"storyCardIcon");
+                            storyCardIconField.set(BasicIndexItem,storyCardIcon);
+
+
+                            String descButtonJson = "{\"event\":\"nickname\",\"follow\":false,\"followed\":false,\"isFollow\":0,\"isFollowed\":0,\"selected\":0,\"text\":\""+upName+"\",\"type\":1,\"uri\":\"bilibili://space/"+upId+"\"}";
+                            Object descButtonObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",descButtonJson,DescButtonClass);
+                            //XposedHelpers.setObjectField(BasicIndexItem,"descText",upName);
+                            XposedHelpers.setObjectField(BasicIndexItem,"descButton",descButtonObject);
+
+                        }
 
                     }
 
