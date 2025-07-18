@@ -291,6 +291,7 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("去除创作中心和推荐服务", "高仿国际版", "UserCenterRemoveExcessiveService"));
         ItemsList.add(new SwitchFunction("去除收藏夹视频循环列表", "重定向Activity至正常视频页面", "FavoritesOpenVideoRedirect"));
         ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用此功能 上面重定向功能就没效果了", "ForceEnableV1Favorites"));
+        ItemsList.add(new SwitchFunction("禁用用户主页拉黑屏蔽", "现在不需要退出账号就能视奸别人啦", "DisableAuthorSpaceBlocking"));
 
         ItemsList.add(new GroupTitle("杂项",true));
         ItemsList.add(new ButtonFunction("任意门","跳转到任意注册的Activity","AnywhereDoor",new FunctionOnClickListener(){
@@ -304,7 +305,9 @@ public class Entrance implements IXposedHookLoadPackage {
                         @Override
                         public void onClick(DialogInterface dia, int which) {
                             try{
-                                activity.startActivity(new Intent(activity,XposedHelpers.findClass(ClassNameEditText.getText().toString(),lpparam.classLoader)));
+                                String targetClassName = ClassNameEditText.getText().toString();
+                                if(targetClassName.isEmpty()){return;}
+                                activity.startActivity(new Intent(activity,XposedHelpers.findClass(targetClassName,lpparam.classLoader)));
                             }catch(Exception e){
                                 Toast.makeText(activity, "错误:"+e, Toast.LENGTH_LONG).show();
                             }

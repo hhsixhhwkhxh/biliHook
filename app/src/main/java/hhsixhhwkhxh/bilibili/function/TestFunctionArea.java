@@ -5,6 +5,7 @@ import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -45,6 +46,7 @@ import java.util.Arrays;
 import android.content.Context;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -72,7 +74,7 @@ public class TestFunctionArea extends FunctionsBase {
         //test11(lpparam);
         //test12(lpparam);
         //test13(lpparam);
-         //test14(lpparam);
+            //test14(lpparam);
         //test15(lpparam);
         //test16(lpparam);
         //test5(lpparam);
@@ -91,16 +93,126 @@ public class TestFunctionArea extends FunctionsBase {
         //test28(lpparam);
         //test29(lpparam);
         //test30(lpparam);
+        //test33(lpparam);
+        //test34(lpparam);
+        //test35(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
+        //test31(lpparam);
+    }
+
+    //主动调用个人主页关注接口 但是我没办法拿到BiliApiDataCallback的对象 最后一个参数只能填null 导致空指针异常客户端闪退 但是关注仍然成功
+    //如果想绕过这个问题的话 就再向下挖掘更边缘底层的方法 或者凑合几个参数直接发包 也是可以的 我就懒了 不怎么好玩也没什么价值
+    //不能关注账号已注销 不能关注拉黑的人 鉴权严格
+    public void test35(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //Lcom/bilibili/relation/api/RelationApiManager;->addAuthorAttentionV2(Ljava/lang/String;JILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/bilibili/okretro/BiliApiDataCallback;)V
+        Class<?> RelationApiManagerClass = XposedHelpers.findClass("com.bilibili.relation.api.RelationApiManager",lpparam.classLoader);
+        Class<?> BiliApiDataCallbackClass = XposedHelpers.findClass("com.bilibili.okretro.BiliApiDataCallback",lpparam.classLoader);
+        //public static void addAuthorAttentionV2(String str, long j, int i, String str2, String str3, String str4, Map<String, String> map, BiliApiDataCallback<Void> biliApiDataCallback)
+        Method addAuthorAttentionV2Method = RelationApiManagerClass.getMethod("addAuthorAttentionV2", String.class,long.class,int.class, String.class, String.class, String.class, Map.class,BiliApiDataCallbackClass);
+
+
+        //Lcom/bilibili/lib/accounts/BiliAccounts;->get(Landroid/content/Context;)Lcom/bilibili/lib/accounts/BiliAccounts;
+        Class<?> BiliAccountsClass = XposedHelpers.findClass("com.bilibili.lib.accounts.BiliAccounts",lpparam.classLoader);
+        Method getMethod = BiliAccountsClass.getMethod("get",Context.class);
+
+        //Lcom/bilibili/lib/accounts/BiliAccounts;->getAccessKey()Ljava/lang/String;
+        Method getAccessKeyMethod = BiliAccountsClass.getMethod("getAccessKey");
+
+        Object BiliAccountsObject = getMethod.invoke(null,Utils.getMainActivity());
+        String AccessKey = (String) getAccessKeyMethod.invoke(BiliAccountsObject);
+
+        long userId = 487789834;
+        HashMap<String,String> map = new HashMap<>();
+        map.put("entity_id",""+userId);
+        map.put("entity","user");
+        addAuthorAttentionV2Method.invoke(null,AccessKey,userId,31,"main.space.0.0","","",map,null);
+    }
+
+    //允许查看拉黑的用户主页
+    public void test34(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliMemberCard", lpparam.classLoader, "isDeleted", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(false);
+            }
+
+        });
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliSpace", lpparam.classLoader, "isSpaceHidden", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(false);
+            }
+
+        });
+    }
+
+    public void test33(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Class<?> MNNPredictorJNIClass = XposedHelpers.findClass("com.bilibili.lib.mnn.MNNPredictorJNI",lpparam.classLoader);
+        Object MNNPredictorJNIInstanceObject = XposedHelpers.getStaticObjectField(MNNPredictorJNIClass,"e");
+
+        //Class<?> optimizeAClass = XposedHelpers.findClass("com.bilibili.lib.startup.optimize.a",lpparam.classLoader);
+
+
+        if(MNNPredictorJNIInstanceObject==null){
+            log("MNNPredictorJNIInstanceObject为空");
+            return;
+        }
+        //y(Context,String,File,long,Function2)
+        XposedHelpers.callMethod(MNNPredictorJNIInstanceObject,"y",Utils.getMainActivity(),
+                "metadata.dat4",
+                new File("/data/user/0/tv.danmaku.bili/files/mnn/model4.mnn"),
+                5000L,
+                null
+        );
+
+    }
+
+    public void test32(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.ui.adapter.CommentListAdapter", lpparam.classLoader, "e1", java.util.List.class, boolean.class, boolean.class, String.class, "kotlin.coroutines.Continuation", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                List list = (List) param.args[0];
+                if(list==null||list.isEmpty()){return;}
+                //Utils.copyText(list.toString());
+                Utils.printStackTrace("test32");
+            }
+
+        });
     }
 
 
+
+    //尝试绕过环境检测
     public void test31(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.tencent.bugly.crashreport.common.info.b", lpparam.classLoader, "h", android.content.Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(0);
+            }
 
+        });
+
+        XposedHelpers.findAndHookMethod("com.tencent.bugly.crashreport.common.info.b", lpparam.classLoader, "g", android.content.Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(new ArrayList<>().toString());
+            }
+
+        });
     }
+
+
     //研究旧版播放器
     public void test30(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
 
@@ -775,6 +887,7 @@ public class TestFunctionArea extends FunctionsBase {
 
     }
 
+    //去除收藏夹视频循环列表
     public void test24(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         /*失败
         XposedHelpers.findAndHookMethod("com.bilibili.lib.blrouter.internal.routes.DefaultGlobalLauncher", lpparam.classLoader, "launch", android.content.Context.class, "androidx.fragment.app.Fragment", "com.bilibili.lib.blrouter.RouteRequest", android.content.Intent[].class, new XC_MethodHook() {

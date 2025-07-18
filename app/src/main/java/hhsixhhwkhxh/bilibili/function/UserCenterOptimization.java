@@ -20,6 +20,7 @@ public class UserCenterOptimization extends FunctionsBase {
         boolean UserCenterRemoveExcessiveService = sharedPreferences.getBoolean("UserCenterRemoveExcessiveService",false);
         boolean FavoritesOpenVideoRedirect = sharedPreferences.getBoolean("FavoritesOpenVideoRedirect",false);
         boolean ForceEnableV1Favorites = sharedPreferences.getBoolean("ForceEnableV1Favorites",false);
+        boolean DisableAuthorSpaceBlocking = sharedPreferences.getBoolean("DisableAuthorSpaceBlocking",false);
 
         if(UserCenterRemoveExcessiveService){
             UserCenterRemoveExcessiveService(lpparam);
@@ -31,6 +32,10 @@ public class UserCenterOptimization extends FunctionsBase {
 
         if(ForceEnableV1Favorites){
             ForceEnableV1Favorites(lpparam);
+        }
+
+        if(DisableAuthorSpaceBlocking){
+            DisableAuthorSpaceBlocking(lpparam);
         }
 
     }
@@ -98,6 +103,26 @@ public class UserCenterOptimization extends FunctionsBase {
                 String newUri = rawUri.substring(0,rawUri.length()-1)+"1";
                 uriField.set(MenuGroup$ItemObject,newUri);
                 //log("uri"+newUri);
+            }
+
+        });
+    }
+
+    public void DisableAuthorSpaceBlocking(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliMemberCard", lpparam.classLoader, "isDeleted", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(false);
+            }
+
+        });
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliSpace", lpparam.classLoader, "isSpaceHidden", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(false);
             }
 
         });
