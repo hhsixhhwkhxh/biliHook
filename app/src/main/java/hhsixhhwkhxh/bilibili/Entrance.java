@@ -33,10 +33,9 @@ import java.lang.reflect.Constructor;
 
 import hhsixhhwkhxh.bilibili.function.HomePageSimplify;
 import hhsixhhwkhxh.bilibili.function.CommentOptimization;
-import hhsixhhwkhxh.bilibili.function.RemoveNavigationBarSign;
 import hhsixhhwkhxh.bilibili.function.ManageHomePagePush;
 import hhsixhhwkhxh.bilibili.function.ManageVideoDetailPagePush;
-import hhsixhhwkhxh.bilibili.function.RemoveVideoDetailPageAD;
+import hhsixhhwkhxh.bilibili.function.VideoDetailPageSimplify;
 import hhsixhhwkhxh.bilibili.function.BypassSplash;
 
 import org.luckypray.dexkit.DexKitBridge;
@@ -111,10 +110,10 @@ public class Entrance implements IXposedHookLoadPackage {
 
                     FunctionsBase.sharedPreferences=sharedPreferences;
 
-                    runFunctionSafely(new RemoveNavigationBarSign(), lpparam);
+                    //runFunctionSafely(new RemoveNavigationBarSign(), lpparam);
                     runFunctionSafely(new ManageHomePagePush(), lpparam);
                     runFunctionSafely(new ManageVideoDetailPagePush(), lpparam);
-                    runFunctionSafely(new RemoveVideoDetailPageAD(), lpparam);
+                    runFunctionSafely(new VideoDetailPageSimplify(), lpparam);
                     runFunctionSafely(new BypassSplash(), lpparam);
                     runFunctionSafely(new HomePageSimplify(), lpparam);
                     runFunctionSafely(new CommentOptimization(), lpparam);
@@ -254,9 +253,12 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("开关设置 重启b站后生效"));
 
 
-        ItemsList.add(new GroupTitle("主页导航栏简化",true));
+        ItemsList.add(new GroupTitle("主页综合简化",true));
         ItemsList.add(new SwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
         ItemsList.add(new SwitchFunction("去除主页会员购", "会员go", "HomePageNavigationBarRemoveVIPShopSign"));
+        ItemsList.add(new SwitchFunction("去除游戏按钮", "私信旁边的按钮", "HomePageRemoveGameSign"));
+        ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
+        ItemsList.add(new SwitchFunction("禁用滑动切换tab", "防止误触", "HomePageDisableHorizontalScrollable"));
 
         ItemsList.add(new GroupTitle("主页推送",true));
         ItemsList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
@@ -279,10 +281,6 @@ public class Entrance implements IXposedHookLoadPackage {
 
         ItemsList.add(new GroupTitle("开屏",true));
         ItemsList.add(new SwitchFunction("去除开屏广告", "和开屏battle了好多次 牢屏别打复活赛了", "BypassSplash"));
-
-        ItemsList.add(new GroupTitle("主页综合简化",true));
-        ItemsList.add(new SwitchFunction("去除游戏按钮", "私信旁边的按钮", "HomePageRemoveGameSign"));
-        ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
 
         ItemsList.add(new GroupTitle("评论优化",true));
         ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒 \n注意 有副作用 此功能缺少打磨", "ForceCommentsToShowAbsoluteTime"));

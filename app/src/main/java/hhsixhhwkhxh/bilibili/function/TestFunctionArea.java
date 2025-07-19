@@ -96,12 +96,25 @@ public class TestFunctionArea extends FunctionsBase {
         //test33(lpparam);
         //test34(lpparam);
         //test35(lpparam);
+        //test36(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
         //test31(lpparam);
     }
+
+    //禁用横向滑动
+    public void test36(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.homepage.widget.ChangeScrollableViewPager", lpparam.classLoader, "setHorizontalScrollable", boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[0]=false;
+            }
+        });
+    }
+
 
     //主动调用个人主页关注接口 但是我没办法拿到BiliApiDataCallback的对象 最后一个参数只能填null 导致空指针异常客户端闪退 但是关注仍然成功
     //如果想绕过这个问题的话 就再向下挖掘更边缘底层的方法 或者凑合几个参数直接发包 也是可以的 我就懒了 不怎么好玩也没什么价值

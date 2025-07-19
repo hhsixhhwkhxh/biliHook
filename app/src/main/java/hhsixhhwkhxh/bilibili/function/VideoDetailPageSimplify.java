@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class RemoveVideoDetailPageAD extends FunctionsBase {
+public class VideoDetailPageSimplify extends FunctionsBase {
 
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
