@@ -13,6 +13,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import org.luckypray.dexkit.query.matchers.ClassMatcher;
 import org.luckypray.dexkit.query.matchers.FieldsMatcher;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
 import org.luckypray.dexkit.query.matchers.base.OpCodesMatcher;
+import org.luckypray.dexkit.result.ClassData;
 import org.luckypray.dexkit.result.FieldData;
 import org.luckypray.dexkit.result.MethodData;
 import org.luckypray.dexkit.util.OpCodeUtil;
@@ -290,6 +292,7 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("去除收藏夹视频循环列表", "重定向Activity至正常视频页面", "FavoritesOpenVideoRedirect"));
         ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用此功能 上面重定向功能就没效果了", "ForceEnableV1Favorites"));
         ItemsList.add(new SwitchFunction("禁用用户主页拉黑屏蔽", "现在不需要退出账号就能视奸别人啦", "DisableAuthorSpaceBlocking"));
+        ItemsList.add(new SwitchFunction("扫墓", "在账号注销的个人页面可以查看动态", "AllowSweepGrave"));
 
         ItemsList.add(new GroupTitle("杂项",true));
         ItemsList.add(new ButtonFunction("任意门","跳转到任意注册的Activity","AnywhereDoor",new FunctionOnClickListener(){
@@ -316,6 +319,36 @@ public class Entrance implements IXposedHookLoadPackage {
                 dialog.show();
             }
         }));
+
+        /*
+        ItemsList.add(new ButtonFunction("扫墓","根据uid查看注销用户的动态","SweepGrave",new FunctionOnClickListener(){
+            public void onClick(){
+                final EditText ClassNameEditText = new EditText(activity);
+                AlertDialog dialog = new AlertDialog.Builder(activity)
+                        .setTitle("输入用户uid")
+                        .setView(ClassNameEditText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dia, int which) {
+                                try{
+                                    String targetUid = ClassNameEditText.getText().toString();
+                                    if(targetUid.isEmpty()){return;}
+                                    UserCenterOptimization.SweepGrave(lpparam,Long.parseLong(targetUid));
+                                }catch(Throwable e){
+                                    Toast.makeText(activity, "错误:"+e, Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .create();
+                dialog.show();
+            }
+        }));
+        */
+
+
         ItemsList.add(new ButtonFunction("重新反混淆","重新使用dexkit查找方法和变量 响应速度慢 请勿多次反复猛击","REResolveConfusionMethods",new FunctionOnClickListener(){
             public void onClick(){
                 String apkPath = lpparam.appInfo.sourceDir;
@@ -507,6 +540,38 @@ public class Entrance implements IXposedHookLoadPackage {
             stringBuilder.append(accessMethodSeekResult(editor,tv_danmaku_bili_ui_main2_mine_p0_bMethods,"tv_danmaku_bili_ui_main2_mine_p0_bMethod")+"\n");
 
 
+            //com.bilibili.bplus.followinglist.model.b9
+            List<ClassData> com_bilibili_bplus_followinglist_model_b9Classes = bridge.findClass(new FindClass().searchPackages("com.bilibili.bplus.followinglist.model").matcher(new ClassMatcher()
+                    .usingStrings("UpListItem(face=")));
+
+            stringBuilder.append(accessClassSeekResult(editor,com_bilibili_bplus_followinglist_model_b9Classes,"com_bilibili_bplus_followinglist_model_b9Class")+"\n");
+
+
+
+            //com.bilibili.bplus.followinglist.model.e7
+            //Lcom/bilibili/bplus/followinglist/model/e7;->N0(Z)Lcom/bapis/bilibili/app/dynamic/v2/CardVideoUpList;
+            List<MethodData> com_bilibili_bplus_followinglist_model_e7_N0Methods = bridge.findClass(new FindClass().searchPackages("com.bilibili.bplus.followinglist.model").matcher(new ClassMatcher()
+                    .usingStrings("ModuleVideoUpList(title="))).findMethod(new FindMethod().matcher(new MethodMatcher()
+                     .returnType("com.bapis.bilibili.app.dynamic.v2.CardVideoUpList")
+                     .paramTypes(boolean.class)));
+
+            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_bplus_followinglist_model_e7_N0Methods,"com_bilibili_bplus_followinglist_model_e7_N0Method")+"\n");
+
+
+            //com.bilibili.app.authorspace.ui.AuthorSpaceActivity
+            //Lcom/bilibili/app/authorspace/ui/AuthorSpaceActivity;->F9()V
+
+            List<MethodData> com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods = bridge.getClassData("com.bilibili.app.authorspace.ui.AuthorSpaceActivity").findMethod(new FindMethod().matcher(new MethodMatcher()
+                    .returnType(void.class)
+                    .usingNumbers(0,8)
+                    .modifiers(Modifier.PRIVATE)//jadx牛逼 反编译完给我说是public 无敌了
+                    .paramCount(0)
+                    .addInvoke("Ltv/danmaku/bili/widget/LoadingImageViewV2;->setRefreshError()V")
+            ));
+
+            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods,"com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Method")+"\n");
+
+
             editor.apply();
             editor.commit();
 
@@ -530,7 +595,7 @@ public class Entrance implements IXposedHookLoadPackage {
                 return stringBuilder.toString();
             }
         }
-        return(name+"->"+list.get(0).getMethodSign());
+        return(name+"->"+list.get(0).toString());
     }
     public String accessFieldSeekResult(SharedPreferences.Editor editor , List<FieldData> list, String name){
         if(list.isEmpty()){
@@ -546,7 +611,26 @@ public class Entrance implements IXposedHookLoadPackage {
                 return stringBuilder.toString();
             }
         }
-        return (name+"->"+list.get(0).getFieldName());
+        return (name+"->"+list.get(0).toString());
     }
+
+    public String accessClassSeekResult(SharedPreferences.Editor editor , List<ClassData> list, String name){
+        if(list.isEmpty()){
+            return (name+"未找到");
+        }else{
+            editor.putString(name,list.get(0).toDexType().serialize());
+            if(list.size()>1){
+                StringBuilder stringBuilder = new StringBuilder(name+"有"+list.size()+"个\n");
+                for(ClassData classData:list){
+                    stringBuilder.append("同特征类: ").append(classData.getName());
+                    stringBuilder.append("\n");
+                }
+                return stringBuilder.toString();
+            }
+        }
+        return (name+"->"+list.get(0).toString());
+    }
+
+
 
 }

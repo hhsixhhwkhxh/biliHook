@@ -22,6 +22,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
+import org.luckypray.dexkit.wrap.DexClass;
 import org.luckypray.dexkit.wrap.DexMethod;
 
 import java.io.StringWriter;
@@ -40,6 +41,8 @@ public class Utils {
 
     private static final HashMap<String,Method> DeConfusionMethodCacheMap = new HashMap<>();
     private static final HashMap<String,Field> DeConfusionFieldCacheMap = new HashMap<>();
+
+    private static final HashMap<String,Class> DeConfusionClassCacheMap = new HashMap<>();
     public static SharedPreferences sharedPreferences;
     public static void init(Activity activity,XC_LoadPackage.LoadPackageParam mlpparam)throws Throwable{
         MainActivityV2=activity;
@@ -258,6 +261,18 @@ public class Utils {
         }
     }
 
+    public static Class getDeConfusionClass(String name,ClassLoader classLoader) throws ClassNotFoundException {
+        if(sharedPreferences==null||name==null||name.equals("")){return null;}
+        if(DeConfusionClassCacheMap.containsKey(name)){
+            return DeConfusionClassCacheMap.get(name);
+        }else{
+            String descriptor = sharedPreferences.getString(name,"");
+            Class<?> targetClass = DexClass.deserialize(descriptor).getInstance(classLoader);
+            DeConfusionClassCacheMap.put(name,targetClass);
+            return targetClass;
+        }
+    }
+
     public static void copyText(String str){
         // 获取剪切板管理器
         ClipboardManager clipboard = (ClipboardManager)MainActivityV2.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -309,5 +324,22 @@ public class Utils {
             log("加载模块资源失败: "+e);
             return null;
         }
+    }
+
+    public static Constructor<?> getConstructorWithParamCount(Class<?> targetClass,int targetParamCount,boolean NeedDeclared){
+        Constructor<?>[] constructors;
+        if(NeedDeclared){
+            constructors = targetClass.getDeclaredConstructors();
+        }else{
+            constructors = targetClass.getConstructors();
+        }
+
+        for (Constructor<?> constructor:constructors){
+            int paramCount = constructor.getParameterCount();
+            if(paramCount==targetParamCount){
+                return constructor;
+            }
+        }
+        return null;
     }
 }

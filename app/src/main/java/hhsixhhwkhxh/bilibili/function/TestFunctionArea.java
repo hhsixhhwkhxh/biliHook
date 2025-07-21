@@ -15,6 +15,7 @@ import de.robv.android.xposed.XposedHelpers;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.ParameterizedType;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -52,6 +53,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import android.os.Handler;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class TestFunctionArea extends FunctionsBase {
@@ -97,12 +100,255 @@ public class TestFunctionArea extends FunctionsBase {
         //test34(lpparam);
         //test35(lpparam);
         //test36(lpparam);
+        //test37(lpparam);
+        //test38(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
         //test31(lpparam);
     }
+
+    public void test38(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.ui.AuthorSpaceActivity", lpparam.classLoader, "F9", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                ViewGroup root = (ViewGroup) XposedHelpers.getObjectField(param.thisObject,"F");
+                //root.addView(new Button(root.getContext()));
+                int id = Utils.getViewID("btn");
+                Button SweepGraveButton = new Button(root.getContext());
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.BELOW, id);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+                SweepGraveButton.setText("扫墓");
+                //SweepGraveButton.setOnClickListener();
+                root.addView(SweepGraveButton, params);
+            }
+        });
+    }
+
+
+    //小玩具 可以访问注销up没删除的动态和视频 好玩 不知道什么时候会被堵死
+    public void test37(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //com.bilibili.bplus.followinglist.model.b9 这是Bilibili关注列表功能中的一个数据模型类(UpListItem)
+
+        //Lcom/bilibili/bplus/followinglist/quick/consume/t0;->a1(Ljava/util/List;Z)V
+
+
+        /*
+        XposedHelpers.findAndHookConstructor("com.bilibili.bplus.followinglist.model.b9", lpparam.classLoader, String.class, String.class, long.class, long.class, "com.bilibili.bplus.followinglist.model.UpItemType", "com.bilibili.bplus.followinglist.model.UpItemStyle", "com.bilibili.bplus.followinglist.model.UpItemStyle", long.class, boolean.class, int.class, boolean.class, String.class, String.class, boolean.class, String.class, boolean.class, "com.bilibili.bplus.followinglist.model.l1", String.class, String.class, String.class, String.class, "com.bilibili.bplus.followinglist.model.c9", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                //参数0 java.lang.String https://i1.hdslb.com/bfs/face/4eb764b8c6afc48ad1e7aaf84b0f58db3d4dbb3f.jpg
+                //参数1 java.lang.String    赛雷三分钟
+                //参数2 java.lang.Long  26108626
+                //参数3 java.lang.Long  4
+                //参数4 com.bilibili.bplus.followinglist.model.UpItemType   NORMAL
+                //参数5 com.bilibili.bplus.followinglist.model.UpItemStyle  UpItemStyle(rectText=, rectTextColor=, rectIcon=, rectBgColor=, outerAnimation=)
+                //参数6 com.bilibili.bplus.followinglist.model.UpItemStyle  UpItemStyle(rectText=, rectTextColor=, rectIcon=, rectBgColor=, outerAnimation=)
+                //参数7 java.lang.Long  0
+                //参数8 java.lang.Boolean   false
+                //参数9    java.lang.Integer   0
+                //参数10    java.lang.Boolean   false
+                //参数11    java.lang.String    bilibili://space/26108626?defaultTab=dynamic
+                //参数12    java.lang.String    24a58bd3f9c939da758b30aac1687c9e
+                //参数13    java.lang.Boolean   false
+                //参数14    java.lang.String
+                //参数15    java.lang.Boolean   false
+                //参数16    null   null
+                //参数17    java.lang.String
+                //参数18    java.lang.String    {"uid_type":1}
+                //参数19    java.lang.String
+                //参数20    java.lang.String
+                //参数21    null    null
+
+                param.args[0]="https://i1.hdslb.com/bfs/face/0de87fa269a1aa3b0a05643909246f7fdeb2ef0b.jpg";
+                param.args[1]="hhsixhhwkhxh";
+                param.args[2]=5519219;
+
+                //param.args[3]=null;
+                //param.args[4]=null;
+                //param.args[5]=null;//无妨
+                //param.args[6]=null;//无妨
+                //param.args[7]=null;
+                //param.args[8]=null;
+                //param.args[9]=null;
+                //param.args[10]=null;
+                //param.args[11]=null;//崩溃
+
+                param.args[12]=null;
+
+                        //param.args[13]=null;//无网络
+                        //param.args[14]=null;//崩溃
+                        //param.args[15]=null;//无网络
+                param.args[16]=null;
+                        //param.args[17]=null;//崩溃
+                        //param.args[18]=null;//崩溃
+                param.args[19]=null;
+                param.args[20]=null;
+                param.args[21]=null;
+
+
+
+            }
+
+        });*/
+
+        Class<?> UpItemTypeClass = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.UpItemType",lpparam.classLoader);
+        Object UpItemTypeNORMALObject = XposedHelpers.getStaticObjectField(UpItemTypeClass,"NORMAL");
+
+        long uid = 5519219L;
+
+        Class<?> b9Class = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.b9",lpparam.classLoader);
+        Constructor<?> b9Constructor = Utils.getConstructorWithParamCount(b9Class,22,false);
+        Object b9Object = b9Constructor.newInstance(
+                "https://i1.hdslb.com/bfs/face/0de87fa269a1aa3b0a05643909246f7fdeb2ef0b.jpg",
+                "hhsixhhwkhxh",
+                uid,
+                0,
+                UpItemTypeNORMALObject,
+                null,
+                null,
+                0,
+                false,
+                0,
+                false,
+                "bilibili://space/"+uid+"?defaultTab=dynamic",
+                "",
+                false,
+                "",
+                false,
+                null,
+                "",
+                "{\"uid_type\":1}",
+                "",
+                "",
+                null
+        );
+
+
+        //com.bilibili.bplus.followinglist.model.e7
+        List<Object> newList = new ArrayList<>();
+        newList.add(b9Object);
+
+        Class<?> e7Class = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.e7",lpparam.classLoader);
+        Constructor<?> e7Constructor = Utils.getConstructorWithParamCount(e7Class,14,false);
+        Object e7Object = e7Constructor.newInstance(
+                "扫墓",
+                newList,
+                new ArrayList<>(),
+                "",
+                0,
+                true,
+                true,
+                "",
+                "bilibili://following/up_more_list",
+                true,
+                false,
+                true,
+                false,
+                ""
+        );
+        /*
+        *   参数0 java.lang.String  最常访问
+            参数1 java.util.ArrayList {...}
+            参数2 java.util.ArrayList {}
+            参数3 java.lang.String    61ead6f2903b73072da7d58927687dc0
+            参数4 java.lang.Integer   0
+            参数5 java.lang.Boolean   true
+            参数6 java.lang.Boolean   true
+            参数7 java.lang.String    更多
+            参数8 java.lang.String    bilibili://following/up_more_list
+            参数9 java.lang.Boolean   true
+            参数10    java.lang.Boolean   false
+            参数11    java.lang.Boolean   true
+            参数12    java.lang.Boolean   false
+            参数13    java.lang.String
+            * */
+        /*
+        XposedHelpers.findAndHookConstructor("com.bilibili.bplus.followinglist.model.e7", lpparam.classLoader, String.class, java.util.ArrayList.class, java.util.ArrayList.class, String.class, int.class, boolean.class, boolean.class, String.class, String.class, boolean.class, boolean.class, boolean.class, boolean.class, String.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                //List list = (ArrayList)param.args[1];
+                //if (list.size() > 1) {
+                //    list.subList(1, list.size()).clear();
+                //}
+                List newList = new ArrayList<>();
+                newList.add(b9Object);
+                param.args[1] = newList;
+
+                param.args[3] = "";
+
+
+            }
+
+        });
+        */
+
+
+        /*
+        XposedHelpers.findAndHookMethod("com.bilibili.bplus.followinglist.module.item.quick.consume.DelegateVideoUpList", lpparam.classLoader, "g", int.class, int.class, "com.bilibili.bplus.followinglist.model.e7", "androidx.recyclerview.widget.RecyclerView", android.view.View.class, "com.bilibili.bplus.followinglist.service.b1", "com.bilibili.lib.blrouter.MutableBundleLike", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Object e7VarObject = param.args[2];
+                Object CardVideoUpListObject = XposedHelpers.callMethod(e7VarObject,"N0",false);
+                byte[] bytes = (byte[]) XposedHelpers.callMethod(CardVideoUpListObject,"toByteArray");
+
+
+            }
+        });*/
+
+
+        Object CardVideoUpListObject = XposedHelpers.callMethod(e7Object,"N0",false);
+        byte[] bytes = (byte[]) XposedHelpers.callMethod(CardVideoUpListObject,"toByteArray");
+
+        String quickConsumeUriStr = "bilibili://following/quick_consume";
+
+        // 创建主Intent
+        Intent intent = new Intent();
+        intent.setData(android.net.Uri.parse(quickConsumeUriStr));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClassName("tv.danmaku.bili", "com.bilibili.bplus.followinglist.quick.consume.QuickConsumeActivity");
+
+        // 创建default_extra_bundle
+        Bundle defaultExtraBundle = new Bundle();
+        //defaultExtraBundle.putInt("key_video_uplist_with_transaction", 4096);
+
+        //Lcom/bilibili/bplus/followinglist/module/item/quick/consume/DelegateVideoUpList;->g(IILcom/bilibili/bplus/followinglist/model/e7;Landroidx/recyclerview/widget/RecyclerView;Landroid/view/View;Lcom/bilibili/bplus/followinglist/service/b1;Lcom/bilibili/lib/blrouter/MutableBundleLike;)Lkotlin/Unit;
+        //e7Var.N0(false).toByteArray()
+        defaultExtraBundle.putByteArray("key_video_uplist", bytes);
+        defaultExtraBundle.putBoolean("key_is_dynamic", true);
+
+        // 创建blrouter.props
+        Bundle blrouterProps = new Bundle();
+        blrouterProps.putString("blrouter.from", "bilibili://following/index/filter/all");
+
+        // 设置主Bundle的Extras
+        intent.putExtra("default_extra_bundle", defaultExtraBundle);
+        intent.putExtra("key_selected_row", 0);
+        intent.putExtra("blrouter.native.start", false);
+        intent.putExtra("key_selected", 2);
+        intent.putExtra("blrouter.props", blrouterProps);
+        intent.putExtra("blrouter.pagename", quickConsumeUriStr);
+        intent.putExtra("blrouter.targeturl", quickConsumeUriStr);
+        intent.putExtra("blrouter.matchrule", quickConsumeUriStr);
+
+        // 启动Activity
+        Utils.getMainActivity().startActivityForResult(intent, -1);
+
+
+    }
+
 
     //禁用横向滑动
     public void test36(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
@@ -592,8 +838,8 @@ public class TestFunctionArea extends FunctionsBase {
         });
 
 
-        Resources resources = Utils.getModuleResources(Utils.getMainActivity());
-        resources.getIdentifier("","id", Entrance.TargetPackageName);
+        //Resources resources = Utils.getModuleResources(Utils.getMainActivity());
+        //resources.getIdentifier("","id", Entrance.TargetPackageName);
     }
 
 
@@ -1750,4 +1996,6 @@ public class TestFunctionArea extends FunctionsBase {
 
             });
     }
+
+
 }
