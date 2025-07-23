@@ -169,7 +169,7 @@ public class UserCenterOptimization extends FunctionsBase {
                 layoutParams.addRule(RelativeLayout.BELOW, id);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
                 long mid = (long) XposedHelpers.callMethod(param.thisObject,"mid");
-                SweepGraveButton.setText("扫墓");
+                SweepGraveButton.setText("考古");
                 SweepGraveButton.setOnClickListener(view -> {
 
                     try {
@@ -203,7 +203,7 @@ public class UserCenterOptimization extends FunctionsBase {
         }
         Object b9Object = b9Constructor.newInstance(
                 "https://i1.hdslb.com/bfs/face/0de87fa269a1aa3b0a05643909246f7fdeb2ef0b.jpg",
-                "hhsixhhwkhxh",
+                "biliHook",
                 uid,
                 0,
                 UpItemTypeNORMALObject,
@@ -246,7 +246,7 @@ public class UserCenterOptimization extends FunctionsBase {
             return;
         }
         Object e7Object = e7Constructor.newInstance(
-                "扫墓",
+                "考古",
                 newList,
                 new ArrayList<>(),
                 "",

@@ -36,6 +36,7 @@ import hhsixhhwkhxh.bilibili.function.HomePageSimplify;
 import hhsixhhwkhxh.bilibili.function.CommentOptimization;
 import hhsixhhwkhxh.bilibili.function.ManageHomePagePush;
 import hhsixhhwkhxh.bilibili.function.ManageVideoDetailPagePush;
+import hhsixhhwkhxh.bilibili.function.ShareManagement;
 import hhsixhhwkhxh.bilibili.function.VideoDetailPageSimplify;
 import hhsixhhwkhxh.bilibili.function.BypassSplash;
 
@@ -120,7 +121,7 @@ public class Entrance implements IXposedHookLoadPackage {
                     runFunctionSafely(new HomePageSimplify(), lpparam);
                     runFunctionSafely(new CommentOptimization(), lpparam);
                     runFunctionSafely(new UserCenterOptimization(),lpparam);
-
+                    runFunctionSafely(new ShareManagement(),lpparam);
                     runFunctionSafely(new TestFunctionArea(), lpparam);
                 }
             });
@@ -292,7 +293,10 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("去除收藏夹视频循环列表", "重定向Activity至正常视频页面", "FavoritesOpenVideoRedirect"));
         ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用此功能 上面重定向功能就没效果了", "ForceEnableV1Favorites"));
         ItemsList.add(new SwitchFunction("禁用用户主页拉黑屏蔽", "现在不需要退出账号就能视奸别人啦", "DisableAuthorSpaceBlocking"));
-        ItemsList.add(new SwitchFunction("扫墓", "在账号注销的个人页面可以查看动态", "AllowSweepGrave"));
+        ItemsList.add(new SwitchFunction("考古", "在账号注销的个人页面可以查看动态", "AllowSweepGrave"));
+
+        ItemsList.add(new GroupTitle("分享",true));
+        ItemsList.add(new SwitchFunction("禁止跳转到竖屏视频", "会重定向到横屏", "DisableJumpToVerticalVideoFromShare"));
 
         ItemsList.add(new GroupTitle("杂项",true));
         ItemsList.add(new ButtonFunction("任意门","跳转到任意注册的Activity","AnywhereDoor",new FunctionOnClickListener(){
@@ -320,8 +324,8 @@ public class Entrance implements IXposedHookLoadPackage {
             }
         }));
 
-        /*
-        ItemsList.add(new ButtonFunction("扫墓","根据uid查看注销用户的动态","SweepGrave",new FunctionOnClickListener(){
+
+        ItemsList.add(new ButtonFunction("考古","根据uid查看注销用户的动态","SweepGrave",new FunctionOnClickListener(){
             public void onClick(){
                 final EditText ClassNameEditText = new EditText(activity);
                 AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -346,7 +350,6 @@ public class Entrance implements IXposedHookLoadPackage {
                 dialog.show();
             }
         }));
-        */
 
 
         ItemsList.add(new ButtonFunction("重新反混淆","重新使用dexkit查找方法和变量 响应速度慢 请勿多次反复猛击","REResolveConfusionMethods",new FunctionOnClickListener(){

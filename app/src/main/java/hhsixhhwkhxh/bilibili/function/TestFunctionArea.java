@@ -15,6 +15,8 @@ import de.robv.android.xposed.XposedHelpers;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.ParameterizedType;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -24,6 +26,7 @@ import android.graphics.Typeface;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -34,6 +37,9 @@ import android.view.View;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,6 +62,7 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TestFunctionArea extends FunctionsBase {
 /*
@@ -102,11 +109,82 @@ public class TestFunctionArea extends FunctionsBase {
         //test36(lpparam);
         //test37(lpparam);
         //test38(lpparam);
+        //test39(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
         //test31(lpparam);
+    }
+
+    //分享禁止跳转到竖屏视频
+    public void test39(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.intent.IntentHandlerActivity", lpparam.classLoader, "init", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Intent intent = (Intent) XposedHelpers.callMethod(param.thisObject,"getIntent");
+                //Utils.showToast(intent.getDataString(), Toast.LENGTH_LONG);
+                /*
+                ComponentName componentName = intent.getComponent();
+                if(componentName==null){return;}
+                if(componentName.getClassName().equals("com.bilibili.video.story.StoryVideoActivity")){
+                    intent.setClassName((Activity)param.thisObject,"com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity");
+                }
+
+                 */
+                /*
+                String dataString = intent.getDataString();
+                Utils.copyText(dataString);
+                if(dataString.startsWith("bilibili://video/")){
+
+                    dataString = dataString.replace("-Atype","onani");
+                    String bvid = dataString.substring(17,dataString.indexOf("?"));
+                    //String newDataString = dataString.replace("video/","united_video/");
+                    //intent.setData(Uri.parse(newDataString));
+
+                    //intent.putExtra("bvid",bvid);
+                    Utils.log(intent);
+                    Utils.log(intent.getExtras());
+                    //Utils.showToast(bvid,1);
+                }*/
+                //String dataString = intent.getDataString();
+                //Utils.copyText("初始"+dataString);
+
+
+                Uri rawUri = intent.getData();
+                String RawH5awaken = rawUri.getQueryParameter("h5awaken");
+                String h5awakenUrlDecoded = URLDecoder.decode(RawH5awaken, "UTF-8");
+
+                // Base64 解码
+                byte[] h5awakenBase64Decoded = Base64.decode(h5awakenUrlDecoded, Base64.DEFAULT);
+
+                //将字节数组转换为字符串
+                String h5awakenString = new String(h5awakenBase64Decoded, StandardCharsets.UTF_8);
+
+                h5awakenString = h5awakenString.replace("share_from","onani");
+
+                String newH5awaken = Base64.encodeToString(h5awakenString.getBytes(StandardCharsets.UTF_8),Base64.DEFAULT);
+
+                Uri.Builder builder = rawUri.buildUpon();
+                builder.clearQuery(); // 清除原始查询参数
+                // 重新添加所有原始查询参数，并替换h5awaken
+                for (String key : rawUri.getQueryParameterNames()) {
+                    if(key.equals("-Atype")){continue;}
+                    if ("h5awaken".equals(key)) {
+                        builder.appendQueryParameter(key, newH5awaken);
+                    } else {
+                        // 注意：一个参数名可能有多个值，这里简化处理，只取第一个值
+                        String value = rawUri.getQueryParameter(key);
+                        builder.appendQueryParameter(key, value);
+                    }
+                }
+                Uri newUri = builder.build();
+                intent.setData(newUri);
+                //Utils.copyText("修改"+intent.getDataString());
+            }
+
+        });
     }
 
     public void test38(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
