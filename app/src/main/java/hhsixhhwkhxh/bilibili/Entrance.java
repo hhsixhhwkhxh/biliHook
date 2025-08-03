@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+
+import de.robv.android.xposed.BuildConfig;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -29,6 +31,10 @@ import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
 
@@ -63,7 +69,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
     private Activity MainActivityV2=null;
     public static int contrastColor=Color.BLACK;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private List<ListItem> ItemsList;
     SharedPreferences sharedPreferences=null;
 
@@ -79,9 +85,9 @@ public class Entrance implements IXposedHookLoadPackage {
     
         if(!lpparam.packageName.equals(TargetPackageName)){return;}
 
-
-        new TestFunctionArea().advanceRun(lpparam);
-
+        if(BuildConfig.DEBUG) {
+            new TestFunctionArea().advanceRun(lpparam);
+        }
 
 
         //如果是"tv.danmaku.bili.MainActivityV2" 正常从桌面打开app biliHook可以正常启动 然而在b站被其他应用程序拉活跳转时 MainActivityV2不会启动 此时模块功能就没有了
@@ -122,7 +128,9 @@ public class Entrance implements IXposedHookLoadPackage {
                     runFunctionSafely(new CommentOptimization(), lpparam);
                     runFunctionSafely(new UserCenterOptimization(),lpparam);
                     runFunctionSafely(new ShareManagement(),lpparam);
-                    runFunctionSafely(new TestFunctionArea(), lpparam);
+                    if(BuildConfig.DEBUG) {
+                        runFunctionSafely(new TestFunctionArea(), lpparam);
+                    }
                 }
             });
         
@@ -207,8 +215,9 @@ public class Entrance implements IXposedHookLoadPackage {
     public void initSettingActivity(final XC_LoadPackage.LoadPackageParam lpparam,final Activity activity){
         
         RelativeLayout layout = new RelativeLayout(activity);
-        listView = new ListView(activity);
-        listView.setId(View.generateViewId());
+        recyclerView = new RecyclerView(activity);
+        recyclerView.setId(View.generateViewId());
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         //listView.setBackgroundColor(Color.WHITE);
         
         ColorDrawable background = (ColorDrawable) activity.getWindow().getDecorView().getRootView().getBackground();
@@ -230,10 +239,10 @@ public class Entrance implements IXposedHookLoadPackage {
         
         
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        listView.setLayoutParams(params);
+        recyclerView.setLayoutParams(params);
 
         //layout.addView(toolbar);
-        layout.addView(listView);
+        layout.addView(recyclerView);
         activity.setContentView(layout);
         
         //sharedPreferences = activity.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
@@ -257,7 +266,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
 
         ItemsList.add(new GroupTitle("主页综合简化",true));
-        ItemsList.add(new SwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
+        ItemsList.add(new ExpandableSwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
         ItemsList.add(new SwitchFunction("去除主页会员购", "会员go", "HomePageNavigationBarRemoveVIPShopSign"));
         ItemsList.add(new SwitchFunction("去除游戏按钮", "私信旁边的按钮", "HomePageRemoveGameSign"));
         ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
@@ -400,7 +409,7 @@ public class Entrance implements IXposedHookLoadPackage {
         
         
         FunctionAdapter adapter = new FunctionAdapter(activity, ItemsList);
-        listView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
         
         //Toast.makeText(activity, "HookAccessible:"+getHookAccessible(), Toast.LENGTH_SHORT).show();
     }

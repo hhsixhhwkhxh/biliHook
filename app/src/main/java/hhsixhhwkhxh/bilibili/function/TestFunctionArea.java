@@ -110,11 +110,26 @@ public class TestFunctionArea extends FunctionsBase {
         //test37(lpparam);
         //test38(lpparam);
         //test39(lpparam);
+        test40(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
         //test31(lpparam);
+    }
+
+    //研究推荐up列表
+    public void test40(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roomv3.base.view.LiveRoomBaseViewPager", lpparam.classLoader, "onTouchEvent", android.view.MotionEvent.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(false);
+                Utils.showToast("test40",1);
+            }
+
+        });
     }
 
     //分享禁止跳转到竖屏视频
@@ -1720,6 +1735,7 @@ public class TestFunctionArea extends FunctionsBase {
                         //String text = "RecyclerView";
                         String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass();
 
+                        XposedBridge.log(text);
 
                         // 初始化画笔
                         Paint paint = new Paint();

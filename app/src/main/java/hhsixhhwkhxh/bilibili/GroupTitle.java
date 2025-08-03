@@ -53,7 +53,7 @@ public class GroupTitle extends ListItem {
         GroupTitleTextView.setText(title);
     }
     @Override
-    public int getViewKindID() {
-        return 2;
+    public int getType() {
+        return ListItem.TYPE_GROUP_TITLE;
     }
 }

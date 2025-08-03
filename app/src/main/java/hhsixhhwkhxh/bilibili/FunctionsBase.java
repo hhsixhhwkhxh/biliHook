@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FunctionsBase {
-    
+
+
     public static SharedPreferences sharedPreferences;
     protected List<XC_MethodHook.Unhook> UnhooksList = new ArrayList<>();
     public abstract void run(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable;

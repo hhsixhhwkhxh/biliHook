@@ -85,16 +85,18 @@ public class HomePageSimplify extends FunctionsBase {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
+                        int flag = (int) param.args[0];//0首页 1动态 2加号 3会员购 4我的
                         View baseView = (View) param.args[1];
 
                         TextView textview = baseView.findViewById(Utils.getViewID("tab_text"));
+
 
                         //textview.getText()的结果5次分别是 "首页" "动态" "" "会员购" "我的"
                         if(HomePageNavigationBarRemovePlusSign&&textview.getText().equals("")){
                             //这里采用较为委婉的方式隐藏布局 其实直接setVisibility应该也没问题
                             baseView.setLayoutParams(new LinearLayout.LayoutParams(0,0));
                         }
-                        if(HomePageNavigationBarRemoveVIPShopSign&&textview.getText().equals("会员购")){
+                        if(HomePageNavigationBarRemoveVIPShopSign&&flag==3){
                             baseView.setLayoutParams(new LinearLayout.LayoutParams(0,0));
                         }
                     }

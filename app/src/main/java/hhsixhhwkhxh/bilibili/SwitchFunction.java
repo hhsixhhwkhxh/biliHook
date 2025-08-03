@@ -21,6 +21,8 @@ public class SwitchFunction extends ListItem {
     
     
     TextView functionName,functionDescription;
+
+    LinearLayout switchContainer;
     Switch functionSwitch;
 
     public SwitchFunction(String name, String description,String id) {
@@ -86,6 +88,13 @@ public class SwitchFunction extends ListItem {
         textLayout.addView(functionName);
         textLayout.addView(functionDescription);
 
+        switchContainer = new LinearLayout(context);
+        switchContainer.setOrientation(LinearLayout.HORIZONTAL);
+        switchContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        switchContainer.setGravity(Gravity.CENTER_VERTICAL);
+
         functionSwitch = new Switch(context);
         functionSwitch.setId(View.generateViewId());
         functionSwitch.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -93,8 +102,10 @@ public class SwitchFunction extends ListItem {
         functionSwitch.setGravity(Gravity.CENTER_VERTICAL);
         functionSwitch.getTrackDrawable().setColorFilter(Entrance.contrastColor,PorterDuff.Mode.SRC_ATOP);
 
+        switchContainer.addView(functionSwitch);
         layout.addView(textLayout);
-        layout.addView(functionSwitch);
+        layout.addView(switchContainer);
+
         return layout;
     }
     
@@ -118,8 +129,8 @@ public class SwitchFunction extends ListItem {
             });
     }
     @Override
-    public int getViewKindID() {
-        return 1;
+    public int getType() {
+        return ListItem.TYPE_SWITCH;
     }
 
     

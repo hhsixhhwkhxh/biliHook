@@ -97,7 +97,7 @@ public class ButtonFunction extends ListItem {
     }
     
     @Override
-    public int getViewKindID() {
-        return 3;
+    public int getType() {
+        return ListItem.TYPE_BUTTON;
     }
 }
