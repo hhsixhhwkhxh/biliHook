@@ -15,13 +15,7 @@ public class FunctionAdapter extends ArrayAdapter<ListItem> {
     @Override
     public View getView(final int position, View convertView,  ViewGroup parent) {
         final ListItem item = getItem(position);
-        //final int ViewKindID = item.getViewKindID();
 
-        /*if (!convertViewMap.containsKey(ViewKindID)) {
-            convertViewMap.put(ViewKindID,item.getView(getContext()));
-            XposedBridge.log(""+convertViewMap);
-        }
-*/
         convertView = item.getView(getContext());
         item.initView(getContext(),convertView);
 

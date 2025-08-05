@@ -1,6 +1,7 @@
 package hhsixhhwkhxh.bilibili;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,6 +35,7 @@ import java.lang.reflect.Constructor;
 
 import hhsixhhwkhxh.bilibili.function.HomePageSimplify;
 import hhsixhhwkhxh.bilibili.function.CommentOptimization;
+import hhsixhhwkhxh.bilibili.function.LivePageSimplify;
 import hhsixhhwkhxh.bilibili.function.ManageHomePagePush;
 import hhsixhhwkhxh.bilibili.function.ManageVideoDetailPagePush;
 import hhsixhhwkhxh.bilibili.function.ShareManagement;
@@ -54,7 +56,7 @@ import org.luckypray.dexkit.util.OpCodeUtil;
 
 import hhsixhhwkhxh.bilibili.function.TestFunctionArea;
 import hhsixhhwkhxh.bilibili.function.UserCenterOptimization;
-
+import hhsixhhwkhxh.bilibili.BuildConfig;
 
 public class Entrance implements IXposedHookLoadPackage {
 
@@ -79,9 +81,27 @@ public class Entrance implements IXposedHookLoadPackage {
     
         if(!lpparam.packageName.equals(TargetPackageName)){return;}
 
-
-        new TestFunctionArea().advanceRun(lpparam);
-
+        if(BuildConfig.IS_DEBUG) {
+            new TestFunctionArea().advanceRun(lpparam);
+        }
+        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Context appContext = (Context) param.args[0];
+                sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
+                if(!sharedPreferences.getBoolean("BanSwitchLiveByVerticalSlide",false)){
+                    return;
+                }
+                LivePageSimplify function = new LivePageSimplify();
+                function.context = appContext;
+                try {
+                    function.run(lpparam);
+                } catch (Throwable e) {
+                    Utils.log("biliHook Function crashed: " + function.getClass().getSimpleName());
+                    Utils.reportError(e);
+                }
+            }
+        });
 
 
         //如果是"tv.danmaku.bili.MainActivityV2" 正常从桌面打开app biliHook可以正常启动 然而在b站被其他应用程序拉活跳转时 MainActivityV2不会启动 此时模块功能就没有了
@@ -122,7 +142,9 @@ public class Entrance implements IXposedHookLoadPackage {
                     runFunctionSafely(new CommentOptimization(), lpparam);
                     runFunctionSafely(new UserCenterOptimization(),lpparam);
                     runFunctionSafely(new ShareManagement(),lpparam);
-                    runFunctionSafely(new TestFunctionArea(), lpparam);
+                    if(BuildConfig.IS_DEBUG) {
+                        runFunctionSafely(new TestFunctionArea(), lpparam);
+                    }
                 }
             });
         
@@ -287,6 +309,9 @@ public class Entrance implements IXposedHookLoadPackage {
 
         ItemsList.add(new GroupTitle("评论优化",true));
         ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒 \n注意 有副作用 此功能缺少打磨", "ForceCommentsToShowAbsoluteTime"));
+
+        ItemsList.add(new GroupTitle("直播页面简化",true));
+        ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能的实现比较刁钻 如果您使用的模块适配版本与b站版本去之甚远 则不建议开启", "BanSwitchLiveByVerticalSlide"));
 
         ItemsList.add(new GroupTitle("个人页优化",true));
         ItemsList.add(new SwitchFunction("去除创作中心和推荐服务", "高仿国际版", "UserCenterRemoveExcessiveService"));

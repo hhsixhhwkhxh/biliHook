@@ -67,6 +67,7 @@ import android.widget.Toast;
 public class TestFunctionArea extends FunctionsBase {
 /*
     这里是功能成熟前的测试的地方 有许多废弃代码
+    测码
 */
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -110,11 +111,231 @@ public class TestFunctionArea extends FunctionsBase {
         //test37(lpparam);
         //test38(lpparam);
         //test39(lpparam);
+        test40(lpparam);
+
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //test26(lpparam);
         //test31(lpparam);
+        //test40(lpparam);
+        //test41(lpparam);
+    }
+
+    //禁止直播页面滑动切换直播间 & 官方模块hook的探索
+    public void test41(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal.bundle.i", lpparam.classLoader, "c", java.io.File.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                File file = (File) param.args[0];
+                File result = Utils.copyFileToAndroidData(file,"test41 "+file.getName()+UUID.randomUUID());
+                XposedBridge.log("test41:"+result);
+            }
+
+        });*/
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal3.bundle.m", lpparam.classLoader, "c", java.io.File.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+            }
+
+        });
+
+        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
+                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
+                String BundleInfo = param.args[0].toString();
+                if(BundleInfo.contains("liveroom")){
+                    //Class n40Class = (Class) XposedHelpers.callMethod(param.thisObject,"a","liveroom.n40");
+                    //XposedBridge.log("test41 success"+n40Class);
+                    //[ 2025-08-04T15:31:50.220    10338: 16139: 16521 I/LSPosed-Bridge  ] test41 successclass liveroom.n40
+
+
+                    //我要hook com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager 因此把它提前加载 方便把握hook时机
+                    Class<?> LiveRoomUIFrameManagerClass = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager");
+                    ClassLoader classLoader = LiveRoomUIFrameManagerClass.getClassLoader();
+                    /*
+                    XposedHelpers.findAndHookMethod(LiveRoomUIFrameManagerClass, "initVerticalPagerView", classLoader.loadClass("kotlin.jvm.functions.Function0"), new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            param.setResult(null);
+                            XposedBridge.log("阻止垂直分页视图初始化");
+                        }
+
+                    });直播页面黑屏
+                    */
+
+                    /*
+                    XposedHelpers.findAndHookConstructor("com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager", classLoader, int.class, classLoader.loadClass("androidx.fragment.app.FragmentActivity"), classLoader.loadClass("liveroom.hm1"), new XC_MethodHook() {
+
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            super.afterHookedMethod(param);
+                            XposedHelpers.setObjectField(param.thisObject,"A",null);
+                            XposedBridge.log("置空FeedRoomGesture");
+                        }
+                    });炸了 空指针
+                    */
+
+                    Class<?> FeedRoomGestureClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture",classLoader);
+                    Class<?> PrepareClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture$Prepare",classLoader);
+                    Object NotObject = XposedHelpers.getStaticObjectField(PrepareClass,"NEXT");
+                    List<Method> GestureHandlingMethods = Utils.selectMethods(FeedRoomGestureClass,PrepareClass,int.class,int.class,int.class,int.class);
+                    //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->f(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
+                    //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->e(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
+                    XposedBridge.log("GestureHandlingMethods:"+GestureHandlingMethods);
+
+                    /*
+                    for(Method method:GestureHandlingMethods){
+                        XposedBridge.hookMethod(method, new XC_MethodHook() {
+                            @Override
+                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                super.beforeHookedMethod(param);
+                                //param.setResult(NotObject);
+                                //XposedBridge.log("驳回");
+                                Utils.printStackTrace("GestureHandlingMethods-"+method.getName());
+                            }
+                        });
+                    }*/
+                    /*
+                    * 	at LSPHooker_.onFeedRoomPageScrolled(Unknown Source:36)
+	                    at com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager$f.onPageScrolled(LiveRoomUIFrameManager.kt:127)
+	                    at com.bilibili.bililive.room.ui.roomv3.vertical.widget.LiveVerticalPagerView$a.onScrolled(LiveVerticalPagerView.kt:9)
+	                    at androidx.recyclerview.widget.RecyclerView.dispatchOnScrolled(BL:52)
+	                    at androidx.recyclerview.widget.RecyclerView.dispatchLayoutStep3(BL:222)
+	                    at androidx.recyclerview.widget.RecyclerView.dispatchLayout(BL:125)
+	                    at androidx.recyclerview.widget.RecyclerView.onLayout(BL:6)
+	                    at android.view.View.layout(View.java:25913)
+	                    at android.view.ViewGroup.layout(ViewGroup.java:6572)
+	                    at android.widget.FrameLayout.layoutChildren(FrameLayout.java:332)
+	                    at android.widget.FrameLayout.onLayout(FrameLayout.java:270)
+	                    at com.bilibili.bililive.room.ui.roomv3.vertical.widget.LiveVerticalPagerView.onLayout(LiveVerticalPagerView.kt:1)
+	                    at android.view.View.layout(View.java:25913)
+                    * */
+
+                    //就算阻止方法调用也没用 因为它是recyclerView 本身就有滑动功能 方才hook的不过是滑动回调罢了
+                    /*
+                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager$f", classLoader, "onPageScrolled", classLoader.loadClass("androidx.recyclerview.widget.RecyclerView"), int.class, int.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            XposedBridge.log("recyclerView类型:"+param.args[0].getClass());
+                            //[ 2025-08-04T16:26:43.290    10338:  2348:  2348 I/LSPosed-Bridge  ] recyclerView类型:class liveroom.iu4
+                        }
+
+                    });*/
+
+                    /*
+                    XposedHelpers.findAndHookMethod("liveroom.n40", classLoader, "insertFeedItems", java.util.List.class, int.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            XposedBridge.log("insertFeedItems list"+param.args[0].toString());
+                        }
+
+                    });*/
+
+
+                    //com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter
+
+
+                    XposedHelpers.findAndHookMethod("liveroom.iu4", classLoader, "onInterceptTouchEvent", android.view.MotionEvent.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            param.setResult(false);
+                        }
+
+                    });
+
+                    XposedHelpers.findAndHookMethod("liveroom.iu4", classLoader, "onTouchEvent", android.view.MotionEvent.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            param.setResult(false);
+                        }
+
+                    });
+                    //成功了 2025-8-4 18:01
+
+                }
+                /*
+                ClassLoader classLoader = (ClassLoader) param.args[1];
+                try {
+                    Class n40Class = classLoader.loadClass("liveroom.n40");
+                    XposedBridge.log("test41 success"+n40Class);
+                }catch (Exception e){
+                    XposedBridge.log(e);
+                }*/
+            }
+        });
+
+        //宿主和官方插件apk中可能有相同的类名 但是请留意它们的内容很可能不同 也由不同的类加载器加载 下面就被误导了
+        /*
+        Class<?> FeedRoomGestureClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture",lpparam.classLoader);
+        Class<?> PrepareClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture$Prepare",lpparam.classLoader);
+        Object NotObject = XposedHelpers.getStaticObjectField(PrepareClass,"NOT");
+        List<Method> GestureHandlingMethods = Utils.selectMethods(FeedRoomGestureClass,PrepareClass,int.class,int.class,int.class,int.class);
+        //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->f(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
+        //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->e(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
+        XposedBridge.log("GestureHandlingMethods:"+GestureHandlingMethods);
+        for(Method method:GestureHandlingMethods){
+            XposedBridge.hookMethod(method, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    param.setResult(NotObject);
+                    XposedBridge.log("驳回");
+                }
+            });
+        }
+        */
+
+
+
+        /*
+        XposedHelpers.findAndHookMethod("com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter", lpparam.classLoader, "appendItems", java.util.List.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                XposedBridge.log("success!");
+                List<?> list = (List<?>) param.args[0];
+                if(list==null||list.isEmpty()){return;}
+                int count = (int) XposedHelpers.callMethod(param.thisObject,"getItemCount");
+                if(count>1){return;}
+                List newList = new ArrayList<>();
+                newList.add(list.get(0));
+                param.args[0] = newList;
+            }
+
+        });成效不显著 可能是通过其他方法加了直播间 同时注意到刚开始只有一个直播间的时候 仍然可以滑动
+          只是有文本提示 因此 重点不应放在把recyclerView的数据源削减成1个来取巧
+        */
+
+    }
+
+    //意外发现直播间的RecyclerView的Adapter类 在apk中没有 怀疑动态加载 hook看看
+    public void test40(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Method loadClassMethod = ClassLoader.class.getMethod("loadClass",String.class);
+        XposedBridge.hookMethod(loadClassMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                String ClassPath = (String) param.args[0];
+                //XposedBridge.log("test40:"+ClassPath);
+                if(ClassPath.startsWith("liveroom.")){
+                    Utils.printStackTrace("test40:"+ClassPath);
+                }
+            }
+        });
     }
 
     //分享禁止跳转到竖屏视频
@@ -1700,7 +1921,6 @@ public class TestFunctionArea extends FunctionsBase {
     }
     //将所有recyclerView的adapter类名绘制出来
     public void test14(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Utils.copyText("test14");
         XposedHelpers.findAndHookMethod(
                 "androidx.recyclerview.widget.RecyclerView", // 支持 AndroidX
                 lpparam.classLoader,
@@ -1717,9 +1937,9 @@ public class TestFunctionArea extends FunctionsBase {
                         if (recyclerView.getVisibility() != View.VISIBLE) return;
 
                         // 设置文字内容
-                        //String text = "RecyclerView";
-                        String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass();
-
+                        //String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass().getName();
+                        String text = "Class:"+param.thisObject.getClass().getName();
+                        XposedBridge.log(text);
 
                         // 初始化画笔
                         Paint paint = new Paint();
@@ -1760,17 +1980,7 @@ public class TestFunctionArea extends FunctionsBase {
                         canvas.drawText(text, centerX, baseline, paint);
                     }
                 });
-        /*
-        XposedHelpers.findAndHookMethod("androidx.recyclerview.widget.RecyclerView", lpparam.classLoader, "setAdapter", "androidx.recyclerview.widget.RecyclerView$Adapter", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object adapterClass = XposedHelpers.callMethod(param.thisObject,"getAdapter");
-                if(adapterClass==null){return;}
-                log("adapterClass:"+adapterClass.getClass());
-            }
 
-        });*/
     }
     private int dpToPx(View view, int dp) {
         return (int) TypedValue.applyDimension(

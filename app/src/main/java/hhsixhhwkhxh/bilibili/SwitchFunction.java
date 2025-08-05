@@ -86,6 +86,11 @@ public class SwitchFunction extends ListItem {
         textLayout.addView(functionName);
         textLayout.addView(functionDescription);
 
+        LinearLayout switchLayout = new LinearLayout(context);
+        switchLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        switchLayout.setOrientation(LinearLayout.VERTICAL);
+        switchLayout.setPadding(16, 16, 16, 16);
+
         functionSwitch = new Switch(context);
         functionSwitch.setId(View.generateViewId());
         functionSwitch.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -94,7 +99,8 @@ public class SwitchFunction extends ListItem {
         functionSwitch.getTrackDrawable().setColorFilter(Entrance.contrastColor,PorterDuff.Mode.SRC_ATOP);
 
         layout.addView(textLayout);
-        layout.addView(functionSwitch);
+        switchLayout.addView(functionSwitch);
+        layout.addView(switchLayout);
         return layout;
     }
     

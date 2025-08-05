@@ -31,6 +31,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        buildConfig = true
+    }
+    buildTypes {
+        getByName("debug") {
+            buildConfigField("Boolean", "IS_DEBUG", "true")
+        }
+        getByName("release") {
+            buildConfigField("Boolean", "IS_DEBUG", "false")
+        }
+    }
 }
 
 dependencies {

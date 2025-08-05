@@ -1,6 +1,10 @@
 package hhsixhhwkhxh.bilibili;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
@@ -27,6 +31,7 @@ import org.luckypray.dexkit.wrap.DexMethod;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,6 +81,10 @@ public class Utils {
                     XposedBridge.log("BLog "+label+" "+param.args[1]);
                 }
             });
+    }
+
+    public static boolean examineIfInitialize(){
+        return (MainActivityV2!=null);
     }
 
 
@@ -342,4 +351,41 @@ public class Utils {
         }
         return null;
     }
+
+    public static File copyFileToAndroidData(File sourceFile, String subDir) {
+        // 获取应用的android/data目录下的files目录，如果subDir不为空则使用subDir
+        Context context = getMainActivity();
+        File dataDir = context.getExternalFilesDir(null);
+        if (dataDir == null) {
+            // 外部存储可能不可用
+            return null;
+        }
+        File targetDir;
+        if (subDir != null && !subDir.trim().isEmpty()) {
+            targetDir = new File(dataDir, subDir);
+        } else {
+            targetDir = dataDir;
+        }
+        // 确保目标目录存在
+        if (!targetDir.exists() && !targetDir.mkdirs()) {
+            // 创建目录失败
+            return null;
+        }
+        File targetFile = new File(targetDir, sourceFile.getName());
+        try {
+            copyFile(sourceFile, targetFile);
+            return targetFile;
+        } catch (IOException e) {
+            Utils.reportError(e);
+            return null;
+        }
+    }
+    // 使用FileChannel进行文件复制，效率较高
+    private static void copyFile(File source, File dest) throws IOException {
+        try (FileChannel sourceChannel = new FileInputStream(source).getChannel();
+             FileChannel destChannel = new FileOutputStream(dest).getChannel()) {
+            destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+        }
+    }
+
 }
