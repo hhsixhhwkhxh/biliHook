@@ -1,5 +1,6 @@
 package hhsixhhwkhxh.bilibili.function;
 import de.robv.android.xposed.XposedBridge;
+import hhsixhhwkhxh.bilibili.BuildConfig;
 import hhsixhhwkhxh.bilibili.FunctionsBase;
 import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -96,6 +97,7 @@ public class ManageHomePagePush extends FunctionsBase {
 
                     Field textField = TagClass.getField("text");
 
+                    
 
                     HashMap<Class,Boolean> PushCardClassRecord = new HashMap<>();
 

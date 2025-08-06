@@ -2,6 +2,7 @@ package hhsixhhwkhxh.bilibili.function;
 
 import android.icu.text.SimpleDateFormat;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Locale;
@@ -16,19 +17,26 @@ public class CommentOptimization extends FunctionsBase {
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if(!sharedPreferences.getBoolean("ForceCommentsToShowAbsoluteTime",false)){return;}
-        Method hMethod = Utils.getDeConfusionMethod("kntr_base_localization_n0_hMethod",lpparam.classLoader);
-        if(hMethod==null){
-            Utils.reportError("CommentOptimization kntr_base_localization_n0_hMethod为空");
+        Method cMethod = Utils.getDeConfusionMethod("com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod",lpparam.classLoader);
+        if(cMethod==null){
+            Utils.reportError("CommentOptimization com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod为空");
             return;
         }
 
+        Field timestampField = Utils.selectField(cMethod.getDeclaringClass(), Long.class);
+        if(timestampField==null){
+            Utils.reportError("CommentOptimization timestampField为空");
+            return;
+        }
+        timestampField.setAccessible(true);
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.getDefault());
 
-        UnhooksList.add(XposedBridge.hookMethod(hMethod, new XC_MethodHook() {
+        UnhooksList.add(XposedBridge.hookMethod(cMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                Long timestampInMillis = (Long) param.args[0];
+                Long timestampInMillis = (Long) timestampField.get(param.thisObject);
                 if(timestampInMillis==null){return;}
                 param.setResult(sdf.format(new Date(timestampInMillis)));
             }

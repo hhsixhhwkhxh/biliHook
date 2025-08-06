@@ -40,6 +40,9 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,8 +114,8 @@ public class TestFunctionArea extends FunctionsBase {
         //test37(lpparam);
         //test38(lpparam);
         //test39(lpparam);
-        test40(lpparam);
-
+        //test40(lpparam);
+        //test42(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -121,6 +124,25 @@ public class TestFunctionArea extends FunctionsBase {
         //test40(lpparam);
         //test41(lpparam);
     }
+
+    //以下代码基于8.56.0版本
+
+    //二战评论区精准时间显示 上次hook的太深了 影响到了其他的时间显示
+    public void test42(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm")
+                .withZone(ZoneId.systemDefault()); // 使用系统时区
+        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.data.model.CommentItem$e$a", lpparam.classLoader, "c", android.content.Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                long timestamp = (Long) XposedHelpers.getObjectField(param.thisObject,"a");
+                param.setResult(formatter.format(Instant.ofEpochMilli(timestamp)));
+            }
+
+        });
+    }
+
 
     //禁止直播页面滑动切换直播间 & 官方模块hook的探索
     public void test41(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
@@ -337,6 +359,8 @@ public class TestFunctionArea extends FunctionsBase {
             }
         });
     }
+
+    //以下代码基于8.51.0版本
 
     //分享禁止跳转到竖屏视频
     public void test39(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
@@ -1663,7 +1687,7 @@ public class TestFunctionArea extends FunctionsBase {
                 super.afterHookedMethod(param);
 
                 Object fVarObject = param.args[0];
-                Object BasicIndexItemObject = XposedHelpers.callMethod(fVarObject,"g0");
+                Object BasicIndexItemObject = XposedHelpers.callMethod(fVarObject,"n0");
                 Class<?> BasicIndexItemClass = BasicIndexItemObject.getClass();
 
                 InvocationHandler handler = new InvocationHandler() {

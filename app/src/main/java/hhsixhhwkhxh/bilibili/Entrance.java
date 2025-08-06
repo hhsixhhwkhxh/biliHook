@@ -308,7 +308,7 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("去除开屏广告", "和开屏battle了好多次 牢屏别打复活赛了", "BypassSplash"));
 
         ItemsList.add(new GroupTitle("评论优化",true));
-        ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒 \n注意 有副作用 此功能缺少打磨", "ForceCommentsToShowAbsoluteTime"));
+        ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒", "ForceCommentsToShowAbsoluteTime"));
 
         ItemsList.add(new GroupTitle("直播页面简化",true));
         ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能的实现比较刁钻 如果您使用的模块适配版本与b站版本去之甚远 则不建议开启", "BanSwitchLiveByVerticalSlide"));
@@ -530,6 +530,7 @@ public class Entrance implements IXposedHookLoadPackage {
             stringBuilder.append(accessMethodSeekResult(editor,mj3_a_bindMethods,"mj3_a_bindMethod")+"\n");
 
             //Lkntr/base/localization/n0;->h(J)Ljava/lang/String;
+            /* 精确时间的旧hook点
             List<MethodData> kntr_base_localization_n0_hMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().fieldCount(2)
                     .fields(new FieldsMatcher().addForType(long.class)).methodCount(17)
                     .modifiers(Modifier.PUBLIC))).findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes(long.class)
@@ -538,7 +539,7 @@ public class Entrance implements IXposedHookLoadPackage {
                     .usingNumbers(14)));
 
             stringBuilder.append(accessMethodSeekResult(editor,kntr_base_localization_n0_hMethods,"kntr_base_localization_n0_hMethod")+"\n");
-
+            */
 
             //pf5.e
             List<MethodData> pf5_e_getLinkMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().usingStrings("FavoritesMediasItem","oid","otype")))
@@ -598,6 +599,12 @@ public class Entrance implements IXposedHookLoadPackage {
             ));
 
             stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods,"com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Method")+"\n");
+
+            //Lcom/bilibili/app/comment3/data/model/CommentItem$e$a;->c(Landroid/content/Context;)Ljava/lang/String;
+            List<MethodData> com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods = bridge.findClass(new FindClass().searchPackages("com.bilibili.app.comment3.data.model").matcher(new ClassMatcher().usingStrings("IP属地：")))
+                    .findMethod(new FindMethod().matcher(new MethodMatcher().returnType(String.class).paramTypes(Context.class).usingStrings("")));
+
+            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod")+"\n");
 
 
             editor.apply();
