@@ -89,11 +89,16 @@ public class Entrance implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 Context appContext = (Context) param.args[0];
                 sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
+                Utils.sharedPreferences=sharedPreferences;
+                FunctionsBase.sharedPreferences=sharedPreferences;
+                /*
+                sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
                 if(!sharedPreferences.getBoolean("BanSwitchLiveByVerticalSlide",false)){
                     return;
-                }
+                }*/
                 LivePageSimplify function = new LivePageSimplify();
                 function.context = appContext;
+
                 try {
                     function.run(lpparam);
                 } catch (Throwable e) {
@@ -119,8 +124,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
                     Utils.init(MainActivityV2,lpparam);
 
-                    sharedPreferences=MainActivityV2.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
-                    Utils.sharedPreferences=sharedPreferences;
+
                     String apkPath = lpparam.appInfo.sourceDir;
                     int beforeVersion = sharedPreferences.getInt("CodeVersion", -1);
                     if(beforeVersion!=Utils.getAppVersionCode(MainActivityV2)){
@@ -131,7 +135,7 @@ public class Entrance implements IXposedHookLoadPackage {
                     }
 
 
-                    FunctionsBase.sharedPreferences=sharedPreferences;
+
 
                     //runFunctionSafely(new RemoveNavigationBarSign(), lpparam);
                     runFunctionSafely(new ManageHomePagePush(), lpparam);
@@ -307,13 +311,14 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("开屏",true));
         ItemsList.add(new SwitchFunction("去除开屏广告", "和开屏battle了好多次 牢屏别打复活赛了", "BypassSplash"));
 
-        ItemsList.add(new GroupTitle("评论优化",true));
+        ItemsList.add(new GroupTitle("评论简化",true));
         ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒", "ForceCommentsToShowAbsoluteTime"));
 
         ItemsList.add(new GroupTitle("直播页面简化",true));
-        ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能的实现比较刁钻 如果您使用的模块适配版本与b站版本去之甚远 则不建议开启", "BanSwitchLiveByVerticalSlide"));
+        ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能我还出了逆向教程", "BanSwitchLiveByVerticalSlide"));
+        ItemsList.add(new SwitchFunction("隐藏他人直播间礼物全局引流弹幕", "某某投喂某某n个梦幻游乐园/浪漫城堡/深海歌姬，点击前往TA的房间吧！", "HideOthersGiftBroadcastDanmaku"));
 
-        ItemsList.add(new GroupTitle("个人页优化",true));
+        ItemsList.add(new GroupTitle("个人页简化",true));
         ItemsList.add(new SwitchFunction("去除创作中心和推荐服务", "高仿国际版", "UserCenterRemoveExcessiveService"));
         ItemsList.add(new SwitchFunction("去除收藏夹视频循环列表", "重定向Activity至正常视频页面", "FavoritesOpenVideoRedirect"));
         ItemsList.add(new SwitchFunction("强制使用旧版v1收藏夹", "如启用此功能 上面重定向功能就没效果了", "ForceEnableV1Favorites"));

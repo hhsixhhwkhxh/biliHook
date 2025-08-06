@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 public class Utils {
     private static Activity MainActivityV2 = null;
+
     private static XC_LoadPackage.LoadPackageParam lpparam = null;
     
     private static Method toJSONStringMethod=null;

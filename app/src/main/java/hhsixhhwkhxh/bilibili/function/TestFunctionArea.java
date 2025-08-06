@@ -123,9 +123,38 @@ public class TestFunctionArea extends FunctionsBase {
         //test31(lpparam);
         //test40(lpparam);
         //test41(lpparam);
+        //test43(lpparam);
     }
 
     //以下代码基于8.56.0版本
+
+
+    //隐藏直播间礼物推广弹幕
+    public void test43(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
+                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
+                String BundleInfo = param.args[0].toString();
+                if(BundleInfo.contains("liveroom")){
+                    //Lcom/bilibili/bililive/room/ui/roomv3/notice/widget/FullScreenNoticeView;->show(Lcom/bilibili/bililive/videoliveplayer/net/beans/gateway/userinfo/LiveNotice;)V
+                    Class<?> FullScreenNoticeView = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","com.bilibili.bililive.room.ui.roomv3.notice.widget.FullScreenNoticeView");
+                    XposedHelpers.findAndHookMethod(FullScreenNoticeView, "show", "com.bilibili.bililive.videoliveplayer.net.beans.gateway.userinfo.LiveNotice", new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            param.setResult(null);
+                        }
+
+                    });
+                }
+            }
+        });
+    }
+
 
     //二战评论区精准时间显示 上次hook的太深了 影响到了其他的时间显示
     public void test42(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
