@@ -351,6 +351,8 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("直播页面简化",true));
         ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能我还出了逆向教程", "BanSwitchLiveByVerticalSlide"));
         ItemsList.add(new SwitchFunction("隐藏他人直播间礼物全局引流弹幕", "某某投喂某某n个梦幻游乐园/浪漫城堡/深海歌姬，点击前往TA的房间吧！", "HideOthersGiftBroadcastDanmaku"));
+        ItemsList.add(new SwitchFunction("隐藏右下角可折叠广告挂件", "通常是一个可点击的轮播图 不知道有没有误伤", "HideLiveNormalBanner"));
+
 
         ItemsList.add(new GroupTitle("个人页简化",true));
         ItemsList.add(new SwitchFunction("去除创作中心和推荐服务", "高仿国际版", "UserCenterRemoveExcessiveService"));

@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import de.robv.android.xposed.XposedHelpers;
@@ -29,6 +30,7 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -133,9 +135,175 @@ public class TestFunctionArea extends FunctionsBase {
         //test41(lpparam);
         //test43(lpparam);
         //test44(lpparam);
-
+        //test48(lpparam);
     }
     //以下代码基于8.56.0版本
+
+
+    //直播间右下角礼物可折叠广告
+    public void test48(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
+                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
+                String BundleInfo = param.args[0].toString();
+                if(BundleInfo.contains("liveroom")){
+                    //Lcom/bilibili/bililive/room/ui/roomv3/notice/widget/FullScreenNoticeView;->show(Lcom/bilibili/bililive/videoliveplayer/net/beans/gateway/userinfo/LiveNotice;)V
+                    Class<?> zs0Class = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","liveroom.zs0");
+                    ClassLoader classLoader = zs0Class.getClassLoader();
+                    XposedHelpers.findAndHookConstructor(zs0Class, android.content.Context.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            //Utils.printStackTrace("test48");
+                        }
+
+                    });
+
+                    XposedHelpers.findAndHookMethod("liveroom.zs0", classLoader, "getInnerLiveData", new XC_MethodHook() {
+
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            super.afterHookedMethod(param);
+                            //Log.i("hhsixhhwkhxh test48",param.getResult().toString());
+                        }
+                    });
+
+                    XposedHelpers.findAndHookMethod("liveroom.zs0", classLoader, "onBind", classLoader.loadClass("com.bilibili.bililive.operation.base.LiveOperationPageData"), new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            //Utils.printStackTrace("test48");
+                            param.setResult(null);
+                            /*java.lang.Exception: test48
+                                                                                                    	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:251)
+                                                                                                    	at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1$3.beforeHookedMethod(TestFunctionArea.java:178)
+                                                                                                    	at PsTaiGxEo.z.Cn.pNNm.ZV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
+                                                                                                    	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
+                                                                                                    	at LSPHooker_.onBind(Unknown Source:11)
+                                                                                                    	at com.bilibili.bililive.room.ui.roomv3.operating4.ui.LiveNormalItemView$b.instantiateItem(LiveNormalItemView.kt:12)
+                                                                                                    	at androidx.viewpager.widget.ViewPager.addNewItem(BL:10)
+                                                                                                    	..
+                                                                                                    	at androidx.viewpager.widget.ViewPager.onMeasure(BL:190)
+                                                                                                    	at android.view.View.measure(View.java:28736)
+                                                                                                    	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:7143)
+                                                                                                    	...
+                                                                                                    	at android.view.View.measure(View.java:28736)
+                                                                                                    	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:7143)
+                                                                                                    	at android.widget.FrameLayout.onMeasure(FrameLayout.java:194)
+                                                                                                    	at com.bilibili.bililive.room.ui.widget.BlowViewLayoutV3.onMeasure(BlowViewLayoutV3.kt:1)
+                                                                                                    	...*/
+                        }
+
+                    });
+
+                    XposedHelpers.findAndHookConstructor("com.bilibili.bililive.room.ui.roomv3.operating4.ui.LiveNormalItemView", classLoader, android.content.Context.class, android.util.AttributeSet.class, int.class, classLoader.loadClass("com.bilibili.bililive.room.ui.roomv3.operating4.config.LiveItemConfig"), new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            //Utils.printStackTrace("test48 LiveNormalItemView");
+                            /*
+                            * java.lang.Exception: test48 LiveNormalItemView
+                                                                                                    	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:251)
+                                                                                                    	at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1$4.beforeHookedMethod(TestFunctionArea.java:206)
+                                                                                                    	at PsTaiGxEo.z.Cn.pNNm.ZV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
+                                                                                                    	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
+                                                                                                    	at LSPHooker_.constructor(Unknown Source:24)
+                                                                                                    	at liveroom.xp0.h(LiveNormalPendantHolder.kt:288)
+                                                                                                    	at liveroom.xp0.onBind(LiveNormalPendantHolder.kt:3)
+                                                                                                    	at liveroom.xp0.onBind(LiveNormalPendantHolder.kt:1)
+                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKViewHolder.bind$skadapter_release(BL:19)
+                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKViewHolder.bind$skadapter_release$default(BL:8)
+                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:4)
+                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:6)
+                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:2)*/
+                        }
+
+                    });
+
+                    XposedHelpers.findAndHookMethod("liveroom.xp0", classLoader, "i", new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            param.setResult(null);
+                        }
+
+                    });
+
+                    XposedHelpers.findAndHookMethod("liveroom.rp0", classLoader, "r", java.util.List.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            Log.i("test48 hhsixhhwkhxh rp0",param.args[0].toString());
+                            param.args[0] = new ArrayList<>();
+                        }
+
+                    });
+
+
+                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roomv3.operating4.service.LiveRoomOperationAppServiceImpl", classLoader, "insertPendentArrow", classLoader.loadClass("com.bilibili.bililive.compose.pendantarrow.LivePendantCollapseData"), new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            //param.setResult(null);
+                            //Log.i("test48", "阻止insertPendentArrow");
+                        }
+
+                    });//这东西纯粹箭头 只是用来折叠/展开广告的 还以为和广告一体的说
+
+                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roomv3.operating4.service.LiveRoomOperationAppServiceImpl", classLoader, "setPendant", java.util.List.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
+                            Log.i("test48 setPendant",Utils.toJSONString(lpparam,param.args[0].toString()) );
+                            XposedBridge.log(Utils.toJSONString(lpparam,param.args[0].toString()));
+                            param.args[0] = new ArrayList<>();
+                        }
+
+                    });
+                }
+            }
+        });
+
+        XposedHelpers.findAndHookConstructor("com.bilibili.bililive.videoliveplayer.net.beans.gateway.roominfo.BiliLiveNormalBannerWrapper", lpparam.classLoader, java.util.List.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //Utils.printStackTrace("test48 BiliLiveNormalBannerWrapper");
+
+            }
+
+        });
+        /*
+        Class<?> BiliLiveRoomBannerClass = XposedHelpers.findClass("com.bilibili.bililive.videoliveplayer.net.beans.gateway.roominfo.BiliLiveRoomBanner",lpparam.classLoader);
+        XposedHelpers.findAndHookMethod("com.alibaba.fastjson.JSON", lpparam.classLoader, "parseObject", String.class, Class.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Class<?> cls =(Class<?>) param.args[1];
+                if(BiliLiveRoomBannerClass.getName().contains("BiliLiveRoomBanner")){
+                    Utils.printStackTrace("test48 JSON parseObject BiliLiveRoomBannerClass");
+                }
+            }
+        });*/
+
+        Class<?> featureClass = XposedHelpers.findClass("com.alibaba.fastjson.parser.Feature",lpparam.classLoader);
+        Class<?> featureArrayClass = Array.newInstance(featureClass, 0).getClass();
+        XposedHelpers.findAndHookMethod("com.alibaba.fastjson.JSON", lpparam.classLoader, "parseObject", char[].class, int.class, Type.class, featureArrayClass, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Log.i("test48", "parseObject TYPE:"+param.getResult().getClass().getName());
+                if(param.getResult().getClass().getName().contains("BiliLiveRoomBanner")){
+                    Utils.printStackTrace("test48 JSON parseObject BiliLiveRoomBannerClass");
+                }
+            }
+        });//没有任何日志 哔哩哔哩似乎不用这个方法
+    }
 
     public void test47(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         /*

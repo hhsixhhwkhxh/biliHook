@@ -23,6 +23,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ import java.io.PrintWriter;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Utils {
     private static Activity MainActivityV2 = null;
@@ -53,6 +55,9 @@ public class Utils {
 
     private static final HashMap<String,Class> DeConfusionClassCacheMap = new HashMap<>();
     public static SharedPreferences sharedPreferences;
+
+    public static StringBuilder errorsBeforeInit = new StringBuilder();
+
     public static void init(Activity activity,XC_LoadPackage.LoadPackageParam mlpparam)throws Throwable{
         MainActivityV2=activity;
         lpparam=mlpparam;
@@ -69,6 +74,12 @@ public class Utils {
 
         final Class<?> MultipleThemeUtils = XposedHelpers.findClass("com.bilibili.lib.ui.util.MultipleThemeUtils",lpparam.classLoader);
         isNightThemeMethod = MultipleThemeUtils.getMethod("isNightTheme",Context.class);
+
+        String errorMsg = errorsBeforeInit.toString();
+        if(!errorMsg.isEmpty()){
+            showToast("biliHook错误(集中报告):"+errorMsg,Toast.LENGTH_LONG);
+
+        }
 
     }
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
@@ -188,6 +199,10 @@ public class Utils {
         return result;
     }
 
+    public static void submitErrorBeforeInit(String msg){
+        errorsBeforeInit.append(msg+"\n");
+    }
+
 
     public static void showToast(String str,int i){
         try {
@@ -256,6 +271,7 @@ public class Utils {
             String stackTrace = sw.toString();
 
             log(stackTrace);
+            Log.i("hhsixhhwkhxh",stackTrace);
 
             // 关闭PrintWriter
             pw.close();
