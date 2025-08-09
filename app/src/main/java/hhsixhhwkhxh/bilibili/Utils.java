@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
@@ -45,6 +46,8 @@ public class Utils {
 
     private static Method showToastMethod = null;
 
+    private static Method isNightThemeMethod = null;
+
     private static final HashMap<String,Method> DeConfusionMethodCacheMap = new HashMap<>();
     private static final HashMap<String,Field> DeConfusionFieldCacheMap = new HashMap<>();
 
@@ -63,6 +66,10 @@ public class Utils {
         final Class<?> ToastHelperClass = XposedHelpers.findClass("com.bilibili.droid.ToastHelper",lpparam.classLoader);
         //Lcom/bilibili/droid/ToastHelper;->showToast(Landroid/content/Context;Ljava/lang/String;I)V
         showToastMethod = ToastHelperClass.getMethod("showToast",Context.class,String.class,int.class);
+
+        final Class<?> MultipleThemeUtils = XposedHelpers.findClass("com.bilibili.lib.ui.util.MultipleThemeUtils",lpparam.classLoader);
+        isNightThemeMethod = MultipleThemeUtils.getMethod("isNightTheme",Context.class);
+
     }
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
         return (String)(toJSONStringMethod.invoke(null,o));
@@ -88,6 +95,13 @@ public class Utils {
         return (MainActivityV2!=null);
     }
 
+    public static boolean isNightTheme(){
+        try {
+            return (boolean) isNightThemeMethod.invoke(null,getMainActivity());
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public static Field selectField(Class<?> TargetClass,Class<?> FieldTypeClass){
         for(Field field:TargetClass.getDeclaredFields()){

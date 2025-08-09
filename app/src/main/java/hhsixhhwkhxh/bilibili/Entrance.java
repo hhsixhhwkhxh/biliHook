@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -71,6 +73,9 @@ public class Entrance implements IXposedHookLoadPackage {
 
     private boolean ModuleSetUp = false;
 
+    public static final String TAG = "Entrance";
+    private FunctionAdapter adapter;
+
     static {
         System.loadLibrary("dexkit");
     }
@@ -84,6 +89,7 @@ public class Entrance implements IXposedHookLoadPackage {
         if(BuildConfig.IS_DEBUG) {
             new TestFunctionArea().advanceRun(lpparam);
         }
+
         XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -175,7 +181,35 @@ public class Entrance implements IXposedHookLoadPackage {
                     Button button = new Button(MainActivityV2);
                     button.setText("壁虎");
                     button.setTextColor(Color.BLACK);
-                    
+
+                    //Class<?> MaterialCheckBoxClass = XposedHelpers.findClass("com.google.android.material.checkbox.MaterialCheckBox",lpparam.classLoader);
+                    //CheckBox checkBox = (CheckBox) MaterialCheckBoxClass.getConstructor(Context.class).newInstance(MainActivityV2);
+                    //MultipleThemeImageView.addView(checkBox);
+                    //checkBox.setText("动态创建的三态复选框");
+                    //checkBox.setCheckedState(MaterialCheckBox.STATE_INDETERMINATE);
+                    //以下几个都有做设置Activity的能力
+                    //Lcom/bilibili/ad/adview/download/ADDownloadManagerActivity;->onCreate(Landroid/os/Bundle;)V
+                    //Lcom/bilibili/adgame/AdGameDetailActivity;->onCreate(Landroid/os/Bundle;)V
+                    //Lcom/bilibili/app/authorspace/ui/nft/ui/activity/NftAggregationActivity;->onCreate(Landroid/os/Bundle;)V
+                    //Lcom/bilibili/app/authorspace/ui/nft/ui/activity/SpaceNftOBPActivity;->onCreate(Landroid/os/Bundle;)V
+
+                    //Lcom/bilibili/lib/dblconfig/DblConfigActivity;->onCreate(Landroid/os/Bundle;)V
+                    XposedHelpers.findAndHookMethod(ModuleSettingsActivityName,lpparam.classLoader,"onCreate",Bundle.class,new XC_MethodHook(){
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            param.args[0]=new Bundle();
+                        }
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            //log("after onCreate");
+                            Activity activity = (Activity)param.thisObject;
+                            if(activity.getIntent().getBooleanExtra("hook",false)){
+                                initSettingActivity(lpparam,activity);
+                                //Log.i(TAG,"initSettingActivity");
+                            }
+                            //XposedHelpers.findAndHookMethod("com.bilibili.studio.uperbase.router.b",lpparam.classLoader,"a",Context.class,new XC_MethodHook(){});
+                            //XposedHelpers.findAndHookMethod("android.app.Activity",lpparam.classLoader,"finish",new XC_MethodHook(){});
+                        }});
                     button.setOnClickListener(new OnClickListener(){
                             @Override
                             public void onClick(View p1) {
@@ -186,29 +220,8 @@ public class Entrance implements IXposedHookLoadPackage {
                                 
                                 //NeedHandleSettingsActivityOnCreate =true;
                                 
-                                //以下几个都有做设置Activity的能力
-                                //Lcom/bilibili/ad/adview/download/ADDownloadManagerActivity;->onCreate(Landroid/os/Bundle;)V
-                                //Lcom/bilibili/adgame/AdGameDetailActivity;->onCreate(Landroid/os/Bundle;)V
-                                //Lcom/bilibili/app/authorspace/ui/nft/ui/activity/NftAggregationActivity;->onCreate(Landroid/os/Bundle;)V
-                                //Lcom/bilibili/app/authorspace/ui/nft/ui/activity/SpaceNftOBPActivity;->onCreate(Landroid/os/Bundle;)V
-                                
-                                //Lcom/bilibili/lib/dblconfig/DblConfigActivity;->onCreate(Landroid/os/Bundle;)V
-                                XposedHelpers.findAndHookMethod(ModuleSettingsActivityName,lpparam.classLoader,"onCreate",Bundle.class,new XC_MethodHook(){
-                                        @Override
-                                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                            param.args[0]=new Bundle();
-                                        }
-                                        @Override
-                                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                            //log("after onCreate");
-                                            Activity activity = (Activity)param.thisObject;
-                                            if(activity.getIntent().getBooleanExtra("hook",false)){
-                                                initSettingActivity(lpparam,activity);
-                                            }
-                                            //XposedHelpers.findAndHookMethod("com.bilibili.studio.uperbase.router.b",lpparam.classLoader,"a",Context.class,new XC_MethodHook(){});
-                                            //XposedHelpers.findAndHookMethod("android.app.Activity",lpparam.classLoader,"finish",new XC_MethodHook(){});
-                                        }});
-                                        }
+
+                            }
                         });
                     MultipleThemeImageView.addView(button);
                     
@@ -267,6 +280,8 @@ public class Entrance implements IXposedHookLoadPackage {
         
         ItemsList = new ArrayList<>();
         //ItemsList.add(new GroupTitle("壁虎 开源模块 适配8.51.0"));
+        final Class<?> MaterialCheckBoxClass = XposedHelpers.findClass("com.google.android.material.checkbox.MaterialCheckBox",lpparam.classLoader);
+
 
         Intent GoToGithubPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hhsixhhwkhxh/biliHook/"));
         ItemsList.add(new ButtonFunction("壁虎 开源模块 适配8.51.0","点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
@@ -279,22 +294,41 @@ public class Entrance implements IXposedHookLoadPackage {
                 }
             }
         }));
+
+        OnClickListener onUpdateAdapterListener = new OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(adapter==null){return;}
+                adapter.notifyDataSetChanged();
+            }
+        };
+
+
         ItemsList.add(new GroupTitle("开关设置 重启b站后生效"));
 
 
         ItemsList.add(new GroupTitle("主页综合简化",true));
-        ItemsList.add(new SwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
-        ItemsList.add(new SwitchFunction("去除主页会员购", "会员go", "HomePageNavigationBarRemoveVIPShopSign"));
+        List<ListItem> HomePageNavigationBarfiltrationChildrenList = new ArrayList<>();
+
+            HomePageNavigationBarfiltrationChildrenList.add(new SwitchFunction("去除主页+号", "最简单的一集", "HomePageNavigationBarRemovePlusSign"));
+            HomePageNavigationBarfiltrationChildrenList.add(new SwitchFunction("去除主页会员购", "会员go", "HomePageNavigationBarRemoveVIPShopSign"));
+        ItemsList.add(new FunctionCollection("导航栏选项过滤器","黑名单机制 点击查看配置",HomePageNavigationBarfiltrationChildrenList,onUpdateAdapterListener));
+
+
         ItemsList.add(new SwitchFunction("去除游戏按钮", "私信旁边的按钮", "HomePageRemoveGameSign"));
         ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
         ItemsList.add(new SwitchFunction("禁用滑动切换tab", "防止误触", "HomePageDisableHorizontalScrollable"));
 
         ItemsList.add(new GroupTitle("主页推送",true));
-        ItemsList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
-        ItemsList.add(new SwitchFunction("过滤广告", "若有缺陷请反馈", "HomePagePushFilterAD"));
-        ItemsList.add(new SwitchFunction("过滤直播", "不会显示推送直播", "HomePagePushFilterLive"));
-        ItemsList.add(new SwitchFunction("过滤游戏", "总有些游戏推荐", "HomePagePushFilterGame"));
-        ItemsList.add(new SwitchFunction("过滤bangumi", "哔哩哔哩国漫", "HomePagePushFilterBangumi"));
+
+        List<ListItem> HomePagePushfiltrationChildrenList = new ArrayList<>();
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤广告", "若有缺陷请反馈", "HomePagePushFilterAD"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤直播", "不会显示推送直播", "HomePagePushFilterLive"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤游戏", "总有些游戏推荐", "HomePagePushFilterGame"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤bangumi", "哔哩哔哩国漫", "HomePagePushFilterBangumi"));
+        ItemsList.add(new FunctionCollection("推送内容过滤器","黑名单机制 点击查看配置",HomePagePushfiltrationChildrenList,onUpdateAdapterListener));
+
         ItemsList.add(new SwitchFunction("竖屏视频转横屏", "去抖化", "HomePagePushTransformVerticalVideo"));
         ItemsList.add(new SwitchFunction("去\"x万点赞\"", "这样所有视频都有up主名字", "HomePagePushRemoveVideoLikeCount"));
         ItemsList.add(new SwitchFunction("严格模式", "所有指向非av的卡片一律丢弃\n此功能对竖屏视频不作处理", "HomePagePushStrictMode"));
@@ -429,7 +463,7 @@ public class Entrance implements IXposedHookLoadPackage {
         }));
         
         
-        FunctionAdapter adapter = new FunctionAdapter(activity, ItemsList);
+        adapter = new FunctionAdapter(activity, ItemsList);
         listView.setAdapter(adapter);
         
         //Toast.makeText(activity, "HookAccessible:"+getHookAccessible(), Toast.LENGTH_SHORT).show();

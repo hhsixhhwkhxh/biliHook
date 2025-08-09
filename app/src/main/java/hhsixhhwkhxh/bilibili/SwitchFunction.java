@@ -20,8 +20,18 @@ public class SwitchFunction extends ListItem {
     private View ExtraView = null;
     
     
-    TextView functionName,functionDescription;
-    Switch functionSwitch;
+    private TextView functionName,functionDescription;
+    private  Switch functionSwitch;
+
+    //为true时 由各个功能类自动将功能开关状态写入sp
+    //为false 则需要外部读取功能开关状态 外部保存 这个类自己就完全不管了
+    //现在没有使用这个api 因为觉得自动保存挺好的 如果是手动档 还要麻烦用户多点一次保存按钮
+    //虽然我尽心设计的按钮颜色派不上用场就是了
+    private boolean switchStateSaveAutomatically = true;
+
+    private boolean isSwitchListenerEnabled = true;
+
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = null;
 
     public SwitchFunction(String name, String description,String id) {
         this.name = name;
@@ -30,10 +40,7 @@ public class SwitchFunction extends ListItem {
         this.enabled=sharedPreferences.getBoolean(id, false);
     }
     
-    public SwitchFunction(String name, String description,String id,View ExtraView) {
-        this(name,description,id);
-        this.ExtraView=ExtraView;
-    }
+
 
     public void setEnabled(boolean isChecked) {
         enabled = isChecked;
@@ -110,11 +117,20 @@ public class SwitchFunction extends ListItem {
         functionName.setText(name);
         functionDescription.setText(description);
         functionSwitch.setChecked(isEnabled());
-
+        updateSwitchState();
         functionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    setEnabled(isChecked);
+                    enabled = isChecked;
+                    if(!isSwitchListenerEnabled){return;}
+                    if(!switchStateSaveAutomatically){
+
+                        return;
+                    }
+
+                    if(onCheckedChangeListener!=null){
+                        onCheckedChangeListener.onCheckedChanged(buttonView,isChecked);
+                    }
 
                     SharedPreferences.Editor editor = context.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE).edit();
                     editor.putBoolean(id, isChecked);
@@ -123,6 +139,27 @@ public class SwitchFunction extends ListItem {
                 }
             });
     }
+
+
+    public void disableSaveAutomatically(){
+        switchStateSaveAutomatically = false;
+    }
+
+
+    public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener onCheckedChangeListener){
+        this.onCheckedChangeListener=onCheckedChangeListener;
+    }
+
+    public void updateSwitchState(){
+        if(functionSwitch==null){return;}
+
+        this.enabled=sharedPreferences.getBoolean(id, false);
+        isSwitchListenerEnabled=false;//防止下面触发onChecked回调 神秘bug打野点
+        functionSwitch.setChecked(enabled);
+        isSwitchListenerEnabled=true;
+    }
+
+
     @Override
     public int getViewKindID() {
         return 1;

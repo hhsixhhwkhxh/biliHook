@@ -8,6 +8,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import android.app.Activity;
 import android.view.View;
 
 public class BypassSplash extends FunctionsBase {
@@ -64,6 +65,18 @@ public class BypassSplash extends FunctionsBase {
 
             }));
         }
+
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.splash.ad.landingpage.SplashImmersiveVideoLandingActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Activity activity = (Activity) param.thisObject;
+                activity.finish();
+                Utils.showToast("kill",0);
+            }
+
+        });
 
     }
     

@@ -1,6 +1,7 @@
 package hhsixhhwkhxh.bilibili.function;
 import hhsixhhwkhxh.bilibili.Entrance;
 import hhsixhhwkhxh.bilibili.FunctionsBase;
+import hhsixhhwkhxh.bilibili.RoundCornerDialog;
 import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -23,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.text.MeasuredText;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
 import android.net.Uri;
@@ -66,6 +68,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.ColorRes;
+import androidx.core.content.res.ResourcesCompat;
 
 public class TestFunctionArea extends FunctionsBase {
 /*
@@ -116,6 +121,9 @@ public class TestFunctionArea extends FunctionsBase {
         //test39(lpparam);
         //test40(lpparam);
         //test42(lpparam);
+        //test45(lpparam);
+        //test46(lpparam);
+        //test47(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -124,9 +132,187 @@ public class TestFunctionArea extends FunctionsBase {
         //test40(lpparam);
         //test41(lpparam);
         //test43(lpparam);
+        //test44(lpparam);
+
+    }
+    //以下代码基于8.56.0版本
+
+    public void test47(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
+        XposedHelpers.findAndHookMethod("androidx.core.content.res.ResourcesCompat", lpparam.classLoader, "isColorInt", Resources.class, int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);m
+                //ResourcesCompat resourcesCompat = (ResourcesCompat) param.thisObject;
+                Resources resources = (Resources) para.args[0];
+                int resId = (int) param.args[1];
+                final TypedValue value = (TypedValue) XposedHelpers.callMethod(param.thisObject,"getTypedValue");
+                try {
+                    resources.getValue(resId, value, true);
+                }catch (Resources.NotFoundException e){
+                    param.setResult(false);
+                }
+            }
+
+        });*/
+        /*
+        XposedHelpers.findAndHookMethod("androidx.core.content.res.ResourcesCompat", lpparam.classLoader, "isColorInt", android.content.res.Resources.class, int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //ResourcesCompat resourcesCompat = (ResourcesCompat) param.thisObject;
+                Resources resources = (Resources) param.args[0];
+                int resId = (int) param.args[1];
+                final TypedValue value = (TypedValue) XposedHelpers.callMethod(param.thisObject,"getTypedValue");
+                try {
+                    resources.getValue(resId, value, true);
+                }catch (Resources.NotFoundException e){
+                    param.setResult(false);
+                }
+            }
+        });*/
+        Class<?> BundleStatusClass = XposedHelpers.findClass("com.bilibili.lib.tribe.core.internal3.bundle.BundleActionExecutor$BundleStatus",lpparam.classLoader);
+        Object INACTIVEObject = XposedHelpers.getStaticObjectField(BundleStatusClass,"INACTIVE");
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal3.bundle.DefaultBundleProcessor", lpparam.classLoader, "h", java.io.File.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                File file = (File)param.args[0];
+                if(file==null){return;}
+                if(file.getPath().contains("/adcore/")){
+                    param.setResult(INACTIVEObject);
+                    XposedBridge.log("test47 kill");
+                }
+            }
+
+        });
     }
 
-    //以下代码基于8.56.0版本
+
+
+    public void test46(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("com.bilibili.cron.Canvas", lpparam.classLoader, "drawText", String.class, float.class, float.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                String str = (String) param.args[0];
+                if(str.equals("助眠小视频")){
+                    Utils.printStackTrace("test46:助眠小视频");
+                }
+            }
+
+        });
+        /*
+        * [ 2025-08-08T19:59:43.385    10338: 19249: 20366 I/LSPosed-Bridge  ] java.lang.Exception: test46:助眠小视频
+	        at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:250)
+	        at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:143)
+	        at RGWMl.Ko.iklmiflKl.knV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
+	        at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
+	        at LSPHooker_.drawText(Unknown Source:32)
+        *后续改包把这个方法删了 点开视频会卡退 算法助手也拦不到报错 用LogFox看报错 是native主动调用的这个方法 踢到钢板了
+        * */
+    }
+
+
+    //工具方法
+    //查找谁绘制了包含关键字的文本
+    //用来查弹幕的代码位置
+    public void test45(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        String keyWord = "助眠小视频";
+
+        for(Method method:Canvas.class.getMethods()){
+            if(!method.getName().contains("drawText")){continue;}
+            Class<?> FirstType = method.getParameterTypes()[0];
+            if(FirstType.equals(MeasuredText.class)){continue;}//处理不了
+            if(FirstType.equals(char[].class)){
+                //char[]
+                XposedBridge.hookMethod(method, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        char[] strArray = (char[]) param.args[0];
+                        if(strArray==null){return;}
+                        String str = new String(strArray);
+                        if(str.contains(keyWord)){
+                            Utils.printStackTrace("test45:"+keyWord);
+                        }
+                    }
+                });
+            }else{
+                //String或者CharSequence
+                XposedBridge.hookMethod(method, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        Object obj = param.args[0];
+                        if(obj==null){return;}
+                        String str = obj.toString();
+                        if(str.contains(keyWord)){
+                            Utils.printStackTrace("test45:"+keyWord);
+                        }
+                    }
+                });
+            }
+
+        }
+        /*最疑惑的一集
+        * java.lang.Exception: test45:助眠小视频
+	        at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:250)
+	        at hhsixhhwkhxh.bilibili.function.TestFunctionArea$2.beforeHookedMethod(TestFunctionArea.java:169)
+	        at RGWMl.Ko.iklmiflKl.knV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
+	        at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
+	        at LSPHooker_.drawText(Unknown Source:42)
+	        at android.text.Layout.drawText(Layout.java:923)
+	        at android.text.Layout.draw(Layout.java:516)
+	        at android.text.Layout.draw(Layout.java:464)
+	        at android.text.Layout.draw(Layout.java:446)
+	        at com.bilibili.cron.Canvas.drawTextDirectly(BL:177)
+	        at com.bilibili.cron.Canvas.drawText(BL:49) 为什么到这里就没了
+	* */
+    }
+
+
+    //粘贴板相关
+    public void test44(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Class<?> GarbManagerClass = XposedHelpers.findClass("com.bilibili.lib.ui.garb.GarbManager",lpparam.classLoader);
+        Method getGarbWithNightModeMethod = GarbManagerClass.getMethod("getGarbWithNightMode",Context.class);
+        Class<?> GarbClass = XposedHelpers.findClass("com.bilibili.lib.ui.garb.Garb",lpparam.classLoader);
+        Method isDarkModeMethod = GarbClass.getMethod("isDarkMode");
+
+        Class<?> MultipleThemeUtils = XposedHelpers.findClass("com.bilibili.lib.ui.util.MultipleThemeUtils",lpparam.classLoader);
+        Method isNightThemeMethod = MultipleThemeUtils.getMethod("isNightTheme",Context.class);
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.splash.d", lpparam.classLoader, "b", "ri5.a", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                //super.beforeHookedMethod(param);
+                Object aVar = param.args[0];
+                if(aVar==null){return;}
+                Object a2 = XposedHelpers.callMethod(aVar,"a");
+                if(a2==null){return;}
+                Object url = XposedHelpers.callMethod(a2,"k");
+                //Object url = XposedHelpers.getObjectField(a2,"e");
+
+                if(url==null){
+                    Toast.makeText(Utils.getMainActivity(),"test44:url==null",Toast.LENGTH_LONG).show();
+                    //Utils.showToast("test44:url==null",0);
+                    XposedBridge.log("test44:url==null");
+                    return;
+                }
+                //XposedBridge.log("test44:"+url.toString());
+                XposedBridge.log("test44:"+url.toString());
+                //Toast.makeText(Utils.getMainActivity(),"test44:"+url.toString(),Toast.LENGTH_LONG).show();
+                //RoundCornerDialog.showDialog(Utils.getMainActivity());
+                //Utils.showToast("test44:"+url.toString(),0);
+
+                boolean isDarkMode = (boolean) isNightThemeMethod.invoke(null,Utils.getMainActivity());
+                Toast.makeText(Utils.getMainActivity(),"test44:"+isDarkMode,Toast.LENGTH_LONG).show();
+
+            }
+
+        });
+    }
 
 
     //隐藏直播间礼物推广弹幕

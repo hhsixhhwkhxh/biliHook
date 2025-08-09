@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "hhsixhhwkhxh.bilibili"
-        minSdk = 28
+        minSdk = 29
         targetSdk = 34
         versionCode = 4
         versionName = "Beta v20250719"
