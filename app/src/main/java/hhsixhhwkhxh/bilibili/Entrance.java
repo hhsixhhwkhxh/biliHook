@@ -284,7 +284,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
 
         Intent GoToGithubPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hhsixhhwkhxh/biliHook/"));
-        ItemsList.add(new ButtonFunction("壁虎 开源模块 适配8.51.0","点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
+        ItemsList.add(new ButtonFunction("壁虎"+BuildConfig.VERSION_NAME+" 适配8.56.0","开源模块 点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
             public void onClick(){
                 try{
                     activity.startActivity(GoToGithubPageIntent);

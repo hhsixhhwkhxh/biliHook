@@ -10,10 +10,18 @@ android {
         applicationId = "hhsixhhwkhxh.bilibili"
         minSdk = 29
         targetSdk = 34
-        versionCode = 4
-        versionName = "Beta v20250719"
+        versionCode = 5
+        versionName = "Beta v20250810"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //添加版本信息
+        buildConfigField("String", "VERSION_NAME", "\"$versionName\"")
+        buildConfigField("int", "VERSION_CODE", "$versionCode")
+
+        //添加构建时间戳
+        buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+
     }
 
     buildTypes {
@@ -41,7 +49,9 @@ android {
         getByName("release") {
             buildConfigField("Boolean", "IS_DEBUG", "false")
         }
+
     }
+
 }
 
 dependencies {

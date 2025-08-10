@@ -66,14 +66,13 @@ public class BypassSplash extends FunctionsBase {
             }));
         }
 
-
+        //不知道有没有用
         XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.splash.ad.landingpage.SplashImmersiveVideoLandingActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 Activity activity = (Activity) param.thisObject;
                 activity.finish();
-                Utils.showToast("kill",0);
             }
 
         });

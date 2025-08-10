@@ -126,6 +126,8 @@ public class TestFunctionArea extends FunctionsBase {
         //test45(lpparam);
         //test46(lpparam);
         //test47(lpparam);
+        //test49(lpparam);
+        //test50(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -138,6 +140,48 @@ public class TestFunctionArea extends FunctionsBase {
         //test48(lpparam);
     }
     //以下代码基于8.56.0版本
+
+    public void test50(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("okhttp3.OkHttpClient$Builder", lpparam.classLoader, "build", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+            }
+        });
+    }
+
+
+    public void test49(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //我手机端收藏BV1eCthzaEue视频时 显示“账号异常，操作失败” 其他视频没问题 电脑端收藏这个视频也没问题
+        XposedHelpers.findAndHookMethod("com.bilibili.playset.widget.favorite.FavoriteDialog", lpparam.classLoader, "H", Throwable.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Throwable th = (Throwable) param.args[0];
+                XposedBridge.log(th);
+                Log.e("test49","FavoriteDialog H",th);
+            }
+            /*
+            * [ 2025-08-10T12:20:17.276    10338: 23420: 23420 E/LSPosed-Bridge  ] com.bilibili.api.BiliApiException: 账号异常，操作失败
+	            at com.bilibili.okretro.BiliApiDataCallback.onResponse(BL:63)
+	            at com.bilibili.okretro.call.BiliCall$c.run(BL:11)
+	            at android.os.Handler.handleCallback(Handler.java:995)
+	            at android.os.Handler.dispatchMessage(Handler.java:105)
+	            at android.os.Looper.loopOnce(Looper.java:288)
+	            at android.os.Looper.loop(Looper.java:393)
+	            at android.app.ActivityThread.main(ActivityThread.java:9549)
+	            at java.lang.reflect.Method.invoke(Native Method)
+	            at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+	            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
+
+                 */
+
+        });
+    }
 
 
     //直播间右下角礼物可折叠广告
