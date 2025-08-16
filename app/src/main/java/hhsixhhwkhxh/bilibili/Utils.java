@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import de.robv.android.xposed.XposedHelpers;
@@ -26,17 +27,22 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.luckypray.dexkit.wrap.DexClass;
+import org.luckypray.dexkit.wrap.DexField;
 import org.luckypray.dexkit.wrap.DexMethod;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Modifier;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Utils {
     private static Activity MainActivityV2 = null;
@@ -50,10 +56,17 @@ public class Utils {
 
     private static Method isNightThemeMethod = null;
 
+    private static Method toJsonInGsonMethod = null;
+    private static Method fromJsonInGsonMethod = null;
+
+    private static Object simpleGsonObject = null;
+
+    private static Class<Annotation> SerializedNameClass = null;
     private static final HashMap<String,Method> DeConfusionMethodCacheMap = new HashMap<>();
     private static final HashMap<String,Field> DeConfusionFieldCacheMap = new HashMap<>();
 
-    private static final HashMap<String,Class> DeConfusionClassCacheMap = new HashMap<>();
+    private static final HashMap<String,Class<?>> DeConfusionClassCacheMap = new HashMap<>();
+
     public static SharedPreferences sharedPreferences;
 
     public static StringBuilder errorsBeforeInit = new StringBuilder();
@@ -81,6 +94,12 @@ public class Utils {
 
         }
 
+        SerializedNameClass = (Class<Annotation>) XposedHelpers.findClass("com.google.gson.annotations.SerializedName",lpparam.classLoader);
+
+        final Class<?> GsonClass = XposedHelpers.findClass("com.google.gson.Gson",lpparam.classLoader);
+        toJsonInGsonMethod = GsonClass.getMethod("toJson", Object.class);
+        fromJsonInGsonMethod = GsonClass.getMethod("fromJson",String.class, Class.class);
+        simpleGsonObject = GsonClass.getConstructor().newInstance();
     }
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
         return (String)(toJSONStringMethod.invoke(null,o));
@@ -122,6 +141,15 @@ public class Utils {
         }
         return null;
     }
+
+    public static Field selectFieldConveniently(Class<?> TargetClass,Class<?> FieldTypeClass){
+        Field field = selectField(TargetClass,FieldTypeClass);
+        if(field==null){
+            return null;
+        }
+        field.setAccessible(true);
+        return field;
+    }
     
     public static Field selectFieldAt(Class<?> TargetClass,Class<?> FieldTypeClass,int index){
         int counts=0;
@@ -132,6 +160,47 @@ public class Utils {
                     return field;
                 }
             }
+        }
+        return null;
+    }
+
+    public static Field selectFieldBySerializedName(Class<?> TargetClass,String name) throws Exception {
+        log(TargetClass);
+        for(Field field:TargetClass.getDeclaredFields()){
+
+            /*
+            log("SerializedNameClass:"+SerializedNameClass);
+            Object[] serializedName = field.getDeclaredAnnotationsByType(SerializedNameClass);
+            log("fieldName:"+field.getName());
+            log("serializedName:"+serializedName);
+            log("Annotations_size:"+field.getAnnotations().length);
+            log("serializedName_size:"+serializedName.length);
+            log("size:"+field.getAnnotations().length);
+            //log("type:"+field.getAnnotations()[0].toString());
+            Method m = SerializedNameClass.getMethod("value");
+            if (serializedName != null&&serializedName.length!=0) {
+                //field.setAccessible(true);
+                String value = (String) XposedHelpers.callMethod(serializedName[0],"value"); // 获取注解值
+                //String value = (String)m.invoke(serializedName);
+
+                log("value:"+value);
+                if(name.equals(value)){
+                    return field;
+                }
+            }
+            */
+
+            for (Annotation ann : field.getDeclaredAnnotations()) {
+                // 通过类名匹配注解
+                if (ann.annotationType().getName().equals("com.google.gson.annotations.SerializedName")) {
+                    Method valueMethod = ann.annotationType().getMethod("value");
+                    String value = (String) valueMethod.invoke(ann);
+                    if (name.equals(value)) {
+                        return field;
+                    }
+                }
+            }
+
         }
         return null;
     }
@@ -193,11 +262,82 @@ public class Utils {
         String result="";
         Class clazz = obj.getClass();
         result+=clazz.toString();
-        for (Field field: clazz.getFields()){
+        for (Field field: clazz.getDeclaredFields()){
+            field.setAccessible(true);
             result+="\n"+field.getName()+" "+field.getType()+" "+field.get(obj);
         }
         return result;
     }
+
+    public static void printObjectFields(Object obj) {
+        if (obj == null) {
+            log("Object is null");
+            return;
+        }
+
+        Class<?> clazz = obj.getClass();
+        log("Fields of class: " + clazz.getSimpleName());
+
+        // 遍历所有字段（包括父类）
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+
+            for (Field field : fields) {
+                // 跳过静态字段
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+
+                // 设置可访问以读取私有字段
+                field.setAccessible(true);
+
+                try {
+                    Object value = field.get(obj);
+                    String valueStr = formatValue(value);
+                    log(field.getType().getSimpleName()+" "+field.getName()+" "+valueStr);
+                } catch (IllegalAccessException e) {
+                    log(" [Access failed]"+field.getName());
+                }
+            }
+            // 继续处理父类的字段
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    // 格式化特殊类型的值
+    private static String formatValue(Object value) {
+        if (value == null) {
+            return "null";
+        }
+
+        Class<?> type = value.getClass();
+
+        // 处理数组
+        if (type.isArray()) {
+            if (type == byte[].class) {
+                return Arrays.toString((byte[]) value);
+            } else if (type == short[].class) {
+                return Arrays.toString((short[]) value);
+            } else if (type == int[].class) {
+                return Arrays.toString((int[]) value);
+            } else if (type == long[].class) {
+                return Arrays.toString((long[]) value);
+            } else if (type == char[].class) {
+                return Arrays.toString((char[]) value);
+            } else if (type == float[].class) {
+                return Arrays.toString((float[]) value);
+            } else if (type == double[].class) {
+                return Arrays.toString((double[]) value);
+            } else if (type == boolean[].class) {
+                return Arrays.toString((boolean[]) value);
+            } else {
+                // 对象数组
+                return Arrays.deepToString((Object[]) value);
+            }
+        }
+        return value.toString();
+    }
+
 
     public static void submitErrorBeforeInit(String msg){
         errorsBeforeInit.append(msg+"\n");
@@ -233,7 +373,20 @@ public class Utils {
     public static void log(Object content){
         if(false){return;}
         if(content==null){content="日志为空";}
+
         XposedBridge.log(content.toString());
+        Log.i("biliHook",content.toString());
+    }
+
+    public static void log_s(Object content){
+        if(false){return;}
+        if(content==null){content="日志为空";}
+        String str = content.toString();
+        int maxLength = 750;
+        if(str.length()>maxLength){
+            str = str.substring(0, maxLength) + "...";
+        }
+        log(str);
     }
     public static boolean containField(Class clazz,String variableName){
 
@@ -309,6 +462,18 @@ public class Utils {
             String descriptor = sharedPreferences.getString(name,"");
             Class<?> targetClass = DexClass.deserialize(descriptor).getInstance(classLoader);
             DeConfusionClassCacheMap.put(name,targetClass);
+            return targetClass;
+        }
+    }
+
+    public static Field getDeConfusionField(String name,ClassLoader classLoader) throws NoSuchFieldException {
+        if(sharedPreferences==null||name==null||name.equals("")){return null;}
+        if(DeConfusionFieldCacheMap.containsKey(name)){
+            return DeConfusionFieldCacheMap.get(name);
+        }else{
+            String descriptor = sharedPreferences.getString(name,"");
+            Field targetClass = DexField.deserialize(descriptor).getFieldInstance(classLoader);
+            DeConfusionFieldCacheMap.put(name,targetClass);
             return targetClass;
         }
     }
@@ -419,4 +584,17 @@ public class Utils {
         }
     }
 
+    public static String toJsonInGson(Object obj) throws InvocationTargetException, IllegalAccessException {
+        if(toJsonInGsonMethod==null||simpleGsonObject==null){
+            return null;
+        }
+        return (String) toJsonInGsonMethod.invoke(simpleGsonObject,obj);
+    }
+
+    public static Object fromJsonInGson(String str, Class<?> cls) throws InvocationTargetException, IllegalAccessException {
+        if(fromJsonInGsonMethod==null||simpleGsonObject==null){
+            return null;
+        }
+       return fromJsonInGsonMethod.invoke(simpleGsonObject,str,cls);
+    }
 }

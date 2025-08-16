@@ -18,13 +18,20 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.ParameterizedType;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.XResources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.text.MeasuredText;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.TimeZone;
@@ -32,6 +39,7 @@ import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -67,11 +75,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import android.os.Handler;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 public class TestFunctionArea extends FunctionsBase {
@@ -128,6 +139,8 @@ public class TestFunctionArea extends FunctionsBase {
         //test47(lpparam);
         //test49(lpparam);
         //test50(lpparam);
+        //test51(lpparam);
+        //test53(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -138,8 +151,252 @@ public class TestFunctionArea extends FunctionsBase {
         //test43(lpparam);
         //test44(lpparam);
         //test48(lpparam);
+        //test52(lpparam);
     }
     //以下代码基于8.56.0版本
+
+    //根据粘贴板查弹幕
+    public void test53(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("android.content.ClipData", lpparam.classLoader, "newPlainText", CharSequence.class, CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                CharSequence charSequence = (CharSequence) param.args[1];
+                if(charSequence==null){
+                    return;
+                }
+                String text = charSequence.toString();
+                Utils.printStackTrace("test53:copy "+text);
+            }
+            //	at rp5.n.e(BL:32)
+        });
+        //又是native
+    }
+
+
+    public void test52(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //测测MainActivityV2什么时候接管界面的
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                ((Activity)param.thisObject).finish();
+                //666露头就秒 点击app自动播放打断动画
+            }
+
+        });
+
+         */
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "e6", android.os.Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(null);
+                //卡在白底粉字bilibili页
+                /*
+                Log.i("test52","hello?");
+                Activity activity = (Activity) param.thisObject;
+                FrameLayout contentFrameLayout = activity.findViewById(0x7f090c44);//content_layout
+                FrameLayout parentFrameLayout = (FrameLayout) contentFrameLayout.getParent();
+                View view = parentFrameLayout.getChildAt(0);
+                XposedBridge.log("test52 first splash view:"+view.getClass().getName());
+                Log.i("test52",view.getClass().getName());
+
+
+                 */
+
+                //Toast.makeText(activity,"test52 first splash view:"+view.getClass().getName(), Toast.LENGTH_LONG).show();
+                //parentFrameLayout.removeView(view);//不影响
+
+                //parentFrameLayout.removeAllViews();//不影响
+
+                try {
+                    //FrameLayout grandparentFrameLayout = (FrameLayout) parentFrameLayout.getParent().getParent().getParent().getParent();
+                    //ViewGroup grandparentFrameLayout = (ViewGroup) parentFrameLayout.getParent().getParent().getParent().getParent().getParent();//空指针了 view都几乎被我删干净了 但是背景还在
+                    //grandparentFrameLayout.removeAllViews();
+                    //XposedHelpers.callMethod(param.thisObject,"B6");//果然可以移除背景
+                    //mainV2的背景是主题赋予的 代码动态删除
+                    // 1. 创建背景层
+                    /*
+                    ColorDrawable background = new ColorDrawable(Color.BLACK);
+
+                    // 2. 创建Logo层
+                    BitmapDrawable logo = (BitmapDrawable) ContextCompat.getDrawable(
+                            activity, activity.getResources().getIdentifier("ic_logo_default","drawable", Entrance.TargetPackageName));
+
+                    // 3. 构建LayerDrawable
+                    Drawable[] layers = new Drawable[]{
+                            background,
+                            new InsetDrawable(logo, 0, 0, 0, (int) TypedValue.applyDimension(
+                                    TypedValue.COMPLEX_UNIT_DIP,
+                                    16,
+                                    activity.getResources().getDisplayMetrics()
+                            )) // 底部16dp
+                    };
+
+                    LayerDrawable dynamicDrawable = new LayerDrawable(layers);
+
+                    // 4. 设置Logo位置
+                    dynamicDrawable.setLayerGravity(1, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+
+                    // 5. 应用到窗口
+                    activity.getWindow().setBackgroundDrawable(dynamicDrawable);
+
+                     */
+                    //慢一拍
+                }catch (Exception e){
+                    //Toast.makeText(activity,"e:"+e, Toast.LENGTH_LONG).show();
+                    Utils.reportError(e);
+                }
+                //Toast.makeText(activity,"test52 first splash view:"+grandparentFrameLayout.getChildAt(0).getClass().getName(), Toast.LENGTH_LONG).show();
+
+                //grandparentFrameLayout.removeAllViews();
+                //666超级加辈 啥也不干 就直接进去了 没有第一屏了 开屏就是2233(第二屏) 然后进入主页
+                //后来查明是类型转换异常了 b站应该用了try catch兜底 有异常直接pass第一屏
+
+
+            }
+
+        });
+        /*
+
+        //试试提提速度
+        final LayerDrawable[] dynamicDrawable = {null};
+        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Context appContext = (Context) param.args[0];
+                ColorDrawable background = new ColorDrawable(Color.BLACK);
+
+                // 2. 创建Logo层
+                BitmapDrawable logo = (BitmapDrawable) ContextCompat.getDrawable(
+                        appContext, appContext.getResources().getIdentifier("ic_logo_default","drawable", Entrance.TargetPackageName));
+
+                // 3. 构建LayerDrawable
+                Drawable[] layers = new Drawable[]{
+                        background,
+                        new InsetDrawable(logo, 0, 0, 0, (int) TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                16,
+                                appContext.getResources().getDisplayMetrics()
+                        )) // 底部16dp
+                };
+
+                dynamicDrawable[0] = new LayerDrawable(layers);
+
+                // 4. 设置Logo位置
+                dynamicDrawable[0].setLayerGravity(1, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+
+            }
+        });
+
+
+         */
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                if(dynamicDrawable[0]==null){return;}
+                Activity activity = (Activity) param.thisObject;
+                activity.getWindow().setBackgroundDrawable(dynamicDrawable[0]);
+                //还是慢 先白后黑
+            }
+
+        });*/
+
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "f6", boolean.class, android.os.Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                if(dynamicDrawable[0]==null){return;}
+                Activity activity = (Activity) param.thisObject;
+                activity.getWindow().setBackgroundDrawable(dynamicDrawable[0]);
+            }
+
+        });
+
+
+         */
+
+    }
+
+
+    //调查视频详情页的“简介”tab栏目
+    //这是受到BV1XBN8ziEML启发的 up主说简介暗改宽度
+    public void test51(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookConstructor("km3.l", lpparam.classLoader, "androidx.databinding.DataBindingComponent", android.view.View.class, Object[].class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Object[] objArr = (Object[]) param.args[2];
+                View constraintLayout = (View) objArr[0];
+                //利用无障碍打标记 我可能是第一个这么想的人么？
+                constraintLayout.setContentDescription("test51 mark constraintLayout");
+                //尴尬的位置 其下就是TextView了
+
+
+                //View view = (View) param.args[1];
+                //view.setContentDescription("test51 mark view");
+                //这俩是同一个东西
+
+                LinearLayout parentView = (LinearLayout) constraintLayout.getParent();
+
+                /*
+                if(parentView==null){
+                    //是这里
+                    Utils.showToast("parentView==null",1);
+                    return;
+                }
+                LinearLayout grandparentView = (LinearLayout) parentView.getParent();
+                if(grandparentView==null){
+                    Utils.showToast("grandparentView==null",1);
+                    return;
+                }
+                Utils.showToast("grandparentView 孩子:"+grandparentView.getChildCount(),1);
+                */
+
+                LinearLayout test = new LinearLayout(constraintLayout.getContext());
+                test.addView(parentView);
+                //理论上这样它二次addView会报错 就有堆栈了 然而无事发生
+
+
+                XposedHelpers.findAndHookMethod("android.view.ViewGroup", lpparam.classLoader, "addView", android.view.View.class, int.class, android.view.ViewGroup.LayoutParams.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                        View childrenView = (View) param.args[0];
+                        if(childrenView.equals(constraintLayout)){
+                            Utils.printStackTrace("test51 addView");
+                        }
+                        //并没有抓到 很奇怪
+                    }
+
+                });
+
+
+            }
+
+        });
+
+
+
+        //返璞归真()
+        XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.tab.e$a", lpparam.classLoader, "getTitle", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                String str = (String) param.getResult();
+                if(str==null){return;}
+                String Placeholder = "      ";
+                param.setResult(Placeholder+str+Placeholder);
+            }
+        });
+        //很不优雅
+    }
 
     public void test50(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         XposedHelpers.findAndHookMethod("okhttp3.OkHttpClient$Builder", lpparam.classLoader, "build", new XC_MethodHook() {
@@ -2388,8 +2645,8 @@ public class TestFunctionArea extends FunctionsBase {
                         if (recyclerView.getVisibility() != View.VISIBLE) return;
 
                         // 设置文字内容
-                        //String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass().getName();
-                        String text = "Class:"+param.thisObject.getClass().getName();
+                        String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass().getName();
+                        //String text = "Class:"+param.thisObject.getClass().getName();
                         XposedBridge.log(text);
 
                         // 初始化画笔

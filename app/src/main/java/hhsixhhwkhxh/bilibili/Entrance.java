@@ -3,17 +3,29 @@ package hhsixhhwkhxh.bilibili;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.res.XModuleResources;
+import android.content.res.XResForwarder;
+import android.content.res.XResources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+
+import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,6 +44,9 @@ import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
 
@@ -46,14 +61,19 @@ import hhsixhhwkhxh.bilibili.function.BypassSplash;
 
 import org.luckypray.dexkit.DexKitBridge;
 import org.luckypray.dexkit.query.FindClass;
+import org.luckypray.dexkit.query.FindField;
 import org.luckypray.dexkit.query.FindMethod;
 import org.luckypray.dexkit.query.matchers.ClassMatcher;
+import org.luckypray.dexkit.query.matchers.FieldMatcher;
 import org.luckypray.dexkit.query.matchers.FieldsMatcher;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
 import org.luckypray.dexkit.query.matchers.base.OpCodesMatcher;
 import org.luckypray.dexkit.result.ClassData;
+import org.luckypray.dexkit.result.ClassDataList;
 import org.luckypray.dexkit.result.FieldData;
+import org.luckypray.dexkit.result.FieldDataList;
 import org.luckypray.dexkit.result.MethodData;
+import org.luckypray.dexkit.result.MethodDataList;
 import org.luckypray.dexkit.util.OpCodeUtil;
 
 import hhsixhhwkhxh.bilibili.function.TestFunctionArea;
@@ -139,8 +159,6 @@ public class Entrance implements IXposedHookLoadPackage {
                         initResolveConfusionMethods(apkPath,lpparam.classLoader);
                         //Toast.makeText(context, "模块初始化成功", Toast.LENGTH_SHORT).show();
                     }
-
-
 
 
                     //runFunctionSafely(new RemoveNavigationBarSign(), lpparam);
@@ -524,6 +542,8 @@ public class Entrance implements IXposedHookLoadPackage {
 
             editor.putInt("CodeVersion",Utils.getAppVersionCode(MainActivityV2));
 
+            editor.putLong("BuildTime",BuildConfig.BUILD_TIME);
+
             StringBuilder stringBuilder = new StringBuilder();
 
             /*
@@ -647,6 +667,30 @@ public class Entrance implements IXposedHookLoadPackage {
 
             stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod")+"\n");
 
+            //ua3.e
+            /*
+            List<ClassData> ua3_eClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher()
+                    .usingStrings("TagData(text=")));
+
+            stringBuilder.append(accessClassSeekResult(editor,ua3_eClasses,"ua3_eClass")+"\n");
+
+             */
+
+            //qa3.t smallCoverV2
+            ClassDataList qa3_tClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher()
+                    .usingStrings("rcmdReason and descText")));
+
+            stringBuilder.append(accessClassSeekResult(editor,qa3_tClasses,"qa3_tClass")+"\n");
+
+            //MethodDataList qa3_t_getUriMethod = qa3_tClasses.findMethod(new FindMethod().matcher(new MethodMatcher().name("getUri")));
+
+            FieldDataList qa3_t_fFields = qa3_tClasses.findField(new FindField().matcher(new FieldMatcher().type(String.class).addReadMethod(new MethodMatcher().name("getUri"))));
+
+            stringBuilder.append(accessFieldSeekResult(editor,qa3_t_fFields,"qa3_t_fField")+"\n");
+
+
+
+
 
             editor.apply();
             editor.commit();
@@ -707,6 +751,63 @@ public class Entrance implements IXposedHookLoadPackage {
         return (name+"->"+list.get(0).toString());
     }
 
+/*
+    @Override
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resParam) throws Throwable {
+        if(!resParam.packageName.equals(TargetPackageName)){return;}
+
+        LayerDrawable layerDrawable = (LayerDrawable) resParam.res.getDrawable(
+                resParam.res.getIdentifier("layerlist_splash", "drawable", TargetPackageName)
+        );
+
+// 先检查layerDrawable是否获取成功
+        if (layerDrawable == null) {
+            XposedBridge.log("layerlist_splash获取失败");
+            return;
+        }
+        layerDrawable.mutate();
+// 打印层级信息，确认有多少层
+        XposedBridge.log("Layer count: " + layerDrawable.getNumberOfLayers());
+
+// 尝试获取第一层
+        Drawable backgroundDrawable = layerDrawable.getDrawable(0);
+        XposedBridge.log("第一层类型: " + backgroundDrawable.getClass().getSimpleName());
+
+// 修改背景
+        if (backgroundDrawable instanceof ColorDrawable) {
+            ColorDrawable newBackground = new ColorDrawable(Color.BLUE);
+            layerDrawable.setDrawable(0, newBackground);
+            XposedBridge.log("替换为黑色ColorDrawable");
+        } else {
+            backgroundDrawable.mutate(); // 确保修改不会影响其他引用
+            backgroundDrawable.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+            XposedBridge.log("应用黑色颜色滤镜");
+        }
+
+// 强制刷新
+        layerDrawable.invalidateSelf();
+        // 修改后强制刷新
+        //layerDrawable.mutate(); // 确保不与其他引用共享状态
+        //layerDrawable.invalidateSelf(); // 强制重绘
+
+// 尝试使用资源名替换，而不是硬编码ID
+        int resId = resParam.res.getIdentifier("layerlist_splash", "drawable", TargetPackageName);
+        if (resId > 0) {
+            resParam.res.setReplacement(0x7f081884,
+                    new XResources.DrawableLoader() {
+                        @Override
+                        public Drawable newDrawable(XResources res, int id) throws Throwable {
+                            XposedBridge.log("newDrawable: 使用资源名替换");
+                            //XposedBridge.log("背景色:"+((ColorDrawable)layerDrawable.getDrawable(0)).getColor());
+                            //XposedBridge.log("白色:"+Color.WHITE+",黑色:"+Color.BLACK);
+                            return layerDrawable;
+                        }
+                    });
+        } else {
+            XposedBridge.log("无法找到资源ID: layerlist_splash");
+        }
+    }
 
 
+ */
 }

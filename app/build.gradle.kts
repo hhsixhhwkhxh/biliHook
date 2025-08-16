@@ -10,8 +10,8 @@ android {
         applicationId = "hhsixhhwkhxh.bilibili"
         minSdk = 29
         targetSdk = 34
-        versionCode = 5
-        versionName = "Beta v20250810"
+        versionCode = 6
+        versionName = "Beta v20250817"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -61,6 +61,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    compileOnly(files("libs/classes.jar"))
+    compileOnly(files("libs/XposedBridgeAPI-89.jar"))
     implementation("org.luckypray:dexkit:2.0.3")
 }
