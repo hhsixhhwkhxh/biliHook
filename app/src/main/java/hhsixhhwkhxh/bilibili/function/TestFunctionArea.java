@@ -116,7 +116,7 @@ public class TestFunctionArea extends FunctionsBase {
         //test7(lpparam);
         //test20(lpparam);
         //test21(lpparam);
-        test22(lpparam);
+        //test22(lpparam);
         //test23(lpparam);
         //test24(lpparam);
         //test25(lpparam);
@@ -141,6 +141,7 @@ public class TestFunctionArea extends FunctionsBase {
         //test50(lpparam);
         //test51(lpparam);
         //test53(lpparam);
+        //test54(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -154,6 +155,37 @@ public class TestFunctionArea extends FunctionsBase {
         //test52(lpparam);
     }
     //以下代码基于8.56.0版本
+
+    //搜索界面推送过滤
+    public void test54(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        final Class<?> searchAdItemClass = XposedHelpers.findClass("com.bilibili.search2.api.SearchAdItem",lpparam.classLoader);
+        final Class<?> searchVideoItemClass = XposedHelpers.findClass("com.bilibili.search2.api.SearchVideoItem",lpparam.classLoader);
+        XposedHelpers.findAndHookMethod("com.bilibili.search2.result.base.b0", lpparam.classLoader, "i1", java.util.List.class, boolean.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                List list = (List) param.args[0];
+                if(list==null||list.isEmpty()){return;}
+                for(Object baseSearchItem:list){
+                    Utils.log_s(baseSearchItem.toString());
+                    Utils.log(baseSearchItem.getClass());
+
+
+                    //com.bilibili.search2.api.SearchAdItem
+                    //com.bilibili.search2.api.SearchVideoItem
+                    //com.bilibili.search2.result.holder.recommend.a0(SearchRelatedSearchItem)
+                }
+
+                for (int i = list.size()-1; i >= 0; i--) {
+                    if(!list.get(i).getClass().equals(searchVideoItemClass)){
+                        list.remove(i);
+                    }
+                }
+            }
+
+        });
+    }
+
 
     //根据粘贴板查弹幕
     public void test53(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{

@@ -383,6 +383,10 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("禁止跳转到竖屏视频", "会重定向到横屏", "DisableJumpToVerticalVideoFromShare"));
 
         ItemsList.add(new GroupTitle("杂项",true));
+
+
+
+
         ItemsList.add(new ButtonFunction("任意门","跳转到任意注册的Activity","AnywhereDoor",new FunctionOnClickListener(){
             public void onClick(){
                 final EditText ClassNameEditText = new EditText(activity);
@@ -688,9 +692,10 @@ public class Entrance implements IXposedHookLoadPackage {
 
             stringBuilder.append(accessFieldSeekResult(editor,qa3_t_fFields,"qa3_t_fField")+"\n");
 
-
-
-
+            //Lcom/bilibili/search2/result/base/b0;->i1(Ljava/util/List;ZZ)V
+            List<MethodData> com_bilibili_search2_result_base_b0_i1Methods = bridge.findClass(new FindClass().searchPackages("com.bilibili.search2.result.base").matcher(new ClassMatcher().usingStrings("SearchResultFooterAdapter"))).findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes(List.class,boolean.class,boolean.class)));
+            
+            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_search2_result_base_b0_i1Methods,"com_bilibili_search2_result_base_b0_i1Method")+"\n");
 
             editor.apply();
             editor.commit();

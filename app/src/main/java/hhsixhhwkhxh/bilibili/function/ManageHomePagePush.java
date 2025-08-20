@@ -8,6 +8,8 @@ import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XC_MethodHook;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -33,26 +35,15 @@ public class ManageHomePagePush extends FunctionsBase {
         final boolean RemoveVideoLikeCount = sharedPreferences.getBoolean("HomePagePushRemoveVideoLikeCount",false);
         final boolean StrictMode = sharedPreferences.getBoolean("HomePagePushStrictMode",false);
 
-
-
         jsonClass = XposedHelpers.findClass("com.alibaba.fastjson.JSON", lpparam.classLoader);
-
-
 
 
         final Class<?> storyCardIconClass = XposedHelpers.findClass("com.bilibili.app.comm.list.common.data.StoryCardIcon",lpparam.classLoader);
 
 
-
-        //new
-        //final Class<?> TagDataClass = Utils.getDeConfusionClass("ua3_eClass",lpparam.classLoader);
         final Field uriField = Utils.getDeConfusionField("qa3_t_fField",lpparam.classLoader);
 
-        /*
-        if(TagDataClass==null){
-            Utils.reportError("ManageHomePagePush 错误 TagDataClass未找到");
-            return;
-        }*/
+
         if(uriField==null){
             Utils.reportError("ManageHomePagePush 错误 uriField未找到");
             return;
@@ -103,9 +94,24 @@ public class ManageHomePagePush extends FunctionsBase {
         }
         cardTypeField.setAccessible(true);
 
+        Class<?> PegasusResponseClass = XposedHelpers.findClass("com.bilibili.pegasus.data.base.PegasusResponse",lpparam.classLoader);
+        final Class<?> InterestChooseClass = XposedHelpers.findClass("com.bilibili.pegasus.data.interestchoose.InterestChoose",lpparam.classLoader);
+        Constructor<?> targetConstructor = null;
+        for(Constructor<?> constructor:PegasusResponseClass.getConstructors()){
+             if(constructor.getParameterCount()==0){continue;}
+             Class<?>[] types = constructor.getParameterTypes();
+             if(types[types.length-1].equals(InterestChooseClass)){
+                 targetConstructor = constructor;
+                 break;
+             }
+        }
 
+        if(targetConstructor==null){
+            Utils.reportError("ManageHomePagePush 错误 targetConstructor未找到");
+            return;
+        }
 
-        XposedHelpers.findAndHookConstructor("com.bilibili.pegasus.data.base.PegasusResponse", lpparam.classLoader, java.util.List.class, "oa3.a", "com.bilibili.pegasus.data.interestchoose.InterestChoose", new XC_MethodHook() {
+        XposedBridge.hookMethod(targetConstructor, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -113,11 +119,6 @@ public class ManageHomePagePush extends FunctionsBase {
                 List list = (List)param.args[0];
                 if(list==null||list.isEmpty()){return;}
 
-
-
-
-
-                log("遍历开始 size:"+list.size());
 
                 for (int i = list.size()-1; i >= 0; i--) {
 
@@ -164,6 +165,19 @@ public class ManageHomePagePush extends FunctionsBase {
 
                     //直播
                     if(FilterLive&&holderType.equals("small_cover_v9")){
+                        list.remove(i);
+                        continue;
+                    }
+
+                    //动漫
+                    if(FilterBangumi&&cardGoTo.equals("pgc")){
+                        list.remove(i);
+                        continue;
+                    }
+
+
+                    //游戏 实测没遇到过
+                    if(FilterGame&&cardGoTo.contains("game")){
                         list.remove(i);
                         continue;
                     }
@@ -321,21 +335,7 @@ public class ManageHomePagePush extends FunctionsBase {
         });
 
 
-        //当数据类cardType为空时 fq2.a.c方法尝试抛出NullPointerException却toString了数据类 导致getHolderType和toString方法互相调用 最终java.lang.StackOverflowError
-        //这应该是b站程序员在处理异常情况时的失误 这里使用xposed矫正c方法的行为
-        XposedHelpers.findAndHookMethod("fq2.a", lpparam.classLoader, "c", "com.bilibili.pegasus.data.base.BasePegasusData", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                String cardType = (String) XposedHelpers.callMethod(param.args[0],"getCardType");
-                if(cardType==null){
-                    Utils.printStackTrace("cardType为空");
-                }
-                param.setResult(cardType);
 
-            }
-
-        });
 
 
 
