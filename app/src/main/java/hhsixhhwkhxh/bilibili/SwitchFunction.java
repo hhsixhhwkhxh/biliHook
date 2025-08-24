@@ -1,5 +1,6 @@
 package hhsixhhwkhxh.bilibili;
 import android.content.SharedPreferences;
+import android.text.SpannableString;
 import android.view.View;
 import android.content.Context;
 import android.widget.LinearLayout;
@@ -13,7 +14,7 @@ import android.graphics.PorterDuff;
 public class SwitchFunction extends ListItem {
 
     private String name;
-    private String description;
+    private SpannableString description;
     private String id;
     private boolean enabled;
     public static SharedPreferences sharedPreferences=null;
@@ -35,11 +36,18 @@ public class SwitchFunction extends ListItem {
 
     public SwitchFunction(String name, String description,String id) {
         this.name = name;
+        this.description = new SpannableString(description);
+        this.id = id;
+        this.enabled=sharedPreferences.getBoolean(id, false);
+    }
+
+
+    public SwitchFunction(String name, SpannableString description, String id) {
+        this.name = name;
         this.description = description;
         this.id = id;
         this.enabled=sharedPreferences.getBoolean(id, false);
     }
-    
 
 
     public void setEnabled(boolean isChecked) {
@@ -51,9 +59,6 @@ public class SwitchFunction extends ListItem {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     public String getId(){
         return id;

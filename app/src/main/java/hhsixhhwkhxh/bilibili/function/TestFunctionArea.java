@@ -142,6 +142,7 @@ public class TestFunctionArea extends FunctionsBase {
         //test51(lpparam);
         //test53(lpparam);
         //test54(lpparam);
+        test55(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -155,6 +156,34 @@ public class TestFunctionArea extends FunctionsBase {
         //test52(lpparam);
     }
     //以下代码基于8.56.0版本
+
+    public void test55(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //private static final void m(c cVar, View view)
+        XposedHelpers.findAndHookMethod("mk1.c", lpparam.classLoader, "m", "mk1.c", android.view.View.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                View view = (View) param.args[1];
+                if(view==null){return;}
+                Object imageMedia =view.getTag();
+                Utils.log("imageMediaClass:"+imageMedia.getClass());
+                //imageMediaClass:class com.bilibili.bplus.followingcard.api.entity.cardBean.FollowingImageMedia
+
+            }
+
+        });
+
+        XposedHelpers.findAndHookMethod("lk1.d", lpparam.classLoader, "i1", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(true);
+                Utils.log("i1调用");
+            }
+
+        });
+    }
+
 
     //搜索界面推送过滤
     public void test54(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{

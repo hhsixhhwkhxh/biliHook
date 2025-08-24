@@ -14,6 +14,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -340,8 +344,10 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("主页推送",true));
 
         List<ListItem> HomePagePushfiltrationChildrenList = new ArrayList<>();
-            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
-            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤广告", "若有缺陷请反馈", "HomePagePushFilterAD"));
+        HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤广告", "可能会过滤掉创作推广视频", "HomePagePushFilterAD"));
+
+            //HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", getTextWithFunctionPreposition("宽身位的卡片 视频会转生小卡片","test","test"), "HomePagePushFilterBanner"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤直播", "不会显示推送直播", "HomePagePushFilterLive"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤游戏", "总有些游戏推荐", "HomePagePushFilterGame"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤bangumi", "哔哩哔哩国漫", "HomePagePushFilterBangumi"));
@@ -694,7 +700,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
             //Lcom/bilibili/search2/result/base/b0;->i1(Ljava/util/List;ZZ)V
             List<MethodData> com_bilibili_search2_result_base_b0_i1Methods = bridge.findClass(new FindClass().searchPackages("com.bilibili.search2.result.base").matcher(new ClassMatcher().usingStrings("SearchResultFooterAdapter"))).findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes(List.class,boolean.class,boolean.class)));
-            
+
             stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_search2_result_base_b0_i1Methods,"com_bilibili_search2_result_base_b0_i1Method")+"\n");
 
             editor.apply();
@@ -756,63 +762,31 @@ public class Entrance implements IXposedHookLoadPackage {
         return (name+"->"+list.get(0).toString());
     }
 
-/*
-    @Override
-    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resParam) throws Throwable {
-        if(!resParam.packageName.equals(TargetPackageName)){return;}
+    private SpannableString getTextWithFunctionPreposition(String baseDescription,String prepositionName,String prepositionId){
+        String text = baseDescription + "\nⓘ 需要前置功能「"+prepositionName+"」";
 
-        LayerDrawable layerDrawable = (LayerDrawable) resParam.res.getDrawable(
-                resParam.res.getIdentifier("layerlist_splash", "drawable", TargetPackageName)
-        );
+        SpannableString spannableString = new SpannableString(text);
 
-// 先检查layerDrawable是否获取成功
-        if (layerDrawable == null) {
-            XposedBridge.log("layerlist_splash获取失败");
-            return;
-        }
-        layerDrawable.mutate();
-// 打印层级信息，确认有多少层
-        XposedBridge.log("Layer count: " + layerDrawable.getNumberOfLayers());
+        // 创建可点击的红色文本
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                //Toast.makeText(MainActivity.this, "你点击了红色文本！", Toast.LENGTH_SHORT).show();
+            }
 
-// 尝试获取第一层
-        Drawable backgroundDrawable = layerDrawable.getDrawable(0);
-        XposedBridge.log("第一层类型: " + backgroundDrawable.getClass().getSimpleName());
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                ds.setColor(Color.YELLOW);
+                ds.setUnderlineText(false);
+            }
+        };
 
-// 修改背景
-        if (backgroundDrawable instanceof ColorDrawable) {
-            ColorDrawable newBackground = new ColorDrawable(Color.BLUE);
-            layerDrawable.setDrawable(0, newBackground);
-            XposedBridge.log("替换为黑色ColorDrawable");
-        } else {
-            backgroundDrawable.mutate(); // 确保修改不会影响其他引用
-            backgroundDrawable.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-            XposedBridge.log("应用黑色颜色滤镜");
-        }
 
-// 强制刷新
-        layerDrawable.invalidateSelf();
-        // 修改后强制刷新
-        //layerDrawable.mutate(); // 确保不与其他引用共享状态
-        //layerDrawable.invalidateSelf(); // 强制重绘
 
-// 尝试使用资源名替换，而不是硬编码ID
-        int resId = resParam.res.getIdentifier("layerlist_splash", "drawable", TargetPackageName);
-        if (resId > 0) {
-            resParam.res.setReplacement(0x7f081884,
-                    new XResources.DrawableLoader() {
-                        @Override
-                        public Drawable newDrawable(XResources res, int id) throws Throwable {
-                            XposedBridge.log("newDrawable: 使用资源名替换");
-                            //XposedBridge.log("背景色:"+((ColorDrawable)layerDrawable.getDrawable(0)).getColor());
-                            //XposedBridge.log("白色:"+Color.WHITE+",黑色:"+Color.BLACK);
-                            return layerDrawable;
-                        }
-                    });
-        } else {
-            XposedBridge.log("无法找到资源ID: layerlist_splash");
-        }
+        // 应用Span
+        int start = text.indexOf("ⓘ");
+        spannableString.setSpan(clickableSpan, start, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return spannableString;
     }
-
-
- */
 }

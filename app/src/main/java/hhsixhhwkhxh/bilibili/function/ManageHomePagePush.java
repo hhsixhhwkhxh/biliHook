@@ -35,6 +35,8 @@ public class ManageHomePagePush extends FunctionsBase {
         final boolean RemoveVideoLikeCount = sharedPreferences.getBoolean("HomePagePushRemoveVideoLikeCount",false);
         final boolean StrictMode = sharedPreferences.getBoolean("HomePagePushStrictMode",false);
 
+        boolean supportFilterFunctionsWhenADExist = true;
+
         jsonClass = XposedHelpers.findClass("com.alibaba.fastjson.JSON", lpparam.classLoader);
 
 
@@ -111,6 +113,14 @@ public class ManageHomePagePush extends FunctionsBase {
             return;
         }
 
+
+        Class<?> adInfoClass = XposedHelpers.findClass("com.bilibili.adcommon.data.AdInfo",lpparam.classLoader);
+        if(adInfoClass==null){
+            supportFilterFunctionsWhenADExist = false;
+        }
+
+
+
         XposedBridge.hookMethod(targetConstructor, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -127,11 +137,16 @@ public class ManageHomePagePush extends FunctionsBase {
                     Class<?> itemDataClass = itemData.getClass();
                     String holderType = (String) XposedHelpers.callMethod(itemData,"getHolderType");
 
+
+                    Utils.log_s(itemData.toString());
+
+
                     if(holderType==null){
+                        //Utils.log(holderType+"  null");
                         continue;
                     }
 
-                    Utils.log_s(itemData.toString());
+
                     Utils.log(holderType+"  "+itemDataClass);
 
 
@@ -176,11 +191,13 @@ public class ManageHomePagePush extends FunctionsBase {
                     }
 
 
-                    //游戏 实测没遇到过
+                    //游戏 实测中还没遇到过
                     if(FilterGame&&cardGoTo.contains("game")){
                         list.remove(i);
                         continue;
                     }
+
+
 
 
 
@@ -219,11 +236,27 @@ public class ManageHomePagePush extends FunctionsBase {
                         }
                     }
 
+                    /*
+                    if(!FilterAD){
+                        if(RemoveVideoLikeCount&&holderType.contains("cm_v2")){
+                            Object adInfoObject = XposedHelpers.getObjectField(itemData,"s");
+                            Object extraObject = XposedHelpers.getObjectField(adInfoObject,"q");
+                            //XposedHelpers.setObjectField(adInfoObject,"q",null);
+                            Object cardObject = XposedHelpers.getObjectField(extraObject,"card");
+                            XposedHelpers.setObjectField(cardObject,"rcmdReasonStyle",null);
+                            //XposedHelpers.callMethod(cardObject,"setRcmdReasonStyle",null);
+                        }
+                    }*/
+
+                    //下面的注释部分 主要处理用户关闭广告过滤 却打开了其他过滤功能(横幅 去标签)的情况 但是成效甚微
 
 
-                    //处理投钱的普通视频 type:cm_v2:1/cm_v2:1-nature/... goto=ad_av class=ae.i
+                    //处理投钱视频 type:cm_v2:1/cm_v2:1-nature/... goto=ad_av class=ae.i
+
+                    /*
                     if(RemoveVideoLikeCount&&holderType.contains("cm_v2")){
 
+                        Utils.copyText(Utils.toJsonInGson(itemData));
                         //添加up名字
                         Object ArgsDataObject = XposedHelpers.callMethod(itemData,"getArgs");
                         String upName = (String) XposedHelpers.callMethod(ArgsDataObject,"getUpName");
@@ -233,6 +266,12 @@ public class ManageHomePagePush extends FunctionsBase {
 
                         Object descButtonObject = XposedHelpers.callStaticMethod(jsonClass,"parseObject",descButtonJson,DescButtonDataClass);
                         //descButtonField.set(itemData,descButtonObject);
+
+                        Field adInfoField = Utils.selectField(itemDataClass,adInfoClass);
+                        if(adInfoField!=null){
+                            adInfoField.setAccessible(true);
+                            adInfoField.set(itemData,null);
+                        }
 
                         //添加up图标
                         //storyCardIconField.set(itemData,storyCardIconObject);
@@ -259,6 +298,8 @@ public class ManageHomePagePush extends FunctionsBase {
                             });
                         }
 
+
+
                         Field[] fields = ADVideoClassFieldCacheMap.get(itemDataClass);
                         if(fields[0]!=null){
                             fields[0].set(itemData,descButtonObject);
@@ -282,30 +323,28 @@ public class ManageHomePagePush extends FunctionsBase {
                         log("处理投钱视频");
                         log(ADVideoClassFieldCacheMap);
                         continue;
-                    }
+                    }*/
 
-                    //if(true){continue;}
 
-                    //处理大卡片 type:cm_double_v9:74 goto=ad_inline_av
-
+                    //处理广告大卡片 type:cm_double_v9:74 goto=ad_inline_av
+                    //可能是创作推广什么的 反正内容普遍低质 偏离用户偏好
                     /*
                     if(FilterBanner&&holderType.contains("cm_double")){
                         if(FilterAD){
                             list.remove(i);
                             continue;
                         }
-                        Object smallItemData = XposedHelpers.callStaticMethod(jsonClass,"parseObject",
-                                Utils.toJSONString(lpparam,itemData),
-                                smallCoverV2DataClass);
+                        Object smallItemData = Utils.fromJsonInGson(Utils.toJsonInGson(itemData),smallCoverV2DataClass);
                         trackIdField.set(smallItemData,"");
+                        cardTypeField.set(smallItemData,"small_cover_v2");
 
                         list.remove(i);
-                        //list.add(i,smallItemData);
+                        list.add(i,smallItemData);
                         continue;
 
                     }*/
 
-                    //
+
 
 
                     //大卡片视频转小卡 large_cover_v9 LargeCoverV9Data qa3.k
@@ -317,9 +356,9 @@ public class ManageHomePagePush extends FunctionsBase {
                         cardTypeField.set(smallItemData,"small_cover_v2");
 
                         String cardType = (String) XposedHelpers.callMethod(smallItemData,"getCardType");
-                        log("getCardType:"+cardType);
+                        //log("getCardType:"+cardType);
 
-                        Utils.printObjectFields(smallItemData);
+                        //Utils.printObjectFields(smallItemData);
 
                         addExtraDescButton(smallItemData);
 
