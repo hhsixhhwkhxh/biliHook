@@ -71,6 +71,8 @@ public class Utils {
 
     public static StringBuilder errorsBeforeInit = new StringBuilder();
 
+    private static LogManager logManager;
+
     public static void init(Activity activity,XC_LoadPackage.LoadPackageParam mlpparam)throws Throwable{
         MainActivityV2=activity;
         lpparam=mlpparam;
@@ -100,6 +102,12 @@ public class Utils {
         toJsonInGsonMethod = GsonClass.getMethod("toJson", Object.class);
         fromJsonInGsonMethod = GsonClass.getMethod("fromJson",String.class, Class.class);
         simpleGsonObject = GsonClass.getConstructor().newInstance();
+
+        if(BuildConfig.IS_DEBUG){
+            logManager = LogManager.getInstance(activity.getExternalFilesDir("biliHook"));
+        }
+
+
     }
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
         return (String)(toJSONStringMethod.invoke(null,o));
@@ -165,7 +173,7 @@ public class Utils {
     }
 
     public static Field selectFieldBySerializedName(Class<?> TargetClass,String name) throws Exception {
-        log(TargetClass);
+        //log(TargetClass);
         for(Field field:TargetClass.getDeclaredFields()){
 
             /*
@@ -371,15 +379,21 @@ public class Utils {
         return MainActivityV2.getResources().getIdentifier(id,"id", Entrance.TargetPackageName);
     }
     public static void log(Object content){
-        if(false){return;}
         if(content==null){content="日志为空";}
 
         XposedBridge.log(content.toString());
         Log.i("biliHook",content.toString());
+
+        if(BuildConfig.IS_DEBUG&&logManager!=null){
+            logManager.i("biliHook",content.toString());
+        }
+    }
+
+    public static void printBoundaryLine(){
+        log("--------------------------------------------");
     }
 
     public static void log_s(Object content){
-        if(false){return;}
         if(content==null){content="日志为空";}
         String str = content.toString();
         int maxLength = 750;

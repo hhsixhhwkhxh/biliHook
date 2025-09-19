@@ -3,36 +3,22 @@ package hhsixhhwkhxh.bilibili;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.content.res.XModuleResources;
-import android.content.res.XResForwarder;
-import android.content.res.XResources;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Bundle;
@@ -49,8 +35,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
 
@@ -58,6 +42,7 @@ import hhsixhhwkhxh.bilibili.function.HomePageSimplify;
 import hhsixhhwkhxh.bilibili.function.CommentOptimization;
 import hhsixhhwkhxh.bilibili.function.LivePageSimplify;
 import hhsixhhwkhxh.bilibili.function.ManageHomePagePush;
+import hhsixhhwkhxh.bilibili.function.ManageHomePagePushV2;
 import hhsixhhwkhxh.bilibili.function.ManageVideoDetailPagePush;
 import hhsixhhwkhxh.bilibili.function.ShareManagement;
 import hhsixhhwkhxh.bilibili.function.VideoDetailPageSimplify;
@@ -77,12 +62,10 @@ import org.luckypray.dexkit.result.ClassDataList;
 import org.luckypray.dexkit.result.FieldData;
 import org.luckypray.dexkit.result.FieldDataList;
 import org.luckypray.dexkit.result.MethodData;
-import org.luckypray.dexkit.result.MethodDataList;
 import org.luckypray.dexkit.util.OpCodeUtil;
 
 import hhsixhhwkhxh.bilibili.function.TestFunctionArea;
 import hhsixhhwkhxh.bilibili.function.UserCenterOptimization;
-import hhsixhhwkhxh.bilibili.BuildConfig;
 
 public class Entrance implements IXposedHookLoadPackage {
 
@@ -100,6 +83,8 @@ public class Entrance implements IXposedHookLoadPackage {
     public static final String TAG = "Entrance";
     private FunctionAdapter adapter;
 
+    private boolean preInitSucceed = false;
+
     static {
         System.loadLibrary("dexkit");
     }
@@ -114,18 +99,20 @@ public class Entrance implements IXposedHookLoadPackage {
             new TestFunctionArea().advanceRun(lpparam);
         }
 
-        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+        XC_MethodHook preInitHook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Context appContext = (Context) param.args[0];
+                Context appContext;
+                if(param.args.length==0){
+                    appContext = (Context) param.thisObject;
+                }else {
+                    appContext = (Context) param.args[0];
+                }
+
                 sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
                 Utils.sharedPreferences=sharedPreferences;
                 FunctionsBase.sharedPreferences=sharedPreferences;
-                /*
-                sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
-                if(!sharedPreferences.getBoolean("BanSwitchLiveByVerticalSlide",false)){
-                    return;
-                }*/
+
                 LivePageSimplify function = new LivePageSimplify();
                 function.context = appContext;
 
@@ -135,8 +122,23 @@ public class Entrance implements IXposedHookLoadPackage {
                     Utils.log("biliHook Function crashed: " + function.getClass().getSimpleName());
                     Utils.reportError(e);
                 }
+                preInitSucceed = true;
             }
-        });
+        };
+
+        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, preInitHook);
+        /*
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, preInitHook);
+        }else {
+            try{
+                Class<?> BiliAppClass = XposedHelpers.findClass("com.bilibili.gripper.BiliApp",lpparam.classLoader);
+                XposedHelpers.findAndHookMethod(BiliAppClass, "onCreate", preInitHook);
+            }catch (Exception e){
+                Utils.reportError(e);
+            }
+        }*/
+
 
 
         //如果是"tv.danmaku.bili.MainActivityV2" 正常从桌面打开app biliHook可以正常启动 然而在b站被其他应用程序拉活跳转时 MainActivityV2不会启动 此时模块功能就没有了
@@ -152,8 +154,16 @@ public class Entrance implements IXposedHookLoadPackage {
                     ModuleSetUp = true;
                     MainActivityV2 = (Activity) param.thisObject;
 
-                    Utils.init(MainActivityV2,lpparam);
+                    if(sharedPreferences==null){
+                        //这通常意味着上面借助Application.attach(Context)初始化失败了
+                        sharedPreferences=MainActivityV2.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
+                        FunctionsBase.sharedPreferences=sharedPreferences;
+                        Utils.sharedPreferences=sharedPreferences;
 
+                        preInitSucceed = false;
+                    }
+
+                    Utils.init(MainActivityV2,lpparam);
 
                     String apkPath = lpparam.appInfo.sourceDir;
                     int beforeVersion = sharedPreferences.getInt("CodeVersion", -1);
@@ -165,8 +175,10 @@ public class Entrance implements IXposedHookLoadPackage {
                     }
 
 
-                    //runFunctionSafely(new RemoveNavigationBarSign(), lpparam);
-                    runFunctionSafely(new ManageHomePagePush(), lpparam);
+                    //
+                    //runFunctionSafely(new ManageHomePagePush(), lpparam);
+                    runFunctionSafely(new ManageHomePagePushV2(), lpparam);
+
                     runFunctionSafely(new ManageVideoDetailPagePush(), lpparam);
                     runFunctionSafely(new VideoDetailPageSimplify(), lpparam);
                     runFunctionSafely(new BypassSplash(), lpparam);
@@ -174,9 +186,11 @@ public class Entrance implements IXposedHookLoadPackage {
                     runFunctionSafely(new CommentOptimization(), lpparam);
                     runFunctionSafely(new UserCenterOptimization(),lpparam);
                     runFunctionSafely(new ShareManagement(),lpparam);
+
                     if(BuildConfig.IS_DEBUG) {
                         runFunctionSafely(new TestFunctionArea(), lpparam);
                     }
+
                 }
             });
         
@@ -219,19 +233,36 @@ public class Entrance implements IXposedHookLoadPackage {
                     XposedHelpers.findAndHookMethod(ModuleSettingsActivityName,lpparam.classLoader,"onCreate",Bundle.class,new XC_MethodHook(){
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            param.args[0]=new Bundle();
+                            //param.args[0]=new Bundle();
+                            Activity activity = (Activity)param.thisObject;
+                            if(!activity.getIntent().getBooleanExtra("hook",false)){
+                                return;
+                            }
+                            Bundle bundle = (Bundle) param.args[0];
+                            if(bundle==null){
+                                param.args[0]=new Bundle();
+                            }
                         }
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             //log("after onCreate");
+
                             Activity activity = (Activity)param.thisObject;
+
+                            //Toast.makeText(activity,"after onCreate",Toast.LENGTH_SHORT).show();
+                            //XposedBridge.log("after onCreate");
+
                             if(activity.getIntent().getBooleanExtra("hook",false)){
                                 initSettingActivity(lpparam,activity);
                                 //Log.i(TAG,"initSettingActivity");
+                                //Toast.makeText(activity,"initSettingActivity",Toast.LENGTH_SHORT).show();
+                                //XposedBridge.log("initSettingActivity");
                             }
-                            //XposedHelpers.findAndHookMethod("com.bilibili.studio.uperbase.router.b",lpparam.classLoader,"a",Context.class,new XC_MethodHook(){});
-                            //XposedHelpers.findAndHookMethod("android.app.Activity",lpparam.classLoader,"finish",new XC_MethodHook(){});
-                        }});
+                        }
+                    });
+
+
+
                     button.setOnClickListener(new OnClickListener(){
                             @Override
                             public void onClick(View p1) {
@@ -346,8 +377,8 @@ public class Entrance implements IXposedHookLoadPackage {
         List<ListItem> HomePagePushfiltrationChildrenList = new ArrayList<>();
         HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤广告", "可能会过滤掉创作推广视频", "HomePagePushFilterAD"));
 
-            //HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
-            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", getTextWithFunctionPreposition("宽身位的卡片 视频会转生小卡片","test","test"), "HomePagePushFilterBanner"));
+            HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", "宽身位的卡片 视频会转生小卡片", "HomePagePushFilterBanner"));
+            //HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤横幅", getTextWithFunctionPreposition("宽身位的卡片 视频会转生小卡片","test","test"), "HomePagePushFilterBanner"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤直播", "不会显示推送直播", "HomePagePushFilterLive"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤游戏", "总有些游戏推荐", "HomePagePushFilterGame"));
             HomePagePushfiltrationChildrenList.add(new SwitchFunction("过滤bangumi", "哔哩哔哩国漫", "HomePagePushFilterBangumi"));
@@ -365,6 +396,8 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("禁用收藏按钮单击直接收藏", "开启后单击收藏会先选收藏夹 而不是直接进入默认收藏夹", "BanDirectFavorite"));
         ItemsList.add(new SwitchFunction("禁用高级乞讨弹幕", "屏蔽容易误触的三连和投票弹窗弹幕\n代码参考github项目FuckBilibiliVote", "BanBeggingDanmaku"));
         ItemsList.add(new SwitchFunction("隐藏竖屏视频入口", "横板视频右下角有两种全屏方式:竖屏全屏和横屏全屏 此功能隐藏了前者入口", "HideVerticalVideoEntrance"));
+        ItemsList.add(new SwitchFunction("强制使用旧版评论区", "绕过云控  *笨拙地*", "ForceEnableOldComments"));
+
 
         ItemsList.add(new GroupTitle("开屏",true));
         ItemsList.add(new SwitchFunction("去除开屏广告", "和开屏battle了好多次 牢屏别打复活赛了", "BypassSplash"));
@@ -372,10 +405,15 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("评论简化",true));
         ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒", "ForceCommentsToShowAbsoluteTime"));
 
-        ItemsList.add(new GroupTitle("直播页面简化",true));
-        ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能我还出了逆向教程", "BanSwitchLiveByVerticalSlide"));
-        ItemsList.add(new SwitchFunction("隐藏他人直播间礼物全局引流弹幕", "某某投喂某某n个梦幻游乐园/浪漫城堡/深海歌姬，点击前往TA的房间吧！", "HideOthersGiftBroadcastDanmaku"));
-        ItemsList.add(new SwitchFunction("隐藏右下角可折叠广告挂件", "通常是一个可点击的轮播图 不知道有没有误伤", "HideLiveNormalBanner"));
+
+        if(preInitSucceed){
+            ItemsList.add(new GroupTitle("直播页面简化",true));
+            ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能我还出了逆向教程", "BanSwitchLiveByVerticalSlide"));
+            ItemsList.add(new SwitchFunction("隐藏他人直播间礼物全局引流弹幕", "某某投喂某某n个梦幻游乐园/浪漫城堡/深海歌姬，点击前往TA的房间吧！", "HideOthersGiftBroadcastDanmaku"));
+            ItemsList.add(new SwitchFunction("隐藏右下角可折叠广告挂件", "通常是一个可点击的轮播图 不知道有没有误伤", "HideLiveNormalBanner"));
+        }else{
+            ItemsList.add(new Sign("直播页面简化(不可用)","biliHook预初始化失败",true));
+        }
 
 
         ItemsList.add(new GroupTitle("个人页简化",true));
@@ -417,6 +455,16 @@ public class Entrance implements IXposedHookLoadPackage {
                 dialog.show();
             }
         }));
+
+
+        if(BuildConfig.IS_DEBUG){
+            ItemsList.add(new ButtonFunction("BiliEnvActivity","测试Activity","",new FunctionOnClickListener(){
+                public void onClick(){
+                    activity.startActivity(new Intent(activity,XposedHelpers.findClass("com.bilibili.bilienv.BiliEnvActivity",lpparam.classLoader)));
+                }
+            }));
+        }
+
 
 
         ItemsList.add(new ButtonFunction("考古","根据uid查看注销用户的动态","SweepGrave",new FunctionOnClickListener(){

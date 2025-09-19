@@ -19,8 +19,10 @@ import java.lang.reflect.ParameterizedType;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XResources;
 import android.graphics.Canvas;
@@ -76,8 +78,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import android.os.Handler;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +93,10 @@ public class TestFunctionArea extends FunctionsBase {
 /*
     这里是功能成熟前的测试的地方 有许多废弃代码
     测码
+
+    在某些情况下 log方法有不同程度的漏日志 甚至在某处代码往后日志不再打印
+    TestFunctionArea类因为执行优先级低 日志输出更可能在此之前就被截断 是重灾区
+    可复现性差 不清楚原因 匪夷所思
 */
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -142,7 +150,12 @@ public class TestFunctionArea extends FunctionsBase {
         //test51(lpparam);
         //test53(lpparam);
         //test54(lpparam);
-        test55(lpparam);
+        //test55(lpparam);
+        //test56(lpparam);
+        //test57(lpparam);
+        //test58(lpparam);
+        //test59(lpparam);
+        //test61(lpparam);
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -154,8 +167,461 @@ public class TestFunctionArea extends FunctionsBase {
         //test44(lpparam);
         //test48(lpparam);
         //test52(lpparam);
+        //test60(lpparam);
+        //test59(lpparam);
+        //test61(lpparam);
     }
     //以下代码基于8.56.0版本
+
+
+    public void test61(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
+        XposedHelpers.findAndHookMethod("kx.n0", lpparam.classLoader, "c", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                List list = (List) param.getResult();
+                if(list.isEmpty()){return;}
+                Utils.printBoundaryLine();
+                for(Object o:list){
+                    Utils.log(o);
+                }
+                Utils.printBoundaryLine();
+            }
+        });
+
+         */
+
+
+
+        /*
+        Class<?> commentConfigClass = XposedHelpers.findClass("ex.k",lpparam.classLoader);
+        for(Method method:commentConfigClass.getMethods()){
+            if(!method.getReturnType().equals(boolean.class)){continue;}
+            if(method.getName().length()!=1){continue;}
+            XposedBridge.hookMethod(method, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    param.setResult(false);
+                    Utils.log("test61 方法"+method.getName());
+                }
+            });
+        }
+
+         */
+
+
+
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.DeviceDecision", lpparam.classLoader, "getBoolean", String.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                String ddName = (String) param.args[0];
+                if(ddName!=null&&ddName.startsWith("comment.next_appearance")){
+                    param.setResult(false);
+                }
+            }
+
+        });
+
+
+        /*
+        XposedHelpers.findAndHookMethod("kntr.base.dd.DDContainer", lpparam.classLoader, "boolForKey", String.class, boolean.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.log("f75.f class:"+XposedHelpers.getObjectField(param.thisObject,"d").getClass().getName());
+                //f75.f class:f75.c
+            }
+
+        });*/
+
+        /*
+        XposedHelpers.findAndHookMethod("f75.c", lpparam.classLoader, "a", String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Utils.log("f75.f class:"+param.getResult().getClass().getName());
+                //f75.f class:f75.b
+            }
+        });
+
+         */
+
+
+        /*
+        XposedHelpers.findAndHookConstructor("f75.b", lpparam.classLoader, Boolean.class, String.class, boolean.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.printStackTrace(param.args[1].toString());
+            }
+
+        });
+
+         */
+
+        /*
+
+        XposedHelpers.findAndHookMethod("f75.c", lpparam.classLoader, "a", String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.log("this.a class:"+XposedHelpers.getObjectField(param.thisObject,"a").getClass().getName());
+                //this.a class:kntr.base.dd.internal.data.b
+            }
+
+        });
+
+         */
+
+
+        /*
+        XposedHelpers.findAndHookConstructor("kntr.base.config.SharedPreferences", lpparam.classLoader, String.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                Utils.log("sp name:"+param.args[0]);
+            }
+
+        });
+
+         */
+    }
+
+
+    public void test60(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        /*
+        Class<?> ConfigManagerClass = XposedHelpers.findClass("com.bilibili.lib.blconfig.ConfigManager",lpparam.classLoader);
+        Object CompanionObject = XposedHelpers.getStaticObjectField(ConfigManagerClass,"Companion");
+        Object configObject = XposedHelpers.callMethod(CompanionObject,"config");
+
+        log("configObject class:"+configObject.getClass().getName());
+        //2025-09-09 20:38:01.479 [INFO] biliHook: TestFunctionArea configObject class:com.bilibili.lib.blconfig.internal.OverrideConfig
+
+
+         */
+
+        //ConfigManager.UserDelegate->com.bilibili.gripper.container.blconfig.l
+
+
+        //need pre
+        XposedHelpers.findAndHookConstructor("com.bilibili.gripper.container.blconfig.l", lpparam.classLoader, "com.bilibili.lib.dd.GDeviceDecision", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //log("GDeviceDecision class:"+param.args[0].getClass().getName());
+                //[ 2025-09-09T20:49:54.818    10338: 24767: 25152 I/LSPosed-Bridge  ] TestFunctionArea GDeviceDecision class:com.bilibili.lib.dd.b
+                //GDeviceDecision->com.bilibili.lib.dd.b
+            }
+
+        });
+        /*com.bilibili.lib.dd.b
+
+        private static m0 b;
+
+        public String dd(@NotNull String str, @Nullable String str2) {
+            return (String) b.getDd().get(str, str2, (Function1) null);
+        }
+        */
+
+
+        /*com.bilibili.lib.dd.internal.m0
+
+        private final DDContractImpl2 a = new DDContractImpl2();
+
+        public Contract<String> getDd() {
+            return ddOf(q.a.l());
+        }
+
+        public Contract<String> ddOf(@NotNull Env env) {
+            if (!Intrinsics.areEqual(this.a.c().env(), env.getName())) {
+                this.a.c().changeEnv(env.getName());
+            }
+            return this.a;
+        }
+        */
+
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.internal.m0", lpparam.classLoader, "getDd", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                //log("Contract class:"+param.getResult().getClass().getName());
+                //2025-09-09 21:05:54.146 [INFO] biliHook: TestFunctionArea Contract class:com.bilibili.lib.dd.internal.DDContractImpl2
+                //Contract->com.bilibili.lib.dd.internal.DDContractImpl2
+            }
+        });
+
+        //kntr.base.dd.DDContainer
+
+        List<String> ddUsed = new ArrayList<>();
+        XposedHelpers.findAndHookMethod("kntr.base.dd.DDContainer", lpparam.classLoader, "stringForKey", String.class, String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                String name = (String) param.args[0];
+                if(!ddUsed.contains(name)){
+                    ddUsed.add(name);
+                    //log("dd "+name+" def:"+param.args[1]+" res:"+param.getResult());
+                    if(name.equals("cm.debug_user_white_list")){
+                        //Utils.printStackTrace("cm.debug_user_white_list");
+                    }
+                }
+            }
+        });
+
+
+        XposedHelpers.findAndHookMethod("com.bilibili.adcommon.config.AdConfigHelper", lpparam.classLoader, "getDebugUsers", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                List<String> list = (List<String>) param.getResult();
+                //list.add("394924834");
+                param.setResult(list);
+            }
+        });
+
+    }
+
+    //学习模式的探索
+    public void test59(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+
+
+        //搜索页面删除返回箭头
+        XposedHelpers.findAndHookMethod("com.bilibili.search2.main.BiliMainSearchActivity", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Activity activity = (Activity) param.thisObject;
+                ImageView imageView = activity.findViewById(Utils.getViewID("iv_back_arrow"));
+                imageView.setVisibility(View.GONE);
+            }
+
+
+        });
+
+
+        //一刀切hook点 不选 搜索历史记录也会没
+        XposedHelpers.findAndHookMethod("bk3.d", lpparam.classLoader, "fillSectionList", "tv.danmaku.bili.widget.section.adapter.BaseSectionAdapter$SectionManager", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+            }
+        });
+
+
+        Class<?> squareTypesClass = XposedHelpers.findClass("com.bilibili.search2.discover.SquareTypes",lpparam.classLoader);
+        Object historyTypeObject = XposedHelpers.getStaticObjectField(squareTypesClass,"HISTORY");
+        String historyTypeString =  (String) XposedHelpers.callMethod(historyTypeObject,"getType");
+
+
+        //过滤热搜等板块 只留下历史记录
+        XposedHelpers.findAndHookMethod("com.bilibili.search2.discover.q", lpparam.classLoader, "f2", java.util.List.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                List list = (List) param.args[0];
+                if(list==null||list.isEmpty()){return;}
+
+                for (int i = list.size()-1; i >= 0; i--) {
+                    Object SearchSquareTypeObject = list.get(i);
+                    String type = (String) XposedHelpers.callMethod(SearchSquareTypeObject,"getType");
+                    if(!type.equals(historyTypeString)){
+                        list.remove(i);
+                    }
+                }
+
+            }
+
+        });
+
+
+        //hook点太浅
+        /*
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.widget.SearchView", lpparam.classLoader, "setQueryHint", CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(null);
+            }
+
+        });
+         */
+        XposedHelpers.findAndHookMethod("com.bilibili.search2.api.DefaultKeyword", lpparam.classLoader, "getShow", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult("");
+            }
+
+        });
+
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.basic.BaseMainFrameFragment", lpparam.classLoader, "onCreateView", android.view.LayoutInflater.class, android.view.ViewGroup.class, android.os.Bundle.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                View view = (View) param.getResult();
+                view.setContentDescription("test59 fragment base layout");
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.basic.BaseMainFrameFragment", lpparam.classLoader, "onViewCreated", android.view.View.class, android.os.Bundle.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                ViewGroup coordinatorLayout = (ViewGroup) param.args[0];
+                ViewGroup contentFrameLayout = coordinatorLayout.findViewById(Utils.getViewID("content"));
+                //contentFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+
+        for(Method method: ScrollView.class.getMethods()){
+            if(method.getName().equals("addView")){
+                XposedBridge.hookMethod(method, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        View childView = (View) param.args[0];
+                        if(childView.getId()==0x7f090965){
+                            Utils.printStackTrace("test59 content add");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+
+
+
+    public void test58(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //Lcom/bilibili/lib/dblconfig/DblFragment;->Io(Landroid/widget/EditText;Landroid/widget/TextView;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+        Class<?> DeviceDecisionClass = XposedHelpers.findClass("com.bilibili.lib.dd.DeviceDecision",lpparam.classLoader);
+        Object DeviceDecisionObject = XposedHelpers.getStaticObjectField(DeviceDecisionClass,"INSTANCE");
+        String str = (String) XposedHelpers.callMethod(DeviceDecisionObject,"cloneDD","props");
+
+        //log("test58:"+str);
+
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.DeviceDecision", lpparam.classLoader, "a", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Object gDeviceDecisionObject = XposedHelpers.getObjectField(param.thisObject,"a");
+                log("gDeviceDecisionObject Class:"+gDeviceDecisionObject.getClass().getName());
+                //2025-09-04 11:01:51.450 [INFO] biliHook: TestFunctionArea gDeviceDecisionObject Class:com.bilibili.lib.dd.b
+            }
+        });
+    }
+
+    //云控研究
+    public void test57(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //代码参考Lcom/bilibili/lib/dblconfig/DblFragment;->To()V
+        Class<?> BLKVClass = XposedHelpers.findClass("com.bilibili.lib.blkv.BLKV",lpparam.classLoader);
+        Class<?> FoundationAliasClass = XposedHelpers.findClass("com.bilibili.lib.foundation.FoundationAlias",lpparam.classLoader);
+        Application fapp =(Application) XposedHelpers.callStaticMethod(FoundationAliasClass,"getFapp");
+
+        Class<?> EnvManagerClass = XposedHelpers.findClass("com.bilibili.lib.foundation.env.EnvManager",lpparam.classLoader);
+        Object envObject = XposedHelpers.callStaticMethod(EnvManagerClass,"getCurrent");
+        String label = (String) XposedHelpers.callMethod(envObject,"getLabel");
+        //可能是prod(生产环境)或者test(测试环境)
+
+        File targetFile = new File(fapp.getDir("foundation", 0), label + "/blconfig/ab.sp");
+
+        Class<?> ConfigManagerClass = XposedHelpers.findClass("com.bilibili.lib.blconfig.ConfigManager",lpparam.classLoader);
+        Object CompanionObject = XposedHelpers.getStaticObjectField(ConfigManagerClass,"Companion");
+        Object FeatureFlagContractObject = XposedHelpers.callMethod(CompanionObject,"ab2");
+
+        log("FeatureFlagContractObject Class:"+FeatureFlagContractObject.getClass().getName());
+        //com.bilibili.lib.blconfig.internal.OverrideFF
+        //SharedPrefX bLSharedPreferences$default = BLKV.getBLSharedPreferences$default(FoundationAlias.getFapp(), new File(FoundationAlias.getFapp().getDir("foundation", 0), EnvManager.getCurrent().getLabel() + "/blconfig/ab.sp"), false, 0, 6, (Object) null);
+
+        //SharedPreferences bLSharedPreferences$default = (SharedPreferences) XposedHelpers.callStaticMethod(BLKVClass,"getBLSharedPreferences$default",fapp, new File(fapp.getDir("foundation", 0), label + "/blconfig/ab.sp"), false, 0, 6, (Object) null);
+
+        Object rawKVObject = XposedHelpers.callStaticMethod(BLKVClass,"toKvs$default",targetFile,false,0,6,(Object) null);
+
+        Map<String, ?> map = (Map<String, ?>) XposedHelpers.callMethod(rawKVObject,"getAll");
+        log("map size"+map.size());
+        //log(map.toString());
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+
+            //log("键: " + entry.getKey() + ", 值: " + entry.getValue());
+        }
+        //com.bilibili.lib.blkv.internal.kv.KVs
+        //log("rawKVObject class:"+rawKVObject.getClass().getName());
+        //log("test57:comment.nft_interaction_enable:"+bLSharedPreferences$default.getString("comment.nft_interaction_enable","null"));//false
+        //log("test57:push_vivo_sdk:"+bLSharedPreferences$default.getString("push_vivo_sdk","null"));//true
+        //log("test57:http_dns_reporter:"+bLSharedPreferences$default.getString("http_dns_reporter","null"));//false
+
+        List<String> ffUsed = new ArrayList<>();
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.blconfig.internal.OverrideFF", lpparam.classLoader, "getWithDefault", String.class, boolean.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                String name = (String) param.args[0];
+                boolean returnValue = (Boolean) param.getResult();
+                boolean defaultValue = (Boolean) param.args[1];
+
+                if(!ffUsed.contains(name)){
+                    ffUsed.add(name);
+                    log(name+" r:"+returnValue+" d:"+defaultValue);
+                }
+                //enable ff mod
+                /*
+                if(name.startsWith("ff_")&&!name.startsWith("ff_a")&&!name.startsWith("ff_o")&&!name.startsWith("ff_i")&&!name.startsWith("ff_m")){
+                    log(name+" r:"+returnValue+" d:"+defaultValue);
+                    //param.setResult(false);
+                }
+                if(name.startsWith("ff_e")){
+                    param.setResult(false);
+                }
+
+                 */
+                ///param.setResult(false);
+
+                //ff_key_use_new_pegasus
+                if(name.contains("ff_key_use_new_pegasus")){
+                    param.setResult(false);
+                    //log("ff_key_use_new_pegasus false");
+                    Utils.printStackTrace("ff_key_use_new_pegasus false");
+                }
+            }
+        });
+    }
+
+    //剪贴版跳转研究
+    public void test56(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("android.content.ClipData$Item", lpparam.classLoader, "getText", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                CharSequence charSequence = (CharSequence) param.getResult();
+                if(charSequence==null){
+                    return;
+                }
+                String result = charSequence.toString();
+                Utils.printStackTrace("test56:"+result);
+            }
+
+        });
+    }
 
     public void test55(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         //private static final void m(c cVar, View view)

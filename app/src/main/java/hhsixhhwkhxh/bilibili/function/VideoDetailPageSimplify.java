@@ -26,6 +26,7 @@ public class VideoDetailPageSimplify extends FunctionsBase {
         boolean BanDirectFavorite = sharedPreferences.getBoolean("BanDirectFavorite",false);
         boolean BanBeggingDanmaku =  sharedPreferences.getBoolean("BanBeggingDanmaku",false);
         boolean HideVerticalVideoEntrance = sharedPreferences.getBoolean("HideVerticalVideoEntrance",false);
+        boolean ForceEnableOldComments = sharedPreferences.getBoolean("ForceEnableOldComments",false);
 
         if(VideoDetailPageRemoveAD){
             VideoDetailPageRemoveAD(lpparam);
@@ -44,6 +45,10 @@ public class VideoDetailPageSimplify extends FunctionsBase {
 
         if(HideVerticalVideoEntrance){
             HideVerticalVideoEntrance(lpparam);
+        }
+
+        if(ForceEnableOldComments){
+            ForceEnableOldComments(lpparam);
         }
 
     }
@@ -232,6 +237,20 @@ public class VideoDetailPageSimplify extends FunctionsBase {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 param.args[0] = View.GONE;
+            }
+
+        });
+    }
+
+    public void ForceEnableOldComments(XC_LoadPackage.LoadPackageParam lpparam){
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.DeviceDecision", lpparam.classLoader, "getBoolean", String.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                String ddName = (String) param.args[0];
+                if(ddName!=null&&ddName.startsWith("comment.next_appearance")){
+                    param.setResult(false);
+                }
             }
 
         });
