@@ -22,6 +22,8 @@ public class BypassSplash extends FunctionsBase {
         //Ltv/danmaku/bili/MainActivityV2;->T5(Landroid/os/Bundle;)V  this.L = (FrameLayout) findViewById(i0.e9); // Splash 容器
         //Ltv/danmaku/bili/MainActivityV2;->m6(Ltv/danmaku/bili/ui/splash/ad/model/Splash;Z)Z 显示广告页
         //阻止哔哩哔哩启动时的开屏广告
+
+        /*
         Class<?> MainActivityV2Class = XposedHelpers.findClass("tv.danmaku.bili.MainActivityV2",lpparam.classLoader);
         Class<?> SplashClass = XposedHelpers.findClass("tv.danmaku.bili.ui.splash.ad.model.Splash",lpparam.classLoader);
         //Ltv/danmaku/bili/MainActivityV2;->m6(Ltv/danmaku/bili/ui/splash/ad/model/Splash;Z)Z
@@ -75,8 +77,40 @@ public class BypassSplash extends FunctionsBase {
                 activity.finish();
             }
 
-        });
+        });*/
 
+
+        //4-9 update新的屏蔽逻辑
+        //阻止哔哩哔哩启动时的开屏广告
+        final Class<?> MainActivitySplashComponentExtKtClass = XposedHelpers.findClass("tv.danmaku.bili.MainActivitySplashComponentExtKt",lpparam.classLoader);
+        final Class<?> SplashOrderClass = XposedHelpers.findClass("tv.danmaku.bili.splash.ad.model.SplashOrder",lpparam.classLoader);
+        final Class<?> MainActivityV2Class = XposedHelpers.findClass("tv.danmaku.bili.MainActivityV2",lpparam.classLoader);
+        Method iMethod = Utils.selectMethod(MainActivitySplashComponentExtKtClass,boolean.class,MainActivityV2Class,SplashOrderClass,boolean.class);
+        if(iMethod==null){
+            Utils.reportError("BypassSplash中iMethod为空");
+            return;
+        }
+        XposedBridge.hookMethod(iMethod, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.args[1] = null;
+            }
+        });
+        //生命周期广告
+        final Class<?> SplashManagerClass = XposedHelpers.findClass("tv.danmaku.bili.splash.ad.core.SplashManager",lpparam.classLoader);
+        Method aMethod = Utils.selectMethod(SplashManagerClass,void.class,Activity.class);
+        //Ltv/danmaku/bili/splash/ad/core/SplashManager;->a(Landroid/app/Activity;)V
+        if(aMethod==null){
+            Utils.reportError("BypassSplash中aMethod为空");
+            return;
+        }
+        XposedBridge.hookMethod(aMethod, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(null);
+            }
+        });
     }
     
     

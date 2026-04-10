@@ -76,6 +76,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import android.os.Handler;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -156,6 +157,10 @@ public class TestFunctionArea extends FunctionsBase {
         //test58(lpparam);
         //test59(lpparam);
         //test61(lpparam);
+        //test63(lpparam);
+        //test64(lpparam);
+
+        
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -170,8 +175,89 @@ public class TestFunctionArea extends FunctionsBase {
         //test60(lpparam);
         //test59(lpparam);
         //test61(lpparam);
+        //test62(lpparam);
+
     }
     //以下代码基于8.56.0版本
+
+    //显示禁言结束时间
+    public void test64(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.getDefault());
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.ui.v0", lpparam.classLoader, "h", "com.bilibili.app.authorspace.api.BiliMemberCard", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                TextView silenceDescTextView =(TextView) XposedHelpers.getObjectField(param.thisObject,"c");
+                if(silenceDescTextView==null){
+                    return;
+                }
+                long silenceEndTime =(long) XposedHelpers.getObjectField(param.args[0],"silenceEndTime");
+                silenceDescTextView.append(" 封禁至"+sdf.format(new Date(silenceEndTime)));
+                log("test64"+Utils.toJSONString(lpparam,param.args[0]));
+                Utils.copyText(Utils.toJSONString(lpparam,param.args[0]));
+            }
+        });
+    }
+
+
+    public void test63(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
+        Context context = null;
+        WindowManager mWindowManager = (WindowManager) context.getSystemService((String) null);
+        mWindowManager.addView(null, null);
+
+         */
+
+        int a = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+
+        Object instance = XposedHelpers.getStaticObjectField(XposedHelpers.findClass("ow.n",lpparam.classLoader),"a");
+
+                log(Utils.getMainActivity());
+                log( XposedHelpers.callMethod(instance,"f",Utils.getMainActivity(),"test",null));
+
+    }
+
+
+    public void test62(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        final boolean[] hasPrintedList = {false};
+        XposedHelpers.findAndHookMethod("kntr.base.dd.internal.data.CoreData", lpparam.classLoader, "x", "h75.h", boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                boolean updateFile = (Boolean) param.args[1];
+                Object hVarObject = param.args[0];
+                List list = (List) XposedHelpers.callMethod(hVarObject,"getList");
+                if(!hasPrintedList[0]){
+                    hasPrintedList[0] = true;
+                    for(Object o:list){
+                        //Utils.log(o.getClass().getName());//h75.f
+                    }
+                }
+                //Utils.log(list);
+                //Utils.printStackTrace("test62");
+            }
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+            }
+        });
+
+
+        Class<?> ddValueClass = XposedHelpers.findClass("f75.b",lpparam.classLoader);
+         XposedHelpers.newInstance(ddValueClass,Boolean.TRUE,"",false,false);
+        XposedHelpers.findAndHookConstructor("f75.c", lpparam.classLoader, "kntr.base.dd.internal.data.d", "g75.a", new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+            }
+        });
+    }
 
 
     public void test61(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
