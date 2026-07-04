@@ -17,6 +17,19 @@ public abstract class FunctionsBase {
             mUnhook.unhook();
         }
     };
+
+    @FunctionalInterface
+    public interface SingleParameterFunction<T> {
+        void run(T param) throws Throwable;
+    }
+
+    public <T> void safeRun(SingleParameterFunction<T> task, T param, String name) {
+        try {
+            task.run(param);
+        } catch (Throwable e) {
+            Utils.reportError(name,e);
+        }
+    }
     public void log(Object content){
         Utils.log(this.getClass().getSimpleName()+ " " + content);
     }

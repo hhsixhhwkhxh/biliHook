@@ -9,6 +9,7 @@ import de.robv.android.xposed.XC_MethodHook;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class ManageHomePagePushV2 extends FunctionsBase {
         }
         cardTypeField.setAccessible(true);
 
-        Class<?> PegasusResponseClass = XposedHelpers.findClass("com.bilibili.pegasus.data.base.PegasusResponse",lpparam.classLoader);
+        final Class<?> PegasusResponseClass = XposedHelpers.findClass("com.bilibili.pegasus.data.base.PegasusResponse",lpparam.classLoader);
         final Class<?> InterestChooseClass = XposedHelpers.findClass("com.bilibili.pegasus.data.interestchoose.InterestChoose",lpparam.classLoader);
         Constructor<?> targetConstructor = null;
         for(Constructor<?> constructor:PegasusResponseClass.getConstructors()){
@@ -116,6 +117,11 @@ public class ManageHomePagePushV2 extends FunctionsBase {
         }
 
 
+        final Class<?> PegasusHolderDataClass = XposedHelpers.findClass("com.bilibili.pegasus.PegasusHolderData",lpparam.classLoader);
+        final Method getHolderTypeMethod = PegasusHolderDataClass.getMethod("getHolderType");
+
+
+
 
         XposedBridge.hookMethod(targetConstructor, new XC_MethodHook() {
             @Override
@@ -131,8 +137,9 @@ public class ManageHomePagePushV2 extends FunctionsBase {
 
                     Object itemData = list.get(i);
                     Class<?> itemDataClass = itemData.getClass();
-                    String holderType = (String) XposedHelpers.callMethod(itemData,"getHolderType");
-
+                    //com.bilibili.pegasus.PegasusHolderData
+                    //String holderType = (String) XposedHelpers.callMethod(itemData,"getHolderType");
+                    String holderType = (String) getHolderTypeMethod.invoke(itemData);
 
                     //Utils.log_s(itemData.toString());
 

@@ -17,13 +17,13 @@ public class CommentOptimization extends FunctionsBase {
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if(!sharedPreferences.getBoolean("ForceCommentsToShowAbsoluteTime",false)){return;}
-        Method cMethod = Utils.getDeConfusionMethod("com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod",lpparam.classLoader);
-        if(cMethod==null){
-            Utils.reportError("CommentOptimization com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod为空");
+        Method aMethod = Utils.getDeConfusionMethod("com_bilibili_app_comment3_data_model_CommentItem$e$a_aMethod",lpparam.classLoader);
+        if(aMethod==null){
+            Utils.reportError("CommentOptimization com_bilibili_app_comment3_data_model_CommentItem$e$a_aMethod为空");
             return;
         }
 
-        Field timestampField = Utils.selectField(cMethod.getDeclaringClass(), Long.class);
+        Field timestampField = Utils.selectField(aMethod.getDeclaringClass(), Long.class);
         if(timestampField==null){
             Utils.reportError("CommentOptimization timestampField为空");
             return;
@@ -32,7 +32,7 @@ public class CommentOptimization extends FunctionsBase {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.getDefault());
 
-        UnhooksList.add(XposedBridge.hookMethod(cMethod, new XC_MethodHook() {
+        UnhooksList.add(XposedBridge.hookMethod(aMethod, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);

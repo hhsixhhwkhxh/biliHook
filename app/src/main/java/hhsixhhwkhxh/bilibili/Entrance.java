@@ -19,6 +19,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
@@ -52,11 +55,14 @@ import org.luckypray.dexkit.DexKitBridge;
 import org.luckypray.dexkit.query.FindClass;
 import org.luckypray.dexkit.query.FindField;
 import org.luckypray.dexkit.query.FindMethod;
+import org.luckypray.dexkit.query.enums.MatchType;
+import org.luckypray.dexkit.query.enums.StringMatchType;
 import org.luckypray.dexkit.query.matchers.ClassMatcher;
 import org.luckypray.dexkit.query.matchers.FieldMatcher;
 import org.luckypray.dexkit.query.matchers.FieldsMatcher;
 import org.luckypray.dexkit.query.matchers.MethodMatcher;
 import org.luckypray.dexkit.query.matchers.base.OpCodesMatcher;
+import org.luckypray.dexkit.query.matchers.base.StringMatcher;
 import org.luckypray.dexkit.result.ClassData;
 import org.luckypray.dexkit.result.ClassDataList;
 import org.luckypray.dexkit.result.FieldData;
@@ -117,7 +123,7 @@ public class Entrance implements IXposedHookLoadPackage {
                 function.context = appContext;
 
                 try {
-                    function.run(lpparam);
+                    //function.run(lpparam);
                 } catch (Throwable e) {
                     Utils.log("biliHook Function crashed: " + function.getClass().getSimpleName());
                     Utils.reportError(e);
@@ -167,16 +173,17 @@ public class Entrance implements IXposedHookLoadPackage {
 
                     String apkPath = lpparam.appInfo.sourceDir;
                     int beforeVersion = sharedPreferences.getInt("CodeVersion", -1);
-                    if(beforeVersion!=Utils.getAppVersionCode(MainActivityV2)){
+                    //if(beforeVersion!=Utils.getAppVersionCode(MainActivityV2)){
                         Toast.makeText(MainActivityV2, "模块反混淆初始化...", Toast.LENGTH_SHORT).show();
                         //initNeededMethods(apkPath,classLoader);
                         initResolveConfusionMethods(apkPath,lpparam.classLoader);
                         //Toast.makeText(context, "模块初始化成功", Toast.LENGTH_SHORT).show();
-                    }
+                    //}
 
 
                     //
                     //runFunctionSafely(new ManageHomePagePush(), lpparam);
+
                     runFunctionSafely(new ManageHomePagePushV2(), lpparam);
 
                     runFunctionSafely(new ManageVideoDetailPagePush(), lpparam);
@@ -185,7 +192,7 @@ public class Entrance implements IXposedHookLoadPackage {
                     runFunctionSafely(new HomePageSimplify(), lpparam);
                     runFunctionSafely(new CommentOptimization(), lpparam);
                     runFunctionSafely(new UserCenterOptimization(),lpparam);
-                    runFunctionSafely(new ShareManagement(),lpparam);
+                    //runFunctionSafely(new ShareManagement(),lpparam);
 
                     if(BuildConfig.IS_DEBUG) {
                         runFunctionSafely(new TestFunctionArea(), lpparam);
@@ -337,7 +344,7 @@ public class Entrance implements IXposedHookLoadPackage {
 
 
         Intent GoToGithubPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hhsixhhwkhxh/biliHook/"));
-        ItemsList.add(new ButtonFunction("壁虎"+BuildConfig.VERSION_NAME+" 适配8.56.0","开源模块 点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
+        ItemsList.add(new ButtonFunction("壁虎"+BuildConfig.VERSION_NAME+" 适配9.0.0","开源模块 点击跳转github页","GoToGithubPage",new FunctionOnClickListener(){
             public void onClick(){
                 try{
                     activity.startActivity(GoToGithubPageIntent);
@@ -397,6 +404,8 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new SwitchFunction("禁用高级乞讨弹幕", "屏蔽容易误触的三连和投票弹窗弹幕\n代码参考github项目FuckBilibiliVote", "BanBeggingDanmaku"));
         ItemsList.add(new SwitchFunction("隐藏竖屏视频入口", "横板视频右下角有两种全屏方式:竖屏全屏和横屏全屏 此功能隐藏了前者入口", "HideVerticalVideoEntrance"));
         ItemsList.add(new SwitchFunction("强制使用旧版评论区", "绕过云控  *笨拙地*", "ForceEnableOldComments"));
+        ItemsList.add(new SwitchFunction("屏蔽暂停倒计时广告", "\"B站未来有可能会倒闭，但绝不会变质\"", "BanPauseCountdownAD"));
+
 
 
         ItemsList.add(new GroupTitle("开屏",true));
@@ -405,7 +414,8 @@ public class Entrance implements IXposedHookLoadPackage {
         ItemsList.add(new GroupTitle("评论简化",true));
         ItemsList.add(new SwitchFunction("强制评论显示绝对时间", "禁用相对时间(刚刚/x小时前/昨天)仿网页端 精确到秒", "ForceCommentsToShowAbsoluteTime"));
 
-
+        //不再维护
+        /*
         if(preInitSucceed){
             ItemsList.add(new GroupTitle("直播页面简化",true));
             ItemsList.add(new SwitchFunction("禁止上下滑动切换直播间", "这个功能我还出了逆向教程", "BanSwitchLiveByVerticalSlide"));
@@ -413,7 +423,7 @@ public class Entrance implements IXposedHookLoadPackage {
             ItemsList.add(new SwitchFunction("隐藏右下角可折叠广告挂件", "通常是一个可点击的轮播图 不知道有没有误伤", "HideLiveNormalBanner"));
         }else{
             ItemsList.add(new Sign("直播页面简化(不可用)","biliHook预初始化失败",true));
-        }
+        }*/
 
 
         ItemsList.add(new GroupTitle("个人页简化",true));
@@ -602,30 +612,12 @@ public class Entrance implements IXposedHookLoadPackage {
 
             editor.putLong("BuildTime",BuildConfig.BUILD_TIME);
 
-            StringBuilder stringBuilder = new StringBuilder();
 
-            /*
-            这是BypassSplash所用到的部分方法(m6)和变量(L) 这两个虽然被混淆 但是可以通过简单的Utils提供的筛选方法反混淆 所以这里不通过dexkit查找它们
-            List<ClassData> MainActivityV2Classes =  bridge.findClass(FindClass.create().matcher(new ClassMatcher(XposedHelpers.findClass("tv.danmaku.bili.MainActivityV2",classLoader))));
-            if(MainActivityV2Classes.isEmpty()){
-                XposedBridge.log("biliHook: 严重错误MainActivityV2Classes为空");
-                return;
-            } else if (MainActivityV2Classes.size()>1) {
-                XposedBridge.log("biliHook: 警告MainActivityV2Classes不唯一:"+MainActivityV2Classes);
-            }
-            ClassData MainActivityV2Class = MainActivityV2Classes.get(0);
 
-            //Ltv/danmaku/bili/MainActivityV2;->m6(Ltv/danmaku/bili/ui/splash/ad/model/Splash;Z)Z
-            List<MethodData> tv_danmaku_bili_MainActivityV2_m6Methods = MainActivityV2Class.findMethod(new FindMethod().matcher(
-                    new MethodMatcher().returnType(boolean.class)
-                            .paramTypes("tv.danmaku.bili.ui.splash.ad.model.Splash","boolean")
-            ));
-            accessMethodSeekResult(editor,tv_danmaku_bili_MainActivityV2_m6Methods,"tv_danmaku_bili_MainActivityV2_m6Method");
+            List<DeConfusionResult<ClassData>> classDeConfusionResultList = new ArrayList<>();
+            List<DeConfusionResult<FieldData>> fieldDeConfusionResultList = new ArrayList<>();
+            List<DeConfusionResult<MethodData>> methodDeConfusionResultList = new ArrayList<>();
 
-            //Ltv/danmaku/bili/MainActivityV2;->L:Landroid/widget/FrameLayout;
-            List<FieldData> tv_danmaku_bili_MainActivityV2_LFields = MainActivityV2Class.findField(new FindField().matcher(new FieldMatcher().type("android.widget.FrameLayout")));
-            accessFieldSeekResult(editor,tv_danmaku_bili_MainActivityV2_LFields,"tv_danmaku_bili_MainActivityV2_LField");
-            */
 
             //BypassSplash
             //Lsh5/k;->m(Landroid/app/Activity;)V
@@ -633,46 +625,21 @@ public class Entrance implements IXposedHookLoadPackage {
                     .findMethod(FindMethod.create().matcher(
                     MethodMatcher.create().returnType(void.class)
                             .paramTypes("android.app.Activity")));
-            stringBuilder.append(accessMethodSeekResult(editor,sh5_k_mMethods,"sh5_k_mMethod")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,sh5_k_mMethods,"sh5_k_mMethod"));
 
-            //Lmj3/a;->bind(Landroid/view/View;)Lmj3/a;
-            List<MethodData> mj3_a_bindMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().addInterface("androidx.viewbinding.ViewBinding")
-                    .usingStrings("Missing required view with ID: ")
-                    .modifiers(Modifier.PUBLIC)
 
-                            .fields(new FieldsMatcher().addForType("com.bilibili.ship.theseus.united.widget.TheseusAncestorLayout")
-                                .addForType("com.bilibili.ship.theseus.united.widget.LockableCollapsingToolbarLayout")
-                                .addForType("com.bilibili.ogv.infra.widget.RatioLayout")
-                                .addForType("com.bilibili.ship.theseus.united.widget.UnitedViewPager")
-                                    .count(24)))).findMethod(new FindMethod().matcher(new MethodMatcher().name("bind")));
 
-            stringBuilder.append(accessMethodSeekResult(editor,mj3_a_bindMethods,"mj3_a_bindMethod")+"\n");
 
-            //Lkntr/base/localization/n0;->h(J)Ljava/lang/String;
-            /* 精确时间的旧hook点
-            List<MethodData> kntr_base_localization_n0_hMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().fieldCount(2)
-                    .fields(new FieldsMatcher().addForType(long.class)).methodCount(17)
-                    .modifiers(Modifier.PUBLIC))).findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes(long.class)
-                    .returnType(String.class)
-                    .annotationCount(1)
-                    .usingNumbers(14)));
-
-            stringBuilder.append(accessMethodSeekResult(editor,kntr_base_localization_n0_hMethods,"kntr_base_localization_n0_hMethod")+"\n");
-            */
 
             //pf5.e
             List<MethodData> pf5_e_getLinkMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().usingStrings("FavoritesMediasItem","oid","otype")))
                     .findMethod(new FindMethod().matcher(new MethodMatcher().name("getLink")));
 
-            stringBuilder.append(accessMethodSeekResult(editor,pf5_e_getLinkMethods,"pf5_e_getLinkMethod")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,pf5_e_getLinkMethods,"pf5_e_getLinkMethod"));
 
 
             //Ltv/danmaku/bili/ui/main2/mine/p0;->b(Lcom/bilibili/lib/homepage/mine/MenuGroup$Item;)V
-            //Method putMethod = Map.class.getMethod("put", Objects.class, Objects.class);
-            //List<MethodData> list = new ArrayList<>();
-            //list.add(new MethodData(putMethod))
-
-
+            /*
             List<MethodData> tv_danmaku_bili_ui_main2_mine_p0_bMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().usingStrings("prompt_scene")))
                     .findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes("com.bilibili.lib.homepage.mine.MenuGroup$Item")
                             .returnType(void.class)
@@ -684,15 +651,18 @@ public class Entrance implements IXposedHookLoadPackage {
 
                             }))
                     ));
-
             stringBuilder.append(accessMethodSeekResult(editor,tv_danmaku_bili_ui_main2_mine_p0_bMethods,"tv_danmaku_bili_ui_main2_mine_p0_bMethod")+"\n");
+            */
+            //Ltv/danmaku/bili/ui/main2/mine/MinePageManager$switchTo$1;
+            List<ClassData> tv_danmaku_bili_ui_main2_mine_MinePageManager$switchTo$1Classes = bridge.findClass(FindClass.create().searchPackages("tv.danmaku.bili.ui.main2.mine").matcher(new ClassMatcher().className(new StringMatcher("MinePageManager", StringMatchType.Contains)).usingStrings("prompt_scene")));
+            classDeConfusionResultList.add(accessClassSeekResult(editor,tv_danmaku_bili_ui_main2_mine_MinePageManager$switchTo$1Classes,"tv_danmaku_bili_ui_main2_mine_MinePageManager$switchTo$1Class"));
 
 
             //com.bilibili.bplus.followinglist.model.b9
             List<ClassData> com_bilibili_bplus_followinglist_model_b9Classes = bridge.findClass(new FindClass().searchPackages("com.bilibili.bplus.followinglist.model").matcher(new ClassMatcher()
                     .usingStrings("UpListItem(face=")));
 
-            stringBuilder.append(accessClassSeekResult(editor,com_bilibili_bplus_followinglist_model_b9Classes,"com_bilibili_bplus_followinglist_model_b9Class")+"\n");
+            classDeConfusionResultList.add(accessClassSeekResult(editor,com_bilibili_bplus_followinglist_model_b9Classes,"com_bilibili_bplus_followinglist_model_b9Class"));
 
 
 
@@ -703,7 +673,7 @@ public class Entrance implements IXposedHookLoadPackage {
                      .returnType("com.bapis.bilibili.app.dynamic.v2.CardVideoUpList")
                      .paramTypes(boolean.class)));
 
-            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_bplus_followinglist_model_e7_N0Methods,"com_bilibili_bplus_followinglist_model_e7_N0Method")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_bplus_followinglist_model_e7_N0Methods,"com_bilibili_bplus_followinglist_model_e7_N0Method"));
 
 
             //com.bilibili.app.authorspace.ui.AuthorSpaceActivity
@@ -717,97 +687,197 @@ public class Entrance implements IXposedHookLoadPackage {
                     .addInvoke("Ltv/danmaku/bili/widget/LoadingImageViewV2;->setRefreshError()V")
             ));
 
-            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods,"com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Method")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods,"com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Method"));
 
             //Lcom/bilibili/app/comment3/data/model/CommentItem$e$a;->c(Landroid/content/Context;)Ljava/lang/String;
             List<MethodData> com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods = bridge.findClass(new FindClass().searchPackages("com.bilibili.app.comment3.data.model").matcher(new ClassMatcher().usingStrings("IP属地：")))
                     .findMethod(new FindMethod().matcher(new MethodMatcher().returnType(String.class).paramTypes(Context.class).usingStrings("")));
 
-            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod"));
 
-            //ua3.e
-            /*
-            List<ClassData> ua3_eClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher()
-                    .usingStrings("TagData(text=")));
 
-            stringBuilder.append(accessClassSeekResult(editor,ua3_eClasses,"ua3_eClass")+"\n");
-
-             */
 
             //qa3.t smallCoverV2
             ClassDataList qa3_tClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher()
                     .usingStrings("rcmdReason and descText")));
 
-            stringBuilder.append(accessClassSeekResult(editor,qa3_tClasses,"qa3_tClass")+"\n");
+            classDeConfusionResultList.add(accessClassSeekResult(editor,qa3_tClasses,"qa3_tClass"));
 
             //MethodDataList qa3_t_getUriMethod = qa3_tClasses.findMethod(new FindMethod().matcher(new MethodMatcher().name("getUri")));
 
             FieldDataList qa3_t_fFields = qa3_tClasses.findField(new FindField().matcher(new FieldMatcher().type(String.class).addReadMethod(new MethodMatcher().name("getUri"))));
 
-            stringBuilder.append(accessFieldSeekResult(editor,qa3_t_fFields,"qa3_t_fField")+"\n");
+            fieldDeConfusionResultList.add(accessFieldSeekResult(editor,qa3_t_fFields,"qa3_t_fField"));
 
             //Lcom/bilibili/search2/result/base/b0;->i1(Ljava/util/List;ZZ)V
             List<MethodData> com_bilibili_search2_result_base_b0_i1Methods = bridge.findClass(new FindClass().searchPackages("com.bilibili.search2.result.base").matcher(new ClassMatcher().usingStrings("SearchResultFooterAdapter"))).findMethod(new FindMethod().matcher(new MethodMatcher().paramTypes(List.class,boolean.class,boolean.class)));
 
-            stringBuilder.append(accessMethodSeekResult(editor,com_bilibili_search2_result_base_b0_i1Methods,"com_bilibili_search2_result_base_b0_i1Method")+"\n");
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_search2_result_base_b0_i1Methods,"com_bilibili_search2_result_base_b0_i1Method"));
+
+            //com.bilibili.ship.theseus.united.page.intro.module.relate.a
+            //BadgeInfoClass
+            List<ClassData> com_bilibili_ship_theseus_united_page_intro_module_relate_BadgeInfoClasses = bridge.findClass(new FindClass().searchPackages("com.bilibili.ship.theseus.united.page.intro.module.relate").matcher(new ClassMatcher().usingStrings("BadgeInfo(")));
+            classDeConfusionResultList.add(accessClassSeekResult(editor,com_bilibili_ship_theseus_united_page_intro_module_relate_BadgeInfoClasses,"com_bilibili_ship_theseus_united_page_intro_module_relate_BadgeInfoClass"));
+
+            //ou0.c
+            List<ClassData> ou0_cClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher().addInterface("androidx.viewbinding.ViewBinding").addFieldForType("com.bilibili.ship.theseus.united.page.behavior.CollapsableChildFrameLayout")));
+            classDeConfusionResultList.add(accessClassSeekResult(editor,ou0_cClasses,"ou0_cClass"));
+
+            //com.bilibili.app.gemini.ui.UIComponentExtKt$onLongClickEvent$1
+            List<ClassData> com_bilibili_app_gemini_ui_UIComponentExtKt$onLongClickEvent$1Classes = bridge.findClass(new FindClass().searchPackages("com.bilibili.app.gemini.ui").matcher(new ClassMatcher().className(new StringMatcher("onLongClickEvent", StringMatchType.Contains))));
+            classDeConfusionResultList.add(accessClassSeekResult(editor,com_bilibili_app_gemini_ui_UIComponentExtKt$onLongClickEvent$1Classes,"com_bilibili_app_gemini_ui_UIComponentExtKt$onLongClickEvent$1Class"));
+
+            //
+            //Lcom/bilibili/app/comment3/data/model/CommentItem$e$a;->a()Ljava/lang/String;
+            List<MethodData> com_bilibili_app_comment3_data_model_CommentItem$e$a_aMethods = bridge.findClass(new FindClass().searchPackages("com.bilibili.app.comment3.data.model").matcher(new ClassMatcher().className(new StringMatcher("CommentItem", StringMatchType.Contains)).usingStrings("Description(createTimeMs=")))
+                    .findMethod(new FindMethod().matcher(new MethodMatcher().addUsingField(new FieldMatcher().type(Long.class)).returnType(String.class).paramCount(0)));
+            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_aMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_aMethod"));
+
 
             editor.apply();
             editor.commit();
 
-            return stringBuilder.toString();
+            StringBuilder stringBuilder1 = new StringBuilder("未找到:\n\n");
+            StringBuilder stringBuilder2 = new StringBuilder("同特征:\n\n");
+            StringBuilder stringBuilder3 = new StringBuilder("完美匹配:\n\n");
+
+            for (DeConfusionResult<ClassData> deConfusionResult: classDeConfusionResultList){
+                switch (deConfusionResult.getResultType()){
+                    case DeConfusionResult.NOT_FOUND:
+                        stringBuilder1.append(deConfusionResult.getName()).append("\n\n");
+                        break;
+                    case DeConfusionResult.NOT_UNIQUE:
+                        stringBuilder2.append("------").append(deConfusionResult.getName()).append("------\n");
+                        for (int i = 0;i < Math.min(10,deConfusionResult.getContent().size());i++){
+                            ClassData classData = deConfusionResult.getContent().get(i);
+                            stringBuilder2.append(classData.getDescriptor()).append("\n");
+                        }
+                        stringBuilder2.append("------------------------\n\n");
+                        break;
+                    case DeConfusionResult.ONLY:
+                        stringBuilder3.append(deConfusionResult.getName()).append("\n").append(deConfusionResult.getContent().get(0).getDescriptor()).append("\n\n");
+                        break;
+                }
+            }
+
+            for (DeConfusionResult<FieldData> deConfusionResult: fieldDeConfusionResultList){
+                switch (deConfusionResult.getResultType()){
+                    case DeConfusionResult.NOT_FOUND:
+                        stringBuilder1.append(deConfusionResult.getName()).append("\n\n");
+                        break;
+                    case DeConfusionResult.NOT_UNIQUE:
+                        stringBuilder2.append("------").append(deConfusionResult.getName()).append("------\n");
+                        for (int i = 0;i < Math.min(10,deConfusionResult.getContent().size());i++){
+                            FieldData fieldData = deConfusionResult.getContent().get(i);
+                            stringBuilder2.append(fieldData.getDescriptor()).append("\n");
+                        }
+                        stringBuilder2.append("------------------------\n\n");
+                        break;
+                    case DeConfusionResult.ONLY:
+                        stringBuilder3.append(deConfusionResult.getName()).append("\n").append(deConfusionResult.getContent().get(0).getDescriptor()).append("\n\n");
+                        break;
+                }
+            }
+
+            for (DeConfusionResult<MethodData> deConfusionResult: methodDeConfusionResultList){
+                switch (deConfusionResult.getResultType()){
+                    case DeConfusionResult.NOT_FOUND:
+                        stringBuilder1.append(deConfusionResult.getName()).append("\n\n");
+                        break;
+                    case DeConfusionResult.NOT_UNIQUE:
+                        stringBuilder2.append("------").append(deConfusionResult.getName()).append("------\n");
+                        for (int i = 0;i < Math.min(10,deConfusionResult.getContent().size());i++){
+                            MethodData methodData = deConfusionResult.getContent().get(i);
+                            stringBuilder2.append(methodData.getDescriptor()).append("\n");
+                        }
+                        stringBuilder2.append("------------------------\n\n");
+                        break;
+                    case DeConfusionResult.ONLY:
+                        stringBuilder3.append(deConfusionResult.getName()).append("\n").append(deConfusionResult.getContent().get(0).getDescriptor()).append("\n\n");
+                        break;
+                }
+            }
+
+            return String.valueOf(stringBuilder1) +
+                    stringBuilder2 +
+                    stringBuilder3;
 
 
         }
     }
 
-    public String accessMethodSeekResult(SharedPreferences.Editor editor , List<MethodData> list, String name){
+    public DeConfusionResult<MethodData> accessMethodSeekResult(SharedPreferences.Editor editor , List<MethodData> list, String name){
         if(list.isEmpty()){
-            return (name+"未找到");
+            return new DeConfusionResult<>(name);
         }else{
             editor.putString(name,list.get(0).toDexMethod().serialize());
             if(list.size()>1){
+                /*
                 StringBuilder stringBuilder = new StringBuilder(name+"有"+list.size()+"个\n");
                 for(MethodData methodData:list){
                     stringBuilder.append("同特征方法: ").append(methodData.getClassName()).append(" -> ").append(methodData.getName());
                     stringBuilder.append("\n");
-                }
-                return stringBuilder.toString();
+                }*/
+                return new DeConfusionResult<>(name,DeConfusionResult.NOT_UNIQUE,list);
             }
         }
-        return(name+"->"+list.get(0).toString());
+        return new DeConfusionResult<>(name,DeConfusionResult.ONLY,list);
     }
-    public String accessFieldSeekResult(SharedPreferences.Editor editor , List<FieldData> list, String name){
+    public DeConfusionResult<FieldData> accessFieldSeekResult(SharedPreferences.Editor editor , List<FieldData> list, String name){
         if(list.isEmpty()){
-            return (name+"未找到");
+            return new DeConfusionResult<>(name);
         }else{
             editor.putString(name,list.get(0).toDexField().serialize());
             if(list.size()>1){
-                StringBuilder stringBuilder = new StringBuilder(name+"有"+list.size()+"个\n");
-                for(FieldData fieldData:list){
-                    stringBuilder.append("同特征变量: ").append(fieldData.getClassName()).append(" -> ").append(fieldData.getName());
-                    stringBuilder.append("\n");
-                }
-                return stringBuilder.toString();
+                return new DeConfusionResult<>(name,DeConfusionResult.NOT_UNIQUE,list);
             }
         }
-        return (name+"->"+list.get(0).toString());
+        return new DeConfusionResult<>(name,DeConfusionResult.ONLY,list);
     }
 
-    public String accessClassSeekResult(SharedPreferences.Editor editor , List<ClassData> list, String name){
+    public DeConfusionResult<ClassData> accessClassSeekResult(SharedPreferences.Editor editor , List<ClassData> list, String name){
         if(list.isEmpty()){
-            return (name+"未找到");
+            return new DeConfusionResult<>(name);
         }else{
             editor.putString(name,list.get(0).toDexType().serialize());
             if(list.size()>1){
-                StringBuilder stringBuilder = new StringBuilder(name+"有"+list.size()+"个\n");
-                for(ClassData classData:list){
-                    stringBuilder.append("同特征类: ").append(classData.getName());
-                    stringBuilder.append("\n");
-                }
-                return stringBuilder.toString();
+                return new DeConfusionResult<>(name,DeConfusionResult.NOT_UNIQUE,list);
             }
         }
-        return (name+"->"+list.get(0).toString());
+        return new DeConfusionResult<>(name,DeConfusionResult.ONLY,list);
+    }
+
+    public class DeConfusionResult<T>{
+        private String name;
+        private int result;
+        public static final int ONLY = 0;
+        public static final int NOT_UNIQUE = 1;
+        public static final int NOT_FOUND = 2;
+
+
+        private List<T> content = null;
+
+        public DeConfusionResult(String name){
+            this.name=name;
+            result = NOT_FOUND;
+        }
+
+        public DeConfusionResult(String name,int result,List<T> content){
+            this.name=name;
+            this.result = result;
+            this.content = content;
+        }
+
+        public String getName(){
+            return name;
+        }
+
+        public int getResultType(){
+            return result;
+        }
+        public List<T> getContent(){
+            return content;
+        }
     }
 
     private SpannableString getTextWithFunctionPreposition(String baseDescription,String prepositionName,String prepositionId){

@@ -24,6 +24,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -112,6 +116,20 @@ public class Utils {
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
         return (String)(toJSONStringMethod.invoke(null,o));
     }
+
+    public static void printfList(String str,List<?> list){
+        if(list==null||list.isEmpty()){
+            return;
+        }
+        log("------"+str+" list size:"+list.size()+"-------");
+        for (Object object:list){
+            if(object==null){
+                continue;
+            }
+            log(object+",类型:"+object.getClass().getName());
+        }
+        log("-----------------------------");
+    }
     
     public static Activity getMainActivity(){
         return MainActivityV2;
@@ -144,6 +162,15 @@ public class Utils {
     public static Field selectField(Class<?> TargetClass,Class<?> FieldTypeClass){
         for(Field field:TargetClass.getDeclaredFields()){
             if(field.getType().equals(FieldTypeClass)){
+                return field;
+            }
+        }
+        return null;
+    }
+
+    public static Field getFieldSafely(Class<?> TargetClass,String name){
+        for(Field field:TargetClass.getDeclaredFields()){
+            if(field.getName().equals(name)){
                 return field;
             }
         }
@@ -353,6 +380,10 @@ public class Utils {
 
 
     public static void showToast(String str,int i){
+        log(str);
+        if(getMainActivity()==null){
+            return;
+        }
         try {
             int maxLength = 750;
             if(str.length()>maxLength){
@@ -362,15 +393,19 @@ public class Utils {
         } catch (Exception e) {
             Toast.makeText(getMainActivity(),str,i).show();
         }
+
     }
 
     public static void reportError(Throwable e){
+        reportError("",e);
+    }
+    public static void reportError(String str,Throwable e){
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String stackTrace = sw.toString();
         pw.close();
-        showToast("biliHook错误\n"+stackTrace,1);
+        showToast("biliHook错误 "+str+"\n"+stackTrace,1);
     }
     public static void reportError(String str){
         showToast("biliHook错误\n"+str,1);
@@ -457,23 +492,29 @@ public class Utils {
     }
 
     public static Method getDeConfusionMethod(String name,ClassLoader classLoader)throws NoSuchMethodException{
-        if(sharedPreferences==null||name==null||name.equals("")){return null;}
+        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionMethodCacheMap.containsKey(name)){
             return DeConfusionMethodCacheMap.get(name);
         }else{
             String descriptor = sharedPreferences.getString(name,"");
+            if(descriptor.isEmpty()){
+                return null;
+            }
             Method targetMethod = DexMethod.deserialize(descriptor).getMethodInstance(classLoader);
             DeConfusionMethodCacheMap.put(name,targetMethod);
             return targetMethod;
         }
     }
 
-    public static Class getDeConfusionClass(String name,ClassLoader classLoader) throws ClassNotFoundException {
-        if(sharedPreferences==null||name==null||name.equals("")){return null;}
+    public static Class<?> getDeConfusionClass(String name,ClassLoader classLoader) throws ClassNotFoundException {
+        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionClassCacheMap.containsKey(name)){
             return DeConfusionClassCacheMap.get(name);
         }else{
             String descriptor = sharedPreferences.getString(name,"");
+            if(descriptor.isEmpty()){
+                return null;
+            }
             Class<?> targetClass = DexClass.deserialize(descriptor).getInstance(classLoader);
             DeConfusionClassCacheMap.put(name,targetClass);
             return targetClass;
@@ -481,11 +522,14 @@ public class Utils {
     }
 
     public static Field getDeConfusionField(String name,ClassLoader classLoader) throws NoSuchFieldException {
-        if(sharedPreferences==null||name==null||name.equals("")){return null;}
+        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionFieldCacheMap.containsKey(name)){
             return DeConfusionFieldCacheMap.get(name);
         }else{
             String descriptor = sharedPreferences.getString(name,"");
+            if(descriptor.isEmpty()){
+                return null;
+            }
             Field targetClass = DexField.deserialize(descriptor).getFieldInstance(classLoader);
             DeConfusionFieldCacheMap.put(name,targetClass);
             return targetClass;
@@ -610,5 +654,89 @@ public class Utils {
             return null;
         }
        return fromJsonInGsonMethod.invoke(simpleGsonObject,str,cls);
+    }
+
+    //将所有recyclerView的adapter类名绘制出来
+    public static void test14(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod(
+                "androidx.recyclerview.widget.RecyclerView", // 支持 AndroidX
+                lpparam.classLoader,
+                "draw",
+                Canvas.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        View recyclerView = (View) param.thisObject;
+                        Canvas canvas = (Canvas) param.args[0];
+
+                        // 原始绘制完成后执行自定义绘制
+                        //drawCenteredText(recyclerView, canvas);
+                        if (recyclerView.getVisibility() != View.VISIBLE) return;
+
+                        // 设置文字内容
+                        String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass().getName();
+                        //String text = "Class:"+param.thisObject.getClass().getName();
+                        XposedBridge.log(text);
+
+                        // 初始化画笔
+                        Paint paint = new Paint();
+                        paint.setColor(Color.RED);
+                        paint.setTextSize(spToPx(recyclerView, 8)); // 16sp
+                        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+                        paint.setAntiAlias(true);
+                        paint.setTextAlign(Paint.Align.CENTER);
+
+                        // 计算居中位置
+                        float centerX = recyclerView.getWidth() / 2f;
+                        float centerY = recyclerView.getHeight() / 2f;
+
+                        // 计算基线位置（垂直居中）
+                        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+                        float textHeight = fontMetrics.descent - fontMetrics.ascent;
+                        float baseline = centerY - (textHeight / 2f - fontMetrics.descent);
+
+                        // 绘制文字（带半透明背景）
+                        int padding = dpToPx(recyclerView, 8);
+                        int cornerRadius = dpToPx(recyclerView, 4);
+                        float textWidth = paint.measureText(text);
+
+                        // 绘制圆角背景
+                        paint.setColor(Color.argb(128, 0, 0, 0)); // 半透明黑色
+                        canvas.drawRoundRect(
+                                centerX - textWidth / 2 - padding,
+                                baseline + fontMetrics.ascent - padding,
+                                centerX + textWidth / 2 + padding,
+                                baseline + fontMetrics.descent + padding,
+                                cornerRadius,
+                                cornerRadius,
+                                paint
+                        );
+
+                        // 绘制文字
+                        paint.setColor(Color.WHITE);
+                        canvas.drawText(text, centerX, baseline, paint);
+                    }
+                });
+
+    }
+
+    public static void hookTextViewSetText(String keyWord){
+
+        XposedHelpers.findAndHookMethod("android.widget.TextView", lpparam.classLoader, "setText", CharSequence.class, android.widget.TextView.BufferType.class, boolean.class, int.class,  new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                CharSequence text = (CharSequence) param.args[0];
+                Utils.log(text);
+                if(text==null){
+                    return;
+                }
+                if(!text.toString().contains(keyWord)){
+                    return;
+                }
+                printStackTrace("hookTextViewSetText "+text);
+            }
+
+        });
     }
 }

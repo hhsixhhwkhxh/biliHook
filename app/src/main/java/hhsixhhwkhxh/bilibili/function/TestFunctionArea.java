@@ -1,94 +1,24 @@
 package hhsixhhwkhxh.bilibili.function;
-import hhsixhhwkhxh.bilibili.Entrance;
+import android.content.LocusId;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import de.robv.android.xposed.XposedBridge;
 import hhsixhhwkhxh.bilibili.FunctionsBase;
-import hhsixhhwkhxh.bilibili.RoundCornerDialog;
-import hhsixhhwkhxh.bilibili.Utils;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import de.robv.android.xposed.XposedHelpers;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.ParameterizedType;
-
-import android.app.Activity;
-import android.app.Application;
-import android.content.ClipData;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.content.res.XResources;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.text.MeasuredText;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.TimeZone;
-import android.net.Uri;
-import android.util.Base64;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.os.Bundle;
 import de.robv.android.xposed.XC_MethodHook;
-import android.view.View;
+import hhsixhhwkhxh.bilibili.Utils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.lang.reflect.Type;
-import de.robv.android.xposed.XposedBridge;
 
-import java.util.Arrays;
-import android.content.Context;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-
-import android.os.Handler;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.ColorRes;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 public class TestFunctionArea extends FunctionsBase {
 /*
@@ -99,404 +29,106 @@ public class TestFunctionArea extends FunctionsBase {
     TestFunctionArea类因为执行优先级低 日志输出更可能在此之前就被截断 是重灾区
     可复现性差 不清楚原因 匪夷所思
 */
+    ClassLoader classLoader = null;
     @Override
     public void run(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        classLoader = lpparam.classLoader;
         //XposedBridge.log("test");
-        /*
-        test1(lpparam);
-        test3(lpparam);
-        test5(lpparam);
-        test7(lpparam);
-        test8(lpparam);
-        test9(lpparam);
-        test10(lpparam);
-        */
 
-        //test11(lpparam);
-        //test12(lpparam);
-        //test13(lpparam);
-            //test14(lpparam);
-        //test15(lpparam);
-        //test16(lpparam);
-        //test5(lpparam);
-        //test17(lpparam);
-        //test18(lpparam);
-        //test19(lpparam);
-        //test7(lpparam);
-        //test20(lpparam);
-        //test21(lpparam);
-        //test22(lpparam);
-        //test23(lpparam);
-        //test24(lpparam);
-        //test25(lpparam);
-        //test26(lpparam);
-        //test27(lpparam);
-        //test28(lpparam);
-        //test29(lpparam);
-        //test30(lpparam);
-        //test33(lpparam);
-        //test34(lpparam);
-        //test35(lpparam);
-        //test36(lpparam);
-        //test37(lpparam);
-        //test38(lpparam);
-        //test39(lpparam);
-        //test40(lpparam);
-        //test42(lpparam);
-        //test45(lpparam);
-        //test46(lpparam);
-        //test47(lpparam);
-        //test49(lpparam);
-        //test50(lpparam);
-        //test51(lpparam);
-        //test53(lpparam);
-        //test54(lpparam);
-        //test55(lpparam);
-        //test56(lpparam);
-        //test57(lpparam);
-        //test58(lpparam);
-        //test59(lpparam);
-        //test61(lpparam);
-        //test63(lpparam);
-        //test64(lpparam);
-
-        
+        //test65(lpparam);
+        //test66(lpparam);
+        //Utils.test14(lpparam);
+        //test67(lpparam);
+        //test68(lpparam);
+        test69(lpparam);
+        //test70(lpparam);
+        //test71(lpparam);
+        //test72(lpparam);
+        //test73(lpparam);
+        //Utils.hookTextViewSetText("小时前");
     }
 
     public void advanceRun(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        //test26(lpparam);
-        //test31(lpparam);
-        //test40(lpparam);
-        //test41(lpparam);
-        //test43(lpparam);
-        //test44(lpparam);
-        //test48(lpparam);
-        //test52(lpparam);
-        //test60(lpparam);
-        //test59(lpparam);
-        //test61(lpparam);
-        //test62(lpparam);
+        classLoader = lpparam.classLoader;
 
     }
-    //以下代码基于8.56.0版本
+    //9.0.0
+    public void test74(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
 
-    //显示禁言结束时间
-    public void test64(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.getDefault());
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.ui.v0", lpparam.classLoader, "h", "com.bilibili.app.authorspace.api.BiliMemberCard", new XC_MethodHook() {
+    }
+    public void test73(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XC_MethodHook test = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Utils.log( param.method.getDeclaringClass().getName()+"."+param.method.getName()+" before");
+            }
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
+                Utils.log(param.method.getDeclaringClass().getName()+"."+param.method.getName()+" after");
+            }
+        };
+        //XposedHelpers.findAndHookMethod("E81.b", lpparam.classLoader, "a", ("D81.x"), boolean.class, ("D81.x"), ("kotlin.jvm.functions.Function2"), test);
+        //XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService", classLoader, "m", classLoader.loadClass("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService"), classLoader.loadClass("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService$PauseTriggerSource"), classLoader.loadClass("kotlin.coroutines.jvm.internal.ContinuationImpl"), test);
+        //XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService$showPauseBarCountdownToast$3", classLoader, "invoke", classLoader.loadClass("kotlinx.coroutines.CoroutineScope"), classLoader.loadClass("kotlin.coroutines.Continuation"), test);
 
-                TextView silenceDescTextView =(TextView) XposedHelpers.getObjectField(param.thisObject,"c");
-                if(silenceDescTextView==null){
-                    return;
-                }
-                long silenceEndTime =(long) XposedHelpers.getObjectField(param.args[0],"silenceEndTime");
-                silenceDescTextView.append(" 封禁至"+sdf.format(new Date(silenceEndTime)));
-                log("test64"+Utils.toJSONString(lpparam,param.args[0]));
-                Utils.copyText(Utils.toJSONString(lpparam,param.args[0]));
+        Class<?> PausedPageServiceClass = XposedHelpers.findClass("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService",lpparam.classLoader);
+        Class<?> PauseTriggerSourceClass = XposedHelpers.findClass("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService$PauseTriggerSource",lpparam.classLoader);
+        Class<?> ContinuationImplClass = XposedHelpers.findClass("kotlin.coroutines.jvm.internal.ContinuationImpl",lpparam.classLoader);
+        Class<?> UnitClass = XposedHelpers.findClass("kotlin.Unit",lpparam.classLoader);
+        Object INSTANCE = XposedHelpers.getStaticObjectField(UnitClass,"INSTANCE");
+        Method mMethod = Utils.selectMethod(PausedPageServiceClass,Object.class,PausedPageServiceClass,PauseTriggerSourceClass,ContinuationImplClass);
+        XposedBridge.hookMethod(mMethod, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(INSTANCE);
             }
         });
+        //Lcom/bilibili/ship/theseus/united/page/pausedpage/PausedPageService;->m(Lcom/bilibili/ship/theseus/united/page/pausedpage/PausedPageService;Lcom/bilibili/ship/theseus/united/page/pausedpage/PausedPageService$PauseTriggerSource;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;
     }
+    public void test72(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Class<?> AdRepositoryClass = XposedHelpers.findClass("com.bilibili.ship.theseus.united.page.ad.AdRepository",lpparam.classLoader);
+        Class<?> PageAdRepositoryClass = XposedHelpers.findClass("com.bilibili.ship.theseus.united.page.ad.PageAdRepository",lpparam.classLoader);
 
-
-    public void test63(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*
-        Context context = null;
-        WindowManager mWindowManager = (WindowManager) context.getSystemService((String) null);
-        mWindowManager.addView(null, null);
-
-         */
-
-        int a = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-
-        Object instance = XposedHelpers.getStaticObjectField(XposedHelpers.findClass("ow.n",lpparam.classLoader),"a");
-
-                log(Utils.getMainActivity());
-                log( XposedHelpers.callMethod(instance,"f",Utils.getMainActivity(),"test",null));
-
-    }
-
-
-    public void test62(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        final boolean[] hasPrintedList = {false};
-        XposedHelpers.findAndHookMethod("kntr.base.dd.internal.data.CoreData", lpparam.classLoader, "x", "h75.h", boolean.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookConstructor("com.bilibili.ship.theseus.united.page.pausedpage.PausedPageService", lpparam.classLoader, ("kotlinx.coroutines.CoroutineScope"), ("androidx.fragment.app.FragmentActivity"), ("com.bilibili.ship.theseus.united.page.ad.AdRepository"), ("Dr0.a"), ("com.bilibili.playerbizcommon.gesture.IGestureService"), ("tv.danmaku.biliplayerv2.service.IPlayerCoreService"), ("tv.danmaku.biliplayerv2.service.z"), ("com.bilibili.ship.theseus.united.page.pausedpage.b"), ("com.bilibili.ship.theseus.united.page.ad.PageAdRepository"), ("com.bilibili.ship.theseus.united.page.backpress.BackActionRepository"), ("kv0.a"), ("com.bilibili.ship.theseus.united.page.playingarea.a"), ("com.bilibili.ship.theseus.united.page.playingarea.PageNestedScrollFusionRepository"), ("com.bilibili.ship.theseus.united.page.uistyle.TheseusPageUIStyleRepository"), ("com.bilibili.ship.theseus.united.page.screenstate.d"), ("com.bilibili.ship.theseus.united.page.tab.u"), ("com.bilibili.ship.theseus.united.page.toolbar.ToolbarRepository"), ("com.bapis.bilibili.app.viewunite.v1.ViewReply"), String.class, ("tv.danmaku.biliplayerv2.service.IToastService"), ("kotlinx.coroutines.flow.Flow"), ("com.bilibili.ship.theseus.united.page.floatlayer.TheseusFloatLayerService"), ("kotlinx.coroutines.flow.Flow"), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                boolean updateFile = (Boolean) param.args[1];
-                Object hVarObject = param.args[0];
-                List list = (List) XposedHelpers.callMethod(hVarObject,"getList");
-                if(!hasPrintedList[0]){
-                    hasPrintedList[0] = true;
-                    for(Object o:list){
-                        //Utils.log(o.getClass().getName());//h75.f
+                for (int i = 0;i<param.args.length;i++){
+                    Object obj = param.args[i];
+                    if(obj==null){
+                        continue;
+                    }
+                    if(obj.getClass()==AdRepositoryClass||obj.getClass()==PageAdRepositoryClass){
+                        param.args[i] = null;
                     }
                 }
-                //Utils.log(list);
-                //Utils.printStackTrace("test62");
+                //Utils.printStackTrace("PausedPageService <init>");
             }
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-            }
+
         });
-
-
-        Class<?> ddValueClass = XposedHelpers.findClass("f75.b",lpparam.classLoader);
-         XposedHelpers.newInstance(ddValueClass,Boolean.TRUE,"",false,false);
-        XposedHelpers.findAndHookConstructor("f75.c", lpparam.classLoader, "kntr.base.dd.internal.data.d", "g75.a", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-            }
-        });
-    }
-
-
-    public void test61(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        //	at tv.danmaku.bili.a$C1$a.b(BL:99)
+        // i = 137
         /*
-        XposedHelpers.findAndHookMethod("kx.n0", lpparam.classLoader, "c", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                List list = (List) param.getResult();
-                if(list.isEmpty()){return;}
-                Utils.printBoundaryLine();
-                for(Object o:list){
-                    Utils.log(o);
-                }
-                Utils.printBoundaryLine();
-            }
-        });
-
-         */
-
-
-
-        /*
-        Class<?> commentConfigClass = XposedHelpers.findClass("ex.k",lpparam.classLoader);
-        for(Method method:commentConfigClass.getMethods()){
-            if(!method.getReturnType().equals(boolean.class)){continue;}
-            if(method.getName().length()!=1){continue;}
-            XposedBridge.hookMethod(method, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.setResult(false);
-                    Utils.log("test61 方法"+method.getName());
-                }
-            });
-        }
-
-         */
-
-
-
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.DeviceDecision", lpparam.classLoader, "getBoolean", String.class, boolean.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookConstructor("tv.danmaku.bili.a$C1$a", lpparam.classLoader, ("tv.danmaku.bili.a$e1"), ("tv.danmaku.bili.a$k0"), ("tv.danmaku.bili.a$C1"), int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                String ddName = (String) param.args[0];
-                if(ddName!=null&&ddName.startsWith("comment.next_appearance")){
-                    param.setResult(false);
+                int i = (int) param.args[param.args.length-1];
+                if(i!=137){
+                    return;
                 }
-            }
-
-        });
-
-
-        /*
-        XposedHelpers.findAndHookMethod("kntr.base.dd.DDContainer", lpparam.classLoader, "boolForKey", String.class, boolean.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.log("f75.f class:"+XposedHelpers.getObjectField(param.thisObject,"d").getClass().getName());
-                //f75.f class:f75.c
+                Utils.printStackTrace("create a$C1$a class for new PausedPageService");
             }
 
         });*/
 
-        /*
-        XposedHelpers.findAndHookMethod("f75.c", lpparam.classLoader, "a", String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
+        //	at tv.danmaku.bili.a$C1.<init>(BL:1441)
 
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Utils.log("f75.f class:"+param.getResult().getClass().getName());
-                //f75.f class:f75.b
-            }
-        });
-
-         */
-
-
-        /*
-        XposedHelpers.findAndHookConstructor("f75.b", lpparam.classLoader, Boolean.class, String.class, boolean.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.printStackTrace(param.args[1].toString());
-            }
-
-        });
-
-         */
-
-        /*
-
-        XposedHelpers.findAndHookMethod("f75.c", lpparam.classLoader, "a", String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.log("this.a class:"+XposedHelpers.getObjectField(param.thisObject,"a").getClass().getName());
-                //this.a class:kntr.base.dd.internal.data.b
-            }
-
-        });
-
-         */
-
-
-        /*
-        XposedHelpers.findAndHookConstructor("kntr.base.config.SharedPreferences", lpparam.classLoader, String.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.log("sp name:"+param.args[0]);
-            }
-
-        });
-
-         */
-    }
-
-
-    public void test60(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        /*
-        Class<?> ConfigManagerClass = XposedHelpers.findClass("com.bilibili.lib.blconfig.ConfigManager",lpparam.classLoader);
-        Object CompanionObject = XposedHelpers.getStaticObjectField(ConfigManagerClass,"Companion");
-        Object configObject = XposedHelpers.callMethod(CompanionObject,"config");
-
-        log("configObject class:"+configObject.getClass().getName());
-        //2025-09-09 20:38:01.479 [INFO] biliHook: TestFunctionArea configObject class:com.bilibili.lib.blconfig.internal.OverrideConfig
-
-
-         */
-
-        //ConfigManager.UserDelegate->com.bilibili.gripper.container.blconfig.l
-
-
-        //need pre
-        XposedHelpers.findAndHookConstructor("com.bilibili.gripper.container.blconfig.l", lpparam.classLoader, "com.bilibili.lib.dd.GDeviceDecision", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //log("GDeviceDecision class:"+param.args[0].getClass().getName());
-                //[ 2025-09-09T20:49:54.818    10338: 24767: 25152 I/LSPosed-Bridge  ] TestFunctionArea GDeviceDecision class:com.bilibili.lib.dd.b
-                //GDeviceDecision->com.bilibili.lib.dd.b
-            }
-
-        });
-        /*com.bilibili.lib.dd.b
-
-        private static m0 b;
-
-        public String dd(@NotNull String str, @Nullable String str2) {
-            return (String) b.getDd().get(str, str2, (Function1) null);
-        }
-        */
-
-
-        /*com.bilibili.lib.dd.internal.m0
-
-        private final DDContractImpl2 a = new DDContractImpl2();
-
-        public Contract<String> getDd() {
-            return ddOf(q.a.l());
-        }
-
-        public Contract<String> ddOf(@NotNull Env env) {
-            if (!Intrinsics.areEqual(this.a.c().env(), env.getName())) {
-                this.a.c().changeEnv(env.getName());
-            }
-            return this.a;
-        }
-        */
-
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.internal.m0", lpparam.classLoader, "getDd", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                //log("Contract class:"+param.getResult().getClass().getName());
-                //2025-09-09 21:05:54.146 [INFO] biliHook: TestFunctionArea Contract class:com.bilibili.lib.dd.internal.DDContractImpl2
-                //Contract->com.bilibili.lib.dd.internal.DDContractImpl2
-            }
-        });
-
-        //kntr.base.dd.DDContainer
-
-        List<String> ddUsed = new ArrayList<>();
-        XposedHelpers.findAndHookMethod("kntr.base.dd.DDContainer", lpparam.classLoader, "stringForKey", String.class, String.class, "kntr.base.dd.IParamsProvider", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                String name = (String) param.args[0];
-                if(!ddUsed.contains(name)){
-                    ddUsed.add(name);
-                    //log("dd "+name+" def:"+param.args[1]+" res:"+param.getResult());
-                    if(name.equals("cm.debug_user_white_list")){
-                        //Utils.printStackTrace("cm.debug_user_white_list");
-                    }
-                }
-            }
-        });
-
-
-        XposedHelpers.findAndHookMethod("com.bilibili.adcommon.config.AdConfigHelper", lpparam.classLoader, "getDebugUsers", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                List<String> list = (List<String>) param.getResult();
-                //list.add("394924834");
-                param.setResult(list);
-            }
-        });
 
     }
-
-    //学习模式的探索
-    public void test59(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-
-
-        //搜索页面删除返回箭头
-        XposedHelpers.findAndHookMethod("com.bilibili.search2.main.BiliMainSearchActivity", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Activity activity = (Activity) param.thisObject;
-                ImageView imageView = activity.findViewById(Utils.getViewID("iv_back_arrow"));
-                imageView.setVisibility(View.GONE);
-            }
-
-
-        });
-
-
-        //一刀切hook点 不选 搜索历史记录也会没
-        XposedHelpers.findAndHookMethod("bk3.d", lpparam.classLoader, "fillSectionList", "tv.danmaku.bili.widget.section.adapter.BaseSectionAdapter$SectionManager", new XC_MethodHook() {
+    public void test71(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.MinePageManager$switchTo$1", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -504,3107 +136,347 @@ public class TestFunctionArea extends FunctionsBase {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
+                Object $targetPage = XposedHelpers.getObjectField(param.thisObject,"$targetPage");
+                String str = (String) XposedHelpers.getObjectField($targetPage,"b");
+                Utils.log("$targetPage.b="+str);
+                //[ 2026-07-04T11:46:32.855    10338: 27870: 27870 I/LSPosed-Bridge  ] $targetPage.b=bilibili://user_center/favourite?version=2
             }
         });
-
-
-        Class<?> squareTypesClass = XposedHelpers.findClass("com.bilibili.search2.discover.SquareTypes",lpparam.classLoader);
-        Object historyTypeObject = XposedHelpers.getStaticObjectField(squareTypesClass,"HISTORY");
-        String historyTypeString =  (String) XposedHelpers.callMethod(historyTypeObject,"getType");
-
-
-        //过滤热搜等板块 只留下历史记录
-        XposedHelpers.findAndHookMethod("com.bilibili.search2.discover.q", lpparam.classLoader, "f2", java.util.List.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                List list = (List) param.args[0];
-                if(list==null||list.isEmpty()){return;}
-
-                for (int i = list.size()-1; i >= 0; i--) {
-                    Object SearchSquareTypeObject = list.get(i);
-                    String type = (String) XposedHelpers.callMethod(SearchSquareTypeObject,"getType");
-                    if(!type.equals(historyTypeString)){
-                        list.remove(i);
-                    }
-                }
-
-            }
-
-        });
-
-
-        //hook点太浅
+    }
+    public void test70(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
         /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.widget.SearchView", lpparam.classLoader, "setQueryHint", CharSequence.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("cf1.t", lpparam.classLoader, "p0", ("com.bilibili.lib.homepage.mine.MenuGroup"), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 param.setResult(null);
+                Utils.printStackTrace("MenuGroup");
             }
 
-        });
-         */
-        XposedHelpers.findAndHookMethod("com.bilibili.search2.api.DefaultKeyword", lpparam.classLoader, "getShow", new XC_MethodHook() {
+        });*/
+
+        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment", lpparam.classLoader, "onCreateView", android.view.LayoutInflater.class, android.view.ViewGroup.class, android.os.Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                param.setResult("");
+                //Utils.log("onCreateView before");
             }
-
-        });
-
-
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.basic.BaseMainFrameFragment", lpparam.classLoader, "onCreateView", android.view.LayoutInflater.class, android.view.ViewGroup.class, android.os.Bundle.class, new XC_MethodHook() {
-
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                View view = (View) param.getResult();
-                view.setContentDescription("test59 fragment base layout");
+                //XposedHelpers.setObjectField(param.thisObject,"l1",new ArrayList<>());
+
             }
         });
+        Class<?> HomeUserCenterFragmentClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment", lpparam.classLoader);
+        XposedHelpers.findAndHookMethod(HomeUserCenterFragmentClass, "pf", ("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment"), ("tv.danmaku.bili.ui.main2.api.AccountMine"), new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
 
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.basic.BaseMainFrameFragment", lpparam.classLoader, "onViewCreated", android.view.View.class, android.os.Bundle.class, new XC_MethodHook() {
 
+            }
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                ViewGroup coordinatorLayout = (ViewGroup) param.args[0];
-                ViewGroup contentFrameLayout = coordinatorLayout.findViewById(Utils.getViewID("content"));
-                //contentFrameLayout.setVisibility(View.GONE);
-            }
-        });
+                Utils.log("pf after");
+                List<?> list = (List<?>) XposedHelpers.getObjectField(param.args[0],"l1");
+                list.remove(1);
+                list.remove(1);
+                Utils.printfList("pf",list);
 
-
-        for(Method method: ScrollView.class.getMethods()){
-            if(method.getName().equals("addView")){
-                XposedBridge.hookMethod(method, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        View childView = (View) param.args[0];
-                        if(childView.getId()==0x7f090965){
-                            Utils.printStackTrace("test59 content add");
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-
-
-
-    public void test58(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Lcom/bilibili/lib/dblconfig/DblFragment;->Io(Landroid/widget/EditText;Landroid/widget/TextView;Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-        Class<?> DeviceDecisionClass = XposedHelpers.findClass("com.bilibili.lib.dd.DeviceDecision",lpparam.classLoader);
-        Object DeviceDecisionObject = XposedHelpers.getStaticObjectField(DeviceDecisionClass,"INSTANCE");
-        String str = (String) XposedHelpers.callMethod(DeviceDecisionObject,"cloneDD","props");
-
-        //log("test58:"+str);
-
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.dd.DeviceDecision", lpparam.classLoader, "a", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Object gDeviceDecisionObject = XposedHelpers.getObjectField(param.thisObject,"a");
-                log("gDeviceDecisionObject Class:"+gDeviceDecisionObject.getClass().getName());
-                //2025-09-04 11:01:51.450 [INFO] biliHook: TestFunctionArea gDeviceDecisionObject Class:com.bilibili.lib.dd.b
             }
         });
     }
-
-    //云控研究
-    public void test57(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //代码参考Lcom/bilibili/lib/dblconfig/DblFragment;->To()V
-        Class<?> BLKVClass = XposedHelpers.findClass("com.bilibili.lib.blkv.BLKV",lpparam.classLoader);
+    public void test69(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
         Class<?> FoundationAliasClass = XposedHelpers.findClass("com.bilibili.lib.foundation.FoundationAlias",lpparam.classLoader);
-        Application fapp =(Application) XposedHelpers.callStaticMethod(FoundationAliasClass,"getFapp");
-
-        Class<?> EnvManagerClass = XposedHelpers.findClass("com.bilibili.lib.foundation.env.EnvManager",lpparam.classLoader);
-        Object envObject = XposedHelpers.callStaticMethod(EnvManagerClass,"getCurrent");
-        String label = (String) XposedHelpers.callMethod(envObject,"getLabel");
-        //可能是prod(生产环境)或者test(测试环境)
-
-        File targetFile = new File(fapp.getDir("foundation", 0), label + "/blconfig/ab.sp");
-
-        Class<?> ConfigManagerClass = XposedHelpers.findClass("com.bilibili.lib.blconfig.ConfigManager",lpparam.classLoader);
-        Object CompanionObject = XposedHelpers.getStaticObjectField(ConfigManagerClass,"Companion");
-        Object FeatureFlagContractObject = XposedHelpers.callMethod(CompanionObject,"ab2");
-
-        log("FeatureFlagContractObject Class:"+FeatureFlagContractObject.getClass().getName());
-        //com.bilibili.lib.blconfig.internal.OverrideFF
-        //SharedPrefX bLSharedPreferences$default = BLKV.getBLSharedPreferences$default(FoundationAlias.getFapp(), new File(FoundationAlias.getFapp().getDir("foundation", 0), EnvManager.getCurrent().getLabel() + "/blconfig/ab.sp"), false, 0, 6, (Object) null);
-
-        //SharedPreferences bLSharedPreferences$default = (SharedPreferences) XposedHelpers.callStaticMethod(BLKVClass,"getBLSharedPreferences$default",fapp, new File(fapp.getDir("foundation", 0), label + "/blconfig/ab.sp"), false, 0, 6, (Object) null);
-
-        Object rawKVObject = XposedHelpers.callStaticMethod(BLKVClass,"toKvs$default",targetFile,false,0,6,(Object) null);
-
-        Map<String, ?> map = (Map<String, ?>) XposedHelpers.callMethod(rawKVObject,"getAll");
-        log("map size"+map.size());
-        //log(map.toString());
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
-
-            //log("键: " + entry.getKey() + ", 值: " + entry.getValue());
-        }
-        //com.bilibili.lib.blkv.internal.kv.KVs
-        //log("rawKVObject class:"+rawKVObject.getClass().getName());
-        //log("test57:comment.nft_interaction_enable:"+bLSharedPreferences$default.getString("comment.nft_interaction_enable","null"));//false
-        //log("test57:push_vivo_sdk:"+bLSharedPreferences$default.getString("push_vivo_sdk","null"));//true
-        //log("test57:http_dns_reporter:"+bLSharedPreferences$default.getString("http_dns_reporter","null"));//false
-
-        List<String> ffUsed = new ArrayList<>();
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.blconfig.internal.OverrideFF", lpparam.classLoader, "getWithDefault", String.class, boolean.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                String name = (String) param.args[0];
-                boolean returnValue = (Boolean) param.getResult();
-                boolean defaultValue = (Boolean) param.args[1];
-
-                if(!ffUsed.contains(name)){
-                    ffUsed.add(name);
-                    log(name+" r:"+returnValue+" d:"+defaultValue);
-                }
-                //enable ff mod
-                /*
-                if(name.startsWith("ff_")&&!name.startsWith("ff_a")&&!name.startsWith("ff_o")&&!name.startsWith("ff_i")&&!name.startsWith("ff_m")){
-                    log(name+" r:"+returnValue+" d:"+defaultValue);
-                    //param.setResult(false);
-                }
-                if(name.startsWith("ff_e")){
-                    param.setResult(false);
-                }
-
-                 */
-                ///param.setResult(false);
-
-                //ff_key_use_new_pegasus
-                if(name.contains("ff_key_use_new_pegasus")){
-                    param.setResult(false);
-                    //log("ff_key_use_new_pegasus false");
-                    Utils.printStackTrace("ff_key_use_new_pegasus false");
-                }
-            }
-        });
-    }
-
-    //剪贴版跳转研究
-    public void test56(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("android.content.ClipData$Item", lpparam.classLoader, "getText", new XC_MethodHook() {
+        Object apps = XposedHelpers.callStaticMethod(FoundationAliasClass,"getFapps");
+        String str = (String) XposedHelpers.callMethod(apps,"getChannel");
+        Utils.log("apps:"+apps.getClass().getName()+",str:"+str);*/
+        //[ 2026-07-03T19:25:44.699    10338: 10095: 10095 I/LSPosed-Bridge  ] apps:com.bilibili.lib.foundation.DefaultApps,str:oppo
+        XposedHelpers.findAndHookMethod("com.bilibili.lib.foundation.DefaultApps", lpparam.classLoader, "getChannel", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                CharSequence charSequence = (CharSequence) param.getResult();
-                if(charSequence==null){
+                param.setResult("master");
+            }
+
+        });
+    }
+    public void test68(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
+        XposedHelpers.findAndHookMethod("android.view.View", lpparam.classLoader, "performClick", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                boolean result = (boolean) param.getResult();
+                if(!result){
                     return;
                 }
-                String result = charSequence.toString();
-                Utils.printStackTrace("test56:"+result);
-            }
-
-        });
-    }
-
-    public void test55(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //private static final void m(c cVar, View view)
-        XposedHelpers.findAndHookMethod("mk1.c", lpparam.classLoader, "m", "mk1.c", android.view.View.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                View view = (View) param.args[1];
-                if(view==null){return;}
-                Object imageMedia =view.getTag();
-                Utils.log("imageMediaClass:"+imageMedia.getClass());
-                //imageMediaClass:class com.bilibili.bplus.followingcard.api.entity.cardBean.FollowingImageMedia
-
-            }
-
-        });
-
-        XposedHelpers.findAndHookMethod("lk1.d", lpparam.classLoader, "i1", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(true);
-                Utils.log("i1调用");
-            }
-
-        });
-    }
-
-
-    //搜索界面推送过滤
-    public void test54(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        final Class<?> searchAdItemClass = XposedHelpers.findClass("com.bilibili.search2.api.SearchAdItem",lpparam.classLoader);
-        final Class<?> searchVideoItemClass = XposedHelpers.findClass("com.bilibili.search2.api.SearchVideoItem",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("com.bilibili.search2.result.base.b0", lpparam.classLoader, "i1", java.util.List.class, boolean.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                List list = (List) param.args[0];
-                if(list==null||list.isEmpty()){return;}
-                for(Object baseSearchItem:list){
-                    Utils.log_s(baseSearchItem.toString());
-                    Utils.log(baseSearchItem.getClass());
-
-
-                    //com.bilibili.search2.api.SearchAdItem
-                    //com.bilibili.search2.api.SearchVideoItem
-                    //com.bilibili.search2.result.holder.recommend.a0(SearchRelatedSearchItem)
-                }
-
-                for (int i = list.size()-1; i >= 0; i--) {
-                    if(!list.get(i).getClass().equals(searchVideoItemClass)){
-                        list.remove(i);
-                    }
-                }
-            }
-
-        });
-    }
-
-
-    //根据粘贴板查弹幕
-    public void test53(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("android.content.ClipData", lpparam.classLoader, "newPlainText", CharSequence.class, CharSequence.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                CharSequence charSequence = (CharSequence) param.args[1];
-                if(charSequence==null){
-                    return;
-                }
-                String text = charSequence.toString();
-                Utils.printStackTrace("test53:copy "+text);
-            }
-            //	at rp5.n.e(BL:32)
-        });
-        //又是native
-    }
-
-
-    public void test52(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //测测MainActivityV2什么时候接管界面的
-        /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                ((Activity)param.thisObject).finish();
-                //666露头就秒 点击app自动播放打断动画
-            }
-
-        });
-
-         */
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "e6", android.os.Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(null);
-                //卡在白底粉字bilibili页
-                /*
-                Log.i("test52","hello?");
-                Activity activity = (Activity) param.thisObject;
-                FrameLayout contentFrameLayout = activity.findViewById(0x7f090c44);//content_layout
-                FrameLayout parentFrameLayout = (FrameLayout) contentFrameLayout.getParent();
-                View view = parentFrameLayout.getChildAt(0);
-                XposedBridge.log("test52 first splash view:"+view.getClass().getName());
-                Log.i("test52",view.getClass().getName());
-
-
-                 */
-
-                //Toast.makeText(activity,"test52 first splash view:"+view.getClass().getName(), Toast.LENGTH_LONG).show();
-                //parentFrameLayout.removeView(view);//不影响
-
-                //parentFrameLayout.removeAllViews();//不影响
-
-                try {
-                    //FrameLayout grandparentFrameLayout = (FrameLayout) parentFrameLayout.getParent().getParent().getParent().getParent();
-                    //ViewGroup grandparentFrameLayout = (ViewGroup) parentFrameLayout.getParent().getParent().getParent().getParent().getParent();//空指针了 view都几乎被我删干净了 但是背景还在
-                    //grandparentFrameLayout.removeAllViews();
-                    //XposedHelpers.callMethod(param.thisObject,"B6");//果然可以移除背景
-                    //mainV2的背景是主题赋予的 代码动态删除
-                    // 1. 创建背景层
-                    /*
-                    ColorDrawable background = new ColorDrawable(Color.BLACK);
-
-                    // 2. 创建Logo层
-                    BitmapDrawable logo = (BitmapDrawable) ContextCompat.getDrawable(
-                            activity, activity.getResources().getIdentifier("ic_logo_default","drawable", Entrance.TargetPackageName));
-
-                    // 3. 构建LayerDrawable
-                    Drawable[] layers = new Drawable[]{
-                            background,
-                            new InsetDrawable(logo, 0, 0, 0, (int) TypedValue.applyDimension(
-                                    TypedValue.COMPLEX_UNIT_DIP,
-                                    16,
-                                    activity.getResources().getDisplayMetrics()
-                            )) // 底部16dp
-                    };
-
-                    LayerDrawable dynamicDrawable = new LayerDrawable(layers);
-
-                    // 4. 设置Logo位置
-                    dynamicDrawable.setLayerGravity(1, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-
-                    // 5. 应用到窗口
-                    activity.getWindow().setBackgroundDrawable(dynamicDrawable);
-
-                     */
-                    //慢一拍
-                }catch (Exception e){
-                    //Toast.makeText(activity,"e:"+e, Toast.LENGTH_LONG).show();
-                    Utils.reportError(e);
-                }
-                //Toast.makeText(activity,"test52 first splash view:"+grandparentFrameLayout.getChildAt(0).getClass().getName(), Toast.LENGTH_LONG).show();
-
-                //grandparentFrameLayout.removeAllViews();
-                //666超级加辈 啥也不干 就直接进去了 没有第一屏了 开屏就是2233(第二屏) 然后进入主页
-                //后来查明是类型转换异常了 b站应该用了try catch兜底 有异常直接pass第一屏
-
-
-            }
-
-        });
-        /*
-
-        //试试提提速度
-        final LayerDrawable[] dynamicDrawable = {null};
-        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Context appContext = (Context) param.args[0];
-                ColorDrawable background = new ColorDrawable(Color.BLACK);
-
-                // 2. 创建Logo层
-                BitmapDrawable logo = (BitmapDrawable) ContextCompat.getDrawable(
-                        appContext, appContext.getResources().getIdentifier("ic_logo_default","drawable", Entrance.TargetPackageName));
-
-                // 3. 构建LayerDrawable
-                Drawable[] layers = new Drawable[]{
-                        background,
-                        new InsetDrawable(logo, 0, 0, 0, (int) TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                16,
-                                appContext.getResources().getDisplayMetrics()
-                        )) // 底部16dp
-                };
-
-                dynamicDrawable[0] = new LayerDrawable(layers);
-
-                // 4. 设置Logo位置
-                dynamicDrawable[0].setLayerGravity(1, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-
-            }
-        });
-
-
-         */
-        /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "onCreate", android.os.Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                if(dynamicDrawable[0]==null){return;}
-                Activity activity = (Activity) param.thisObject;
-                activity.getWindow().setBackgroundDrawable(dynamicDrawable[0]);
-                //还是慢 先白后黑
+                View view = (View) param.thisObject;
+                Object mListenerInfo = XposedHelpers.getObjectField(param.thisObject,"mListenerInfo");
+                View.OnClickListener onClickListener = (View.OnClickListener) XposedHelpers.getObjectField(mListenerInfo,"mOnClickListener");
+                Utils.log("performClick view:"+param.thisObject+"("+view.getId()+"),onClickListenerClass:"+onClickListener.getClass().getName());
             }
 
         });*/
-
+        //[ 2026-07-03T18:15:26.869    10338: 12666: 12666 I/LSPosed-Bridge  ] performClick view:android.widget.LinearLayout{3b47b54 VFE...CL. ...P.... 640,0-842,174 #7f09165b app:id/frame_fav alpha=1.0 viewInfo = }(2131301979),onClickListenerClass:com.bilibili.app.gemini.ui.h
         /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.MainActivityV2", lpparam.classLoader, "f6", boolean.class, android.os.Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                if(dynamicDrawable[0]==null){return;}
-                Activity activity = (Activity) param.thisObject;
-                activity.getWindow().setBackgroundDrawable(dynamicDrawable[0]);
-            }
-
-        });
-
-
-         */
-
-    }
-
-
-    //调查视频详情页的“简介”tab栏目
-    //这是受到BV1XBN8ziEML启发的 up主说简介暗改宽度
-    public void test51(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookConstructor("km3.l", lpparam.classLoader, "androidx.databinding.DataBindingComponent", android.view.View.class, Object[].class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object[] objArr = (Object[]) param.args[2];
-                View constraintLayout = (View) objArr[0];
-                //利用无障碍打标记 我可能是第一个这么想的人么？
-                constraintLayout.setContentDescription("test51 mark constraintLayout");
-                //尴尬的位置 其下就是TextView了
-
-
-                //View view = (View) param.args[1];
-                //view.setContentDescription("test51 mark view");
-                //这俩是同一个东西
-
-                LinearLayout parentView = (LinearLayout) constraintLayout.getParent();
-
-                /*
-                if(parentView==null){
-                    //是这里
-                    Utils.showToast("parentView==null",1);
-                    return;
-                }
-                LinearLayout grandparentView = (LinearLayout) parentView.getParent();
-                if(grandparentView==null){
-                    Utils.showToast("grandparentView==null",1);
-                    return;
-                }
-                Utils.showToast("grandparentView 孩子:"+grandparentView.getChildCount(),1);
-                */
-
-                LinearLayout test = new LinearLayout(constraintLayout.getContext());
-                test.addView(parentView);
-                //理论上这样它二次addView会报错 就有堆栈了 然而无事发生
-
-
-                XposedHelpers.findAndHookMethod("android.view.ViewGroup", lpparam.classLoader, "addView", android.view.View.class, int.class, android.view.ViewGroup.LayoutParams.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        View childrenView = (View) param.args[0];
-                        if(childrenView.equals(constraintLayout)){
-                            Utils.printStackTrace("test51 addView");
-                        }
-                        //并没有抓到 很奇怪
-                    }
-
-                });
-
-
-            }
-
-        });
-
-
-
-        //返璞归真()
-        XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.tab.e$a", lpparam.classLoader, "getTitle", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                String str = (String) param.getResult();
-                if(str==null){return;}
-                String Placeholder = "      ";
-                param.setResult(Placeholder+str+Placeholder);
-            }
-        });
-        //很不优雅
-    }
-
-    public void test50(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("okhttp3.OkHttpClient$Builder", lpparam.classLoader, "build", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-            }
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-            }
-        });
-    }
-
-
-    public void test49(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //我手机端收藏BV1eCthzaEue视频时 显示“账号异常，操作失败” 其他视频没问题 电脑端收藏这个视频也没问题
-        XposedHelpers.findAndHookMethod("com.bilibili.playset.widget.favorite.FavoriteDialog", lpparam.classLoader, "H", Throwable.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Throwable th = (Throwable) param.args[0];
-                XposedBridge.log(th);
-                Log.e("test49","FavoriteDialog H",th);
-            }
-            /*
-            * [ 2025-08-10T12:20:17.276    10338: 23420: 23420 E/LSPosed-Bridge  ] com.bilibili.api.BiliApiException: 账号异常，操作失败
-	            at com.bilibili.okretro.BiliApiDataCallback.onResponse(BL:63)
-	            at com.bilibili.okretro.call.BiliCall$c.run(BL:11)
-	            at android.os.Handler.handleCallback(Handler.java:995)
-	            at android.os.Handler.dispatchMessage(Handler.java:105)
-	            at android.os.Looper.loopOnce(Looper.java:288)
-	            at android.os.Looper.loop(Looper.java:393)
-	            at android.app.ActivityThread.main(ActivityThread.java:9549)
-	            at java.lang.reflect.Method.invoke(Native Method)
-	            at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
-	            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
-
-                 */
-
-        });
-    }
-
-
-    //直播间右下角礼物可折叠广告
-    public void test48(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
-                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
-                String BundleInfo = param.args[0].toString();
-                if(BundleInfo.contains("liveroom")){
-                    //Lcom/bilibili/bililive/room/ui/roomv3/notice/widget/FullScreenNoticeView;->show(Lcom/bilibili/bililive/videoliveplayer/net/beans/gateway/userinfo/LiveNotice;)V
-                    Class<?> zs0Class = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","liveroom.zs0");
-                    ClassLoader classLoader = zs0Class.getClassLoader();
-                    XposedHelpers.findAndHookConstructor(zs0Class, android.content.Context.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            //Utils.printStackTrace("test48");
-                        }
-
-                    });
-
-                    XposedHelpers.findAndHookMethod("liveroom.zs0", classLoader, "getInnerLiveData", new XC_MethodHook() {
-
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            super.afterHookedMethod(param);
-                            //Log.i("hhsixhhwkhxh test48",param.getResult().toString());
-                        }
-                    });
-
-                    XposedHelpers.findAndHookMethod("liveroom.zs0", classLoader, "onBind", classLoader.loadClass("com.bilibili.bililive.operation.base.LiveOperationPageData"), new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            //Utils.printStackTrace("test48");
-                            param.setResult(null);
-                            /*java.lang.Exception: test48
-                                                                                                    	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:251)
-                                                                                                    	at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1$3.beforeHookedMethod(TestFunctionArea.java:178)
-                                                                                                    	at PsTaiGxEo.z.Cn.pNNm.ZV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
-                                                                                                    	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
-                                                                                                    	at LSPHooker_.onBind(Unknown Source:11)
-                                                                                                    	at com.bilibili.bililive.room.ui.roomv3.operating4.ui.LiveNormalItemView$b.instantiateItem(LiveNormalItemView.kt:12)
-                                                                                                    	at androidx.viewpager.widget.ViewPager.addNewItem(BL:10)
-                                                                                                    	..
-                                                                                                    	at androidx.viewpager.widget.ViewPager.onMeasure(BL:190)
-                                                                                                    	at android.view.View.measure(View.java:28736)
-                                                                                                    	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:7143)
-                                                                                                    	...
-                                                                                                    	at android.view.View.measure(View.java:28736)
-                                                                                                    	at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:7143)
-                                                                                                    	at android.widget.FrameLayout.onMeasure(FrameLayout.java:194)
-                                                                                                    	at com.bilibili.bililive.room.ui.widget.BlowViewLayoutV3.onMeasure(BlowViewLayoutV3.kt:1)
-                                                                                                    	...*/
-                        }
-
-                    });
-
-                    XposedHelpers.findAndHookConstructor("com.bilibili.bililive.room.ui.roomv3.operating4.ui.LiveNormalItemView", classLoader, android.content.Context.class, android.util.AttributeSet.class, int.class, classLoader.loadClass("com.bilibili.bililive.room.ui.roomv3.operating4.config.LiveItemConfig"), new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            //Utils.printStackTrace("test48 LiveNormalItemView");
-                            /*
-                            * java.lang.Exception: test48 LiveNormalItemView
-                                                                                                    	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:251)
-                                                                                                    	at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1$4.beforeHookedMethod(TestFunctionArea.java:206)
-                                                                                                    	at PsTaiGxEo.z.Cn.pNNm.ZV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
-                                                                                                    	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
-                                                                                                    	at LSPHooker_.constructor(Unknown Source:24)
-                                                                                                    	at liveroom.xp0.h(LiveNormalPendantHolder.kt:288)
-                                                                                                    	at liveroom.xp0.onBind(LiveNormalPendantHolder.kt:3)
-                                                                                                    	at liveroom.xp0.onBind(LiveNormalPendantHolder.kt:1)
-                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKViewHolder.bind$skadapter_release(BL:19)
-                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKViewHolder.bind$skadapter_release$default(BL:8)
-                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:4)
-                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:6)
-                                                                                                    	at com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter.onBindViewHolder(BL:2)*/
-                        }
-
-                    });
-
-                    XposedHelpers.findAndHookMethod("liveroom.xp0", classLoader, "i", new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            param.setResult(null);
-                        }
-
-                    });
-
-                    XposedHelpers.findAndHookMethod("liveroom.rp0", classLoader, "r", java.util.List.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            Log.i("test48 hhsixhhwkhxh rp0",param.args[0].toString());
-                            param.args[0] = new ArrayList<>();
-                        }
-
-                    });
-
-
-                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roomv3.operating4.service.LiveRoomOperationAppServiceImpl", classLoader, "insertPendentArrow", classLoader.loadClass("com.bilibili.bililive.compose.pendantarrow.LivePendantCollapseData"), new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            //param.setResult(null);
-                            //Log.i("test48", "阻止insertPendentArrow");
-                        }
-
-                    });//这东西纯粹箭头 只是用来折叠/展开广告的 还以为和广告一体的说
-
-                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roomv3.operating4.service.LiveRoomOperationAppServiceImpl", classLoader, "setPendant", java.util.List.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            Log.i("test48 setPendant",Utils.toJSONString(lpparam,param.args[0].toString()) );
-                            XposedBridge.log(Utils.toJSONString(lpparam,param.args[0].toString()));
-                            param.args[0] = new ArrayList<>();
-                        }
-
-                    });
-                }
-            }
-        });
-
-        XposedHelpers.findAndHookConstructor("com.bilibili.bililive.videoliveplayer.net.beans.gateway.roominfo.BiliLiveNormalBannerWrapper", lpparam.classLoader, java.util.List.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //Utils.printStackTrace("test48 BiliLiveNormalBannerWrapper");
-
-            }
-
-        });
-        /*
-        Class<?> BiliLiveRoomBannerClass = XposedHelpers.findClass("com.bilibili.bililive.videoliveplayer.net.beans.gateway.roominfo.BiliLiveRoomBanner",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("com.alibaba.fastjson.JSON", lpparam.classLoader, "parseObject", String.class, Class.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Class<?> cls =(Class<?>) param.args[1];
-                if(BiliLiveRoomBannerClass.getName().contains("BiliLiveRoomBanner")){
-                    Utils.printStackTrace("test48 JSON parseObject BiliLiveRoomBannerClass");
-                }
-            }
-        });*/
-
-        Class<?> featureClass = XposedHelpers.findClass("com.alibaba.fastjson.parser.Feature",lpparam.classLoader);
-        Class<?> featureArrayClass = Array.newInstance(featureClass, 0).getClass();
-        XposedHelpers.findAndHookMethod("com.alibaba.fastjson.JSON", lpparam.classLoader, "parseObject", char[].class, int.class, Type.class, featureArrayClass, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Log.i("test48", "parseObject TYPE:"+param.getResult().getClass().getName());
-                if(param.getResult().getClass().getName().contains("BiliLiveRoomBanner")){
-                    Utils.printStackTrace("test48 JSON parseObject BiliLiveRoomBannerClass");
-                }
-            }
-        });//没有任何日志 哔哩哔哩似乎不用这个方法
-    }
-
-    public void test47(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*
-        XposedHelpers.findAndHookMethod("androidx.core.content.res.ResourcesCompat", lpparam.classLoader, "isColorInt", Resources.class, int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);m
-                //ResourcesCompat resourcesCompat = (ResourcesCompat) param.thisObject;
-                Resources resources = (Resources) para.args[0];
-                int resId = (int) param.args[1];
-                final TypedValue value = (TypedValue) XposedHelpers.callMethod(param.thisObject,"getTypedValue");
-                try {
-                    resources.getValue(resId, value, true);
-                }catch (Resources.NotFoundException e){
-                    param.setResult(false);
-                }
-            }
-
-        });*/
-        /*
-        XposedHelpers.findAndHookMethod("androidx.core.content.res.ResourcesCompat", lpparam.classLoader, "isColorInt", android.content.res.Resources.class, int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //ResourcesCompat resourcesCompat = (ResourcesCompat) param.thisObject;
-                Resources resources = (Resources) param.args[0];
-                int resId = (int) param.args[1];
-                final TypedValue value = (TypedValue) XposedHelpers.callMethod(param.thisObject,"getTypedValue");
-                try {
-                    resources.getValue(resId, value, true);
-                }catch (Resources.NotFoundException e){
-                    param.setResult(false);
-                }
-            }
-        });*/
-        Class<?> BundleStatusClass = XposedHelpers.findClass("com.bilibili.lib.tribe.core.internal3.bundle.BundleActionExecutor$BundleStatus",lpparam.classLoader);
-        Object INACTIVEObject = XposedHelpers.getStaticObjectField(BundleStatusClass,"INACTIVE");
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal3.bundle.DefaultBundleProcessor", lpparam.classLoader, "h", java.io.File.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                File file = (File)param.args[0];
-                if(file==null){return;}
-                if(file.getPath().contains("/adcore/")){
-                    param.setResult(INACTIVEObject);
-                    XposedBridge.log("test47 kill");
-                }
-            }
-
-        });
-    }
-
-
-
-    public void test46(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("com.bilibili.cron.Canvas", lpparam.classLoader, "drawText", String.class, float.class, float.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                String str = (String) param.args[0];
-                if(str.equals("助眠小视频")){
-                    Utils.printStackTrace("test46:助眠小视频");
-                }
-            }
-
-        });
-        /*
-        * [ 2025-08-08T19:59:43.385    10338: 19249: 20366 I/LSPosed-Bridge  ] java.lang.Exception: test46:助眠小视频
-	        at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:250)
-	        at hhsixhhwkhxh.bilibili.function.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:143)
-	        at RGWMl.Ko.iklmiflKl.knV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
-	        at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
-	        at LSPHooker_.drawText(Unknown Source:32)
-        *后续改包把这个方法删了 点开视频会卡退 算法助手也拦不到报错 用LogFox看报错 是native主动调用的这个方法 踢到钢板了
-        * */
-    }
-
-
-    //工具方法
-    //查找谁绘制了包含关键字的文本
-    //用来查弹幕的代码位置
-    public void test45(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        String keyWord = "助眠小视频";
-
-        for(Method method:Canvas.class.getMethods()){
-            if(!method.getName().contains("drawText")){continue;}
-            Class<?> FirstType = method.getParameterTypes()[0];
-            if(FirstType.equals(MeasuredText.class)){continue;}//处理不了
-            if(FirstType.equals(char[].class)){
-                //char[]
-                XposedBridge.hookMethod(method, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        char[] strArray = (char[]) param.args[0];
-                        if(strArray==null){return;}
-                        String str = new String(strArray);
-                        if(str.contains(keyWord)){
-                            Utils.printStackTrace("test45:"+keyWord);
-                        }
-                    }
-                });
-            }else{
-                //String或者CharSequence
-                XposedBridge.hookMethod(method, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        Object obj = param.args[0];
-                        if(obj==null){return;}
-                        String str = obj.toString();
-                        if(str.contains(keyWord)){
-                            Utils.printStackTrace("test45:"+keyWord);
-                        }
-                    }
-                });
-            }
-
-        }
-        /*最疑惑的一集
-        * java.lang.Exception: test45:助眠小视频
-	        at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:250)
-	        at hhsixhhwkhxh.bilibili.function.TestFunctionArea$2.beforeHookedMethod(TestFunctionArea.java:169)
-	        at RGWMl.Ko.iklmiflKl.knV.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
-	        at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
-	        at LSPHooker_.drawText(Unknown Source:42)
-	        at android.text.Layout.drawText(Layout.java:923)
-	        at android.text.Layout.draw(Layout.java:516)
-	        at android.text.Layout.draw(Layout.java:464)
-	        at android.text.Layout.draw(Layout.java:446)
-	        at com.bilibili.cron.Canvas.drawTextDirectly(BL:177)
-	        at com.bilibili.cron.Canvas.drawText(BL:49) 为什么到这里就没了
-	* */
-    }
-
-
-    //粘贴板相关
-    public void test44(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        Class<?> GarbManagerClass = XposedHelpers.findClass("com.bilibili.lib.ui.garb.GarbManager",lpparam.classLoader);
-        Method getGarbWithNightModeMethod = GarbManagerClass.getMethod("getGarbWithNightMode",Context.class);
-        Class<?> GarbClass = XposedHelpers.findClass("com.bilibili.lib.ui.garb.Garb",lpparam.classLoader);
-        Method isDarkModeMethod = GarbClass.getMethod("isDarkMode");
-
-        Class<?> MultipleThemeUtils = XposedHelpers.findClass("com.bilibili.lib.ui.util.MultipleThemeUtils",lpparam.classLoader);
-        Method isNightThemeMethod = MultipleThemeUtils.getMethod("isNightTheme",Context.class);
-
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.splash.d", lpparam.classLoader, "b", "ri5.a", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                //super.beforeHookedMethod(param);
-                Object aVar = param.args[0];
-                if(aVar==null){return;}
-                Object a2 = XposedHelpers.callMethod(aVar,"a");
-                if(a2==null){return;}
-                Object url = XposedHelpers.callMethod(a2,"k");
-                //Object url = XposedHelpers.getObjectField(a2,"e");
-
-                if(url==null){
-                    Toast.makeText(Utils.getMainActivity(),"test44:url==null",Toast.LENGTH_LONG).show();
-                    //Utils.showToast("test44:url==null",0);
-                    XposedBridge.log("test44:url==null");
-                    return;
-                }
-                //XposedBridge.log("test44:"+url.toString());
-                XposedBridge.log("test44:"+url.toString());
-                //Toast.makeText(Utils.getMainActivity(),"test44:"+url.toString(),Toast.LENGTH_LONG).show();
-                //RoundCornerDialog.showDialog(Utils.getMainActivity());
-                //Utils.showToast("test44:"+url.toString(),0);
-
-                boolean isDarkMode = (boolean) isNightThemeMethod.invoke(null,Utils.getMainActivity());
-                Toast.makeText(Utils.getMainActivity(),"test44:"+isDarkMode,Toast.LENGTH_LONG).show();
-
-            }
-
-        });
-    }
-
-
-    //隐藏直播间礼物推广弹幕
-    public void test43(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
-                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
-                String BundleInfo = param.args[0].toString();
-                if(BundleInfo.contains("liveroom")){
-                    //Lcom/bilibili/bililive/room/ui/roomv3/notice/widget/FullScreenNoticeView;->show(Lcom/bilibili/bililive/videoliveplayer/net/beans/gateway/userinfo/LiveNotice;)V
-                    Class<?> FullScreenNoticeView = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","com.bilibili.bililive.room.ui.roomv3.notice.widget.FullScreenNoticeView");
-                    XposedHelpers.findAndHookMethod(FullScreenNoticeView, "show", "com.bilibili.bililive.videoliveplayer.net.beans.gateway.userinfo.LiveNotice", new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            param.setResult(null);
-                        }
-
-                    });
-                }
-            }
-        });
-    }
-
-
-    //二战评论区精准时间显示 上次hook的太深了 影响到了其他的时间显示
-    public void test42(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm")
-                .withZone(ZoneId.systemDefault()); // 使用系统时区
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.data.model.CommentItem$e$a", lpparam.classLoader, "c", android.content.Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                long timestamp = (Long) XposedHelpers.getObjectField(param.thisObject,"a");
-                param.setResult(formatter.format(Instant.ofEpochMilli(timestamp)));
-            }
-
-        });
-    }
-
-
-    //禁止直播页面滑动切换直播间 & 官方模块hook的探索
-    public void test41(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal.bundle.i", lpparam.classLoader, "c", java.io.File.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                File file = (File) param.args[0];
-                File result = Utils.copyFileToAndroidData(file,"test41 "+file.getName()+UUID.randomUUID());
-                XposedBridge.log("test41:"+result);
-            }
-
-        });*/
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.tribe.core.internal3.bundle.m", lpparam.classLoader, "c", java.io.File.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-            }
-
-        });
-
-        XposedHelpers.findAndHookConstructor("com.bilibili.lib.tribe.core.internal.loader.DefaultBundleClassLoaderWrapper", lpparam.classLoader, "com.bilibili.lib.tribe.core.internal.bundle.u", ClassLoader.class, String.class, boolean.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                //XposedBridge.log("打印第一个参数:"+param.args[0].toString());
-                //[ 2025-08-04T15:26:01.365    10338:  3850:  4523 I/LSPosed-Bridge  ] 打印第一个参数:BundleInfo(name='liveroom', versionCode=2010879700, versionName='0.0.1', priority=100)
-                String BundleInfo = param.args[0].toString();
-                if(BundleInfo.contains("liveroom")){
-                    //Class n40Class = (Class) XposedHelpers.callMethod(param.thisObject,"a","liveroom.n40");
-                    //XposedBridge.log("test41 success"+n40Class);
-                    //[ 2025-08-04T15:31:50.220    10338: 16139: 16521 I/LSPosed-Bridge  ] test41 successclass liveroom.n40
-
-
-                    //我要hook com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager 因此把它提前加载 方便把握hook时机
-                    Class<?> LiveRoomUIFrameManagerClass = (Class<?>) XposedHelpers.callMethod(param.thisObject,"a","com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager");
-                    ClassLoader classLoader = LiveRoomUIFrameManagerClass.getClassLoader();
-                    /*
-                    XposedHelpers.findAndHookMethod(LiveRoomUIFrameManagerClass, "initVerticalPagerView", classLoader.loadClass("kotlin.jvm.functions.Function0"), new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            param.setResult(null);
-                            XposedBridge.log("阻止垂直分页视图初始化");
-                        }
-
-                    });直播页面黑屏
-                    */
-
-                    /*
-                    XposedHelpers.findAndHookConstructor("com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager", classLoader, int.class, classLoader.loadClass("androidx.fragment.app.FragmentActivity"), classLoader.loadClass("liveroom.hm1"), new XC_MethodHook() {
-
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            super.afterHookedMethod(param);
-                            XposedHelpers.setObjectField(param.thisObject,"A",null);
-                            XposedBridge.log("置空FeedRoomGesture");
-                        }
-                    });炸了 空指针
-                    */
-
-                    Class<?> FeedRoomGestureClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture",classLoader);
-                    Class<?> PrepareClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture$Prepare",classLoader);
-                    Object NotObject = XposedHelpers.getStaticObjectField(PrepareClass,"NEXT");
-                    List<Method> GestureHandlingMethods = Utils.selectMethods(FeedRoomGestureClass,PrepareClass,int.class,int.class,int.class,int.class);
-                    //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->f(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
-                    //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->e(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
-                    XposedBridge.log("GestureHandlingMethods:"+GestureHandlingMethods);
-
-                    /*
-                    for(Method method:GestureHandlingMethods){
-                        XposedBridge.hookMethod(method, new XC_MethodHook() {
-                            @Override
-                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                super.beforeHookedMethod(param);
-                                //param.setResult(NotObject);
-                                //XposedBridge.log("驳回");
-                                Utils.printStackTrace("GestureHandlingMethods-"+method.getName());
-                            }
-                        });
-                    }*/
-                    /*
-                    * 	at LSPHooker_.onFeedRoomPageScrolled(Unknown Source:36)
-	                    at com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager$f.onPageScrolled(LiveRoomUIFrameManager.kt:127)
-	                    at com.bilibili.bililive.room.ui.roomv3.vertical.widget.LiveVerticalPagerView$a.onScrolled(LiveVerticalPagerView.kt:9)
-	                    at androidx.recyclerview.widget.RecyclerView.dispatchOnScrolled(BL:52)
-	                    at androidx.recyclerview.widget.RecyclerView.dispatchLayoutStep3(BL:222)
-	                    at androidx.recyclerview.widget.RecyclerView.dispatchLayout(BL:125)
-	                    at androidx.recyclerview.widget.RecyclerView.onLayout(BL:6)
-	                    at android.view.View.layout(View.java:25913)
-	                    at android.view.ViewGroup.layout(ViewGroup.java:6572)
-	                    at android.widget.FrameLayout.layoutChildren(FrameLayout.java:332)
-	                    at android.widget.FrameLayout.onLayout(FrameLayout.java:270)
-	                    at com.bilibili.bililive.room.ui.roomv3.vertical.widget.LiveVerticalPagerView.onLayout(LiveVerticalPagerView.kt:1)
-	                    at android.view.View.layout(View.java:25913)
-                    * */
-
-                    //就算阻止方法调用也没用 因为它是recyclerView 本身就有滑动功能 方才hook的不过是滑动回调罢了
-                    /*
-                    XposedHelpers.findAndHookMethod("com.bilibili.bililive.room.ui.roommanager.LiveRoomUIFrameManager$f", classLoader, "onPageScrolled", classLoader.loadClass("androidx.recyclerview.widget.RecyclerView"), int.class, int.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            XposedBridge.log("recyclerView类型:"+param.args[0].getClass());
-                            //[ 2025-08-04T16:26:43.290    10338:  2348:  2348 I/LSPosed-Bridge  ] recyclerView类型:class liveroom.iu4
-                        }
-
-                    });*/
-
-                    /*
-                    XposedHelpers.findAndHookMethod("liveroom.n40", classLoader, "insertFeedItems", java.util.List.class, int.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            XposedBridge.log("insertFeedItems list"+param.args[0].toString());
-                        }
-
-                    });*/
-
-
-                    //com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter
-
-
-                    XposedHelpers.findAndHookMethod("liveroom.iu4", classLoader, "onInterceptTouchEvent", android.view.MotionEvent.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            param.setResult(false);
-                        }
-
-                    });
-
-                    XposedHelpers.findAndHookMethod("liveroom.iu4", classLoader, "onTouchEvent", android.view.MotionEvent.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
-                            param.setResult(false);
-                        }
-
-                    });
-                    //成功了 2025-8-4 18:01
-
-                }
-                /*
-                ClassLoader classLoader = (ClassLoader) param.args[1];
-                try {
-                    Class n40Class = classLoader.loadClass("liveroom.n40");
-                    XposedBridge.log("test41 success"+n40Class);
-                }catch (Exception e){
-                    XposedBridge.log(e);
-                }*/
-            }
-        });
-
-        //宿主和官方插件apk中可能有相同的类名 但是请留意它们的内容很可能不同 也由不同的类加载器加载 下面就被误导了
-        /*
-        Class<?> FeedRoomGestureClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture",lpparam.classLoader);
-        Class<?> PrepareClass = XposedHelpers.findClass("com.bilibili.bililive.room.ui.roomv3.player.playflow.FeedRoomGesture$Prepare",lpparam.classLoader);
-        Object NotObject = XposedHelpers.getStaticObjectField(PrepareClass,"NOT");
-        List<Method> GestureHandlingMethods = Utils.selectMethods(FeedRoomGestureClass,PrepareClass,int.class,int.class,int.class,int.class);
-        //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->f(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
-        //Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture;->e(IIII)Lcom/bilibili/bililive/room/ui/roomv3/player/playflow/FeedRoomGesture$Prepare;
-        XposedBridge.log("GestureHandlingMethods:"+GestureHandlingMethods);
-        for(Method method:GestureHandlingMethods){
-            XposedBridge.hookMethod(method, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    param.setResult(NotObject);
-                    XposedBridge.log("驳回");
-                }
-            });
-        }
-        */
-
-
-
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.bililive.infra.skadapter.SKRecyclerViewAdapter", lpparam.classLoader, "appendItems", java.util.List.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                XposedBridge.log("success!");
-                List<?> list = (List<?>) param.args[0];
-                if(list==null||list.isEmpty()){return;}
-                int count = (int) XposedHelpers.callMethod(param.thisObject,"getItemCount");
-                if(count>1){return;}
-                List newList = new ArrayList<>();
-                newList.add(list.get(0));
-                param.args[0] = newList;
-            }
-
-        });成效不显著 可能是通过其他方法加了直播间 同时注意到刚开始只有一个直播间的时候 仍然可以滑动
-          只是有文本提示 因此 重点不应放在把recyclerView的数据源削减成1个来取巧
-        */
-
-    }
-
-    //意外发现直播间的RecyclerView的Adapter类 在apk中没有 怀疑动态加载 hook看看
-    public void test40(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        Method loadClassMethod = ClassLoader.class.getMethod("loadClass",String.class);
-        XposedBridge.hookMethod(loadClassMethod, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                String ClassPath = (String) param.args[0];
-                //XposedBridge.log("test40:"+ClassPath);
-                if(ClassPath.startsWith("liveroom.")){
-                    Utils.printStackTrace("test40:"+ClassPath);
-                }
-            }
-        });
-    }
-
-    //以下代码基于8.51.0版本
-
-    //分享禁止跳转到竖屏视频
-    public void test39(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.intent.IntentHandlerActivity", lpparam.classLoader, "init", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Intent intent = (Intent) XposedHelpers.callMethod(param.thisObject,"getIntent");
-                //Utils.showToast(intent.getDataString(), Toast.LENGTH_LONG);
-                /*
-                ComponentName componentName = intent.getComponent();
-                if(componentName==null){return;}
-                if(componentName.getClassName().equals("com.bilibili.video.story.StoryVideoActivity")){
-                    intent.setClassName((Activity)param.thisObject,"com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity");
-                }
-
-                 */
-                /*
-                String dataString = intent.getDataString();
-                Utils.copyText(dataString);
-                if(dataString.startsWith("bilibili://video/")){
-
-                    dataString = dataString.replace("-Atype","onani");
-                    String bvid = dataString.substring(17,dataString.indexOf("?"));
-                    //String newDataString = dataString.replace("video/","united_video/");
-                    //intent.setData(Uri.parse(newDataString));
-
-                    //intent.putExtra("bvid",bvid);
-                    Utils.log(intent);
-                    Utils.log(intent.getExtras());
-                    //Utils.showToast(bvid,1);
-                }*/
-                //String dataString = intent.getDataString();
-                //Utils.copyText("初始"+dataString);
-
-
-                Uri rawUri = intent.getData();
-                String RawH5awaken = rawUri.getQueryParameter("h5awaken");
-                String h5awakenUrlDecoded = URLDecoder.decode(RawH5awaken, "UTF-8");
-
-                // Base64 解码
-                byte[] h5awakenBase64Decoded = Base64.decode(h5awakenUrlDecoded, Base64.DEFAULT);
-
-                //将字节数组转换为字符串
-                String h5awakenString = new String(h5awakenBase64Decoded, StandardCharsets.UTF_8);
-
-                h5awakenString = h5awakenString.replace("share_from","onani");
-
-                String newH5awaken = Base64.encodeToString(h5awakenString.getBytes(StandardCharsets.UTF_8),Base64.DEFAULT);
-
-                Uri.Builder builder = rawUri.buildUpon();
-                builder.clearQuery(); // 清除原始查询参数
-                // 重新添加所有原始查询参数，并替换h5awaken
-                for (String key : rawUri.getQueryParameterNames()) {
-                    if(key.equals("-Atype")){continue;}
-                    if ("h5awaken".equals(key)) {
-                        builder.appendQueryParameter(key, newH5awaken);
-                    } else {
-                        // 注意：一个参数名可能有多个值，这里简化处理，只取第一个值
-                        String value = rawUri.getQueryParameter(key);
-                        builder.appendQueryParameter(key, value);
-                    }
-                }
-                Uri newUri = builder.build();
-                intent.setData(newUri);
-                //Utils.copyText("修改"+intent.getDataString());
-            }
-
-        });
-    }
-
-    public void test38(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.ui.AuthorSpaceActivity", lpparam.classLoader, "F9", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                ViewGroup root = (ViewGroup) XposedHelpers.getObjectField(param.thisObject,"F");
-                //root.addView(new Button(root.getContext()));
-                int id = Utils.getViewID("btn");
-                Button SweepGraveButton = new Button(root.getContext());
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.BELOW, id);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-
-                SweepGraveButton.setText("扫墓");
-                //SweepGraveButton.setOnClickListener();
-                root.addView(SweepGraveButton, params);
-            }
-        });
-    }
-
-
-    //小玩具 可以访问注销up没删除的动态和视频 好玩 不知道什么时候会被堵死
-    public void test37(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //com.bilibili.bplus.followinglist.model.b9 这是Bilibili关注列表功能中的一个数据模型类(UpListItem)
-
-        //Lcom/bilibili/bplus/followinglist/quick/consume/t0;->a1(Ljava/util/List;Z)V
-
-
-        /*
-        XposedHelpers.findAndHookConstructor("com.bilibili.bplus.followinglist.model.b9", lpparam.classLoader, String.class, String.class, long.class, long.class, "com.bilibili.bplus.followinglist.model.UpItemType", "com.bilibili.bplus.followinglist.model.UpItemStyle", "com.bilibili.bplus.followinglist.model.UpItemStyle", long.class, boolean.class, int.class, boolean.class, String.class, String.class, boolean.class, String.class, boolean.class, "com.bilibili.bplus.followinglist.model.l1", String.class, String.class, String.class, String.class, "com.bilibili.bplus.followinglist.model.c9", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                //参数0 java.lang.String https://i1.hdslb.com/bfs/face/4eb764b8c6afc48ad1e7aaf84b0f58db3d4dbb3f.jpg
-                //参数1 java.lang.String    赛雷三分钟
-                //参数2 java.lang.Long  26108626
-                //参数3 java.lang.Long  4
-                //参数4 com.bilibili.bplus.followinglist.model.UpItemType   NORMAL
-                //参数5 com.bilibili.bplus.followinglist.model.UpItemStyle  UpItemStyle(rectText=, rectTextColor=, rectIcon=, rectBgColor=, outerAnimation=)
-                //参数6 com.bilibili.bplus.followinglist.model.UpItemStyle  UpItemStyle(rectText=, rectTextColor=, rectIcon=, rectBgColor=, outerAnimation=)
-                //参数7 java.lang.Long  0
-                //参数8 java.lang.Boolean   false
-                //参数9    java.lang.Integer   0
-                //参数10    java.lang.Boolean   false
-                //参数11    java.lang.String    bilibili://space/26108626?defaultTab=dynamic
-                //参数12    java.lang.String    24a58bd3f9c939da758b30aac1687c9e
-                //参数13    java.lang.Boolean   false
-                //参数14    java.lang.String
-                //参数15    java.lang.Boolean   false
-                //参数16    null   null
-                //参数17    java.lang.String
-                //参数18    java.lang.String    {"uid_type":1}
-                //参数19    java.lang.String
-                //参数20    java.lang.String
-                //参数21    null    null
-
-                param.args[0]="https://i1.hdslb.com/bfs/face/0de87fa269a1aa3b0a05643909246f7fdeb2ef0b.jpg";
-                param.args[1]="hhsixhhwkhxh";
-                param.args[2]=5519219;
-
-                //param.args[3]=null;
-                //param.args[4]=null;
-                //param.args[5]=null;//无妨
-                //param.args[6]=null;//无妨
-                //param.args[7]=null;
-                //param.args[8]=null;
-                //param.args[9]=null;
-                //param.args[10]=null;
-                //param.args[11]=null;//崩溃
-
-                param.args[12]=null;
-
-                        //param.args[13]=null;//无网络
-                        //param.args[14]=null;//崩溃
-                        //param.args[15]=null;//无网络
-                param.args[16]=null;
-                        //param.args[17]=null;//崩溃
-                        //param.args[18]=null;//崩溃
-                param.args[19]=null;
-                param.args[20]=null;
-                param.args[21]=null;
-
-
-
-            }
-
-        });*/
-
-        Class<?> UpItemTypeClass = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.UpItemType",lpparam.classLoader);
-        Object UpItemTypeNORMALObject = XposedHelpers.getStaticObjectField(UpItemTypeClass,"NORMAL");
-
-        long uid = 5519219L;
-
-        Class<?> b9Class = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.b9",lpparam.classLoader);
-        Constructor<?> b9Constructor = Utils.getConstructorWithParamCount(b9Class,22,false);
-        Object b9Object = b9Constructor.newInstance(
-                "https://i1.hdslb.com/bfs/face/0de87fa269a1aa3b0a05643909246f7fdeb2ef0b.jpg",
-                "hhsixhhwkhxh",
-                uid,
-                0,
-                UpItemTypeNORMALObject,
-                null,
-                null,
-                0,
-                false,
-                0,
-                false,
-                "bilibili://space/"+uid+"?defaultTab=dynamic",
-                "",
-                false,
-                "",
-                false,
-                null,
-                "",
-                "{\"uid_type\":1}",
-                "",
-                "",
-                null
-        );
-
-
-        //com.bilibili.bplus.followinglist.model.e7
-        List<Object> newList = new ArrayList<>();
-        newList.add(b9Object);
-
-        Class<?> e7Class = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.e7",lpparam.classLoader);
-        Constructor<?> e7Constructor = Utils.getConstructorWithParamCount(e7Class,14,false);
-        Object e7Object = e7Constructor.newInstance(
-                "扫墓",
-                newList,
-                new ArrayList<>(),
-                "",
-                0,
-                true,
-                true,
-                "",
-                "bilibili://following/up_more_list",
-                true,
-                false,
-                true,
-                false,
-                ""
-        );
-        /*
-        *   参数0 java.lang.String  最常访问
-            参数1 java.util.ArrayList {...}
-            参数2 java.util.ArrayList {}
-            参数3 java.lang.String    61ead6f2903b73072da7d58927687dc0
-            参数4 java.lang.Integer   0
-            参数5 java.lang.Boolean   true
-            参数6 java.lang.Boolean   true
-            参数7 java.lang.String    更多
-            参数8 java.lang.String    bilibili://following/up_more_list
-            参数9 java.lang.Boolean   true
-            参数10    java.lang.Boolean   false
-            参数11    java.lang.Boolean   true
-            参数12    java.lang.Boolean   false
-            参数13    java.lang.String
-            * */
-        /*
-        XposedHelpers.findAndHookConstructor("com.bilibili.bplus.followinglist.model.e7", lpparam.classLoader, String.class, java.util.ArrayList.class, java.util.ArrayList.class, String.class, int.class, boolean.class, boolean.class, String.class, String.class, boolean.class, boolean.class, boolean.class, boolean.class, String.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                //List list = (ArrayList)param.args[1];
-                //if (list.size() > 1) {
-                //    list.subList(1, list.size()).clear();
-                //}
-                List newList = new ArrayList<>();
-                newList.add(b9Object);
-                param.args[1] = newList;
-
-                param.args[3] = "";
-
-
-            }
-
-        });
-        */
-
-
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.bplus.followinglist.module.item.quick.consume.DelegateVideoUpList", lpparam.classLoader, "g", int.class, int.class, "com.bilibili.bplus.followinglist.model.e7", "androidx.recyclerview.widget.RecyclerView", android.view.View.class, "com.bilibili.bplus.followinglist.service.b1", "com.bilibili.lib.blrouter.MutableBundleLike", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Object e7VarObject = param.args[2];
-                Object CardVideoUpListObject = XposedHelpers.callMethod(e7VarObject,"N0",false);
-                byte[] bytes = (byte[]) XposedHelpers.callMethod(CardVideoUpListObject,"toByteArray");
-
-
-            }
-        });*/
-
-
-        Object CardVideoUpListObject = XposedHelpers.callMethod(e7Object,"N0",false);
-        byte[] bytes = (byte[]) XposedHelpers.callMethod(CardVideoUpListObject,"toByteArray");
-
-        String quickConsumeUriStr = "bilibili://following/quick_consume";
-
-        // 创建主Intent
-        Intent intent = new Intent();
-        intent.setData(android.net.Uri.parse(quickConsumeUriStr));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClassName("tv.danmaku.bili", "com.bilibili.bplus.followinglist.quick.consume.QuickConsumeActivity");
-
-        // 创建default_extra_bundle
-        Bundle defaultExtraBundle = new Bundle();
-        //defaultExtraBundle.putInt("key_video_uplist_with_transaction", 4096);
-
-        //Lcom/bilibili/bplus/followinglist/module/item/quick/consume/DelegateVideoUpList;->g(IILcom/bilibili/bplus/followinglist/model/e7;Landroidx/recyclerview/widget/RecyclerView;Landroid/view/View;Lcom/bilibili/bplus/followinglist/service/b1;Lcom/bilibili/lib/blrouter/MutableBundleLike;)Lkotlin/Unit;
-        //e7Var.N0(false).toByteArray()
-        defaultExtraBundle.putByteArray("key_video_uplist", bytes);
-        defaultExtraBundle.putBoolean("key_is_dynamic", true);
-
-        // 创建blrouter.props
-        Bundle blrouterProps = new Bundle();
-        blrouterProps.putString("blrouter.from", "bilibili://following/index/filter/all");
-
-        // 设置主Bundle的Extras
-        intent.putExtra("default_extra_bundle", defaultExtraBundle);
-        intent.putExtra("key_selected_row", 0);
-        intent.putExtra("blrouter.native.start", false);
-        intent.putExtra("key_selected", 2);
-        intent.putExtra("blrouter.props", blrouterProps);
-        intent.putExtra("blrouter.pagename", quickConsumeUriStr);
-        intent.putExtra("blrouter.targeturl", quickConsumeUriStr);
-        intent.putExtra("blrouter.matchrule", quickConsumeUriStr);
-
-        // 启动Activity
-        Utils.getMainActivity().startActivityForResult(intent, -1);
-
-
-    }
-
-
-    //禁用横向滑动
-    public void test36(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.homepage.widget.ChangeScrollableViewPager", lpparam.classLoader, "setHorizontalScrollable", boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.args[0]=false;
-            }
-        });
-    }
-
-
-    //主动调用个人主页关注接口 但是我没办法拿到BiliApiDataCallback的对象 最后一个参数只能填null 导致空指针异常客户端闪退 但是关注仍然成功
-    //如果想绕过这个问题的话 就再向下挖掘更边缘底层的方法 或者凑合几个参数直接发包 也是可以的 我就懒了 不怎么好玩也没什么价值
-    //不能关注账号已注销 不能关注拉黑的人 鉴权严格
-    public void test35(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Lcom/bilibili/relation/api/RelationApiManager;->addAuthorAttentionV2(Ljava/lang/String;JILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lcom/bilibili/okretro/BiliApiDataCallback;)V
-        Class<?> RelationApiManagerClass = XposedHelpers.findClass("com.bilibili.relation.api.RelationApiManager",lpparam.classLoader);
-        Class<?> BiliApiDataCallbackClass = XposedHelpers.findClass("com.bilibili.okretro.BiliApiDataCallback",lpparam.classLoader);
-        //public static void addAuthorAttentionV2(String str, long j, int i, String str2, String str3, String str4, Map<String, String> map, BiliApiDataCallback<Void> biliApiDataCallback)
-        Method addAuthorAttentionV2Method = RelationApiManagerClass.getMethod("addAuthorAttentionV2", String.class,long.class,int.class, String.class, String.class, String.class, Map.class,BiliApiDataCallbackClass);
-
-
-        //Lcom/bilibili/lib/accounts/BiliAccounts;->get(Landroid/content/Context;)Lcom/bilibili/lib/accounts/BiliAccounts;
-        Class<?> BiliAccountsClass = XposedHelpers.findClass("com.bilibili.lib.accounts.BiliAccounts",lpparam.classLoader);
-        Method getMethod = BiliAccountsClass.getMethod("get",Context.class);
-
-        //Lcom/bilibili/lib/accounts/BiliAccounts;->getAccessKey()Ljava/lang/String;
-        Method getAccessKeyMethod = BiliAccountsClass.getMethod("getAccessKey");
-
-        Object BiliAccountsObject = getMethod.invoke(null,Utils.getMainActivity());
-        String AccessKey = (String) getAccessKeyMethod.invoke(BiliAccountsObject);
-
-        long userId = 487789834;
-        HashMap<String,String> map = new HashMap<>();
-        map.put("entity_id",""+userId);
-        map.put("entity","user");
-        addAuthorAttentionV2Method.invoke(null,AccessKey,userId,31,"main.space.0.0","","",map,null);
-    }
-
-    //允许查看拉黑的用户主页
-    public void test34(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliMemberCard", lpparam.classLoader, "isDeleted", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(false);
-            }
-
-        });
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.authorspace.api.BiliSpace", lpparam.classLoader, "isSpaceHidden", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(false);
-            }
-
-        });
-    }
-
-    public void test33(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        Class<?> MNNPredictorJNIClass = XposedHelpers.findClass("com.bilibili.lib.mnn.MNNPredictorJNI",lpparam.classLoader);
-        Object MNNPredictorJNIInstanceObject = XposedHelpers.getStaticObjectField(MNNPredictorJNIClass,"e");
-
-        //Class<?> optimizeAClass = XposedHelpers.findClass("com.bilibili.lib.startup.optimize.a",lpparam.classLoader);
-
-
-        if(MNNPredictorJNIInstanceObject==null){
-            log("MNNPredictorJNIInstanceObject为空");
-            return;
-        }
-        //y(Context,String,File,long,Function2)
-        XposedHelpers.callMethod(MNNPredictorJNIInstanceObject,"y",Utils.getMainActivity(),
-                "metadata.dat4",
-                new File("/data/user/0/tv.danmaku.bili/files/mnn/model4.mnn"),
-                5000L,
-                null
-        );
-
-    }
-
-    public void test32(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.ui.adapter.CommentListAdapter", lpparam.classLoader, "e1", java.util.List.class, boolean.class, boolean.class, String.class, "kotlin.coroutines.Continuation", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                List list = (List) param.args[0];
-                if(list==null||list.isEmpty()){return;}
-                //Utils.copyText(list.toString());
-                Utils.printStackTrace("test32");
-            }
-
-        });
-    }
-
-
-
-    //尝试绕过环境检测
-    public void test31(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("com.tencent.bugly.crashreport.common.info.b", lpparam.classLoader, "h", android.content.Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(0);
-            }
-
-        });
-
-        XposedHelpers.findAndHookMethod("com.tencent.bugly.crashreport.common.info.b", lpparam.classLoader, "g", android.content.Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(new ArrayList<>().toString());
-            }
-
-        });
-    }
-
-
-    //研究旧版播放器
-    public void test30(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        Class<?> DirectorVersionClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.DirectorVersion",lpparam.classLoader);
-        Object DirectorVersionV1 = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V1");
-        Object DirectorVersionV3 = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V3");
-        /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "setDirectorVersion", "tv.danmaku.biliplayerv2.DirectorVersion", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.args[0] = DirectorVersionV1;
-            }
-
-        });
-        */
-
-        /*
-        *Crash unexpectedly: java.lang.RuntimeException: Unable to start activity ComponentInfo{tv.danmaku.bili/com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity}: java.lang.IllegalArgumentException: illegal useVideoDirectorV3:V1
-	        ...
-            Caused by: java.lang.IllegalArgumentException: illegal useVideoDirectorV3:V1
-	        at el5.j.getPlayDirectorServiceV3(BL:81) 这个方法校验传入的DirectorVersion如果不是V3就报错
-	        at com.bilibili.ship.theseus.united.player.oldway.playercontainer.b.q(BL:1) Dagger模块 用于提供各种播放器相关的服务实例 q方法无条件调用上一个V3方法
-	        at com.bilibili.ship.theseus.united.player.oldway.playercontainer.s.a(BL:3) Dagger工厂类 用于提供`p`类型的实例
-	        at tv.danmaku.bili.b$d3.p3(BL:9) Dagger 依赖注入组件实现类
-	        at tv.danmaku.bili.b$d3.Q2(BL:1) 中转方法
-	        at tv.danmaku.bili.b$d3$a.a(BL:49) 依赖注入工厂
-	        at tv.danmaku.bili.b$d3$a.get(BL:23)
-	        *
-	        at zy4.c.get(BL:14) 单例模式实现，用于 Dagger 依赖注入框架中的延迟加载（Lazy）和线程安全的单例提供
-	        at tv.danmaku.bili.b$d3$a.a(BL:98)
-	        at tv.danmaku.bili.b$d3$a.get(BL:23)
-	        at zy4.c.get(BL:14)
-	        at tv.danmaku.bili.b$d3.c(BL:3)
-	        at com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity.onCreate(BL:216)
-	        at android.app.Activity.performCreate(Activity.java:9196)
-	        at android.app.Activity.performCreate(Activity.java:9168)
-	        at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1544)
-	        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4351)
-	        ... 13 more
-            */
-            //tv.danmaku.biliplayerimpl.videodirector.PlayDirectorServiceV3
-        /*
-        final XC_MethodHook.Unhook[] unhook = {null};
-        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getPlayDirectorServiceV3", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                unhook[0] = XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "getDirectorVersion", new XC_MethodHook() {
-
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        param.setResult(DirectorVersionV3);
-                    }
-                });
-            }
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                unhook[0].unhook();
-            }
-        });
-        */
-        //播放界面右上角的设置按钮是这个类
-        //com.bilibili.playerbizcommonv2.widget.setting.PlayerSettingWidget
-
-
-        /*
-        Class<?> PlayerSettingWidgetClass = XposedHelpers.findClass("com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("dz.i", lpparam.classLoader, "n", "dz.i", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                ViewGroup viewGroup = (ViewGroup) param.getResult();
-                View rawView = viewGroup.findViewById(0x7f090443);
-                if(rawView == null){
-                    log("test30 没找到");
-                }
-
-                ViewGroup parent = (ViewGroup) rawView.getParent();
-                int index = parent.indexOfChild(rawView);
-                ViewGroup.LayoutParams layoutParams = rawView.getLayoutParams();
-                parent.removeView(rawView);
-
-                View newView = (View) XposedHelpers.newInstance(PlayerSettingWidgetClass,rawView.getContext());
-                parent.addView(newView, index, layoutParams);
-
-                //parent.removeView(view); // 彻底移除（需重新添加才能显示）
-                log("test30 剔除 上位");
-
-            }
-        });*/
-        /*注意到Ldz/i;->n(Ldz/i;)Landroid/view/ViewGroup;
-            public static final ViewGroup n(i iVar) {
-                int i;
-                //h.d()  Lbn5/h;->d()Z false
-                //h.c()  Lbn5/h;->c()Z false
-                if (!h.d() && !h.c()) {
-                    i = d.b;
-                } else {
-                    i = d.c;
-                }
-                ViewGroup viewGroup = null;
-                View inflate = LayoutInflater.from(iVar.a).inflate(i, (ViewGroup) null, false);
-                ...
-            }
-
-          vy.d
-        *.field public static b:I = 0x7f0c1391
-        *.field public static c:I = 0x7f0c1392
-        走else分支是青少年模式或严格模式 控制器阉割了好多功能
-        * */
-
-        /*布局错乱 且 点击报错
-        * Crash unexpectedly: java.lang.IllegalArgumentException: illegal useVideoDirectorV2:V3
-	        at el5.j.getVideoPlayDirectorService(BL:81)
-	        at wd3.i0.E(BL:6)
-	        at wd3.i0.I(BL:11)
-	        at wd3.i0.C(BL:49)
-	        at wd3.i0.onWidgetShow(BL:4)
-	        at tv.danmaku.biliplayerv2.widget.AbsFunctionWidget.onWidgetShow(BL:2)
-	        at hl5.o.L0(BL:172)
-	        at hl5.o.showWidget(BL:45)
-	        at hl5.o.showWidget(BL:22)
-	        at com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget.onClick(BL:88)
-	        at android.view.View.performClick(View.java:8119)
-	        at android.view.View.performClickInternal(View.java:8089)
-	        at android.view.View.-$$Nest$mperformClickInternal(Unknown Source:0)
-	        at android.view.View$PerformClick.run(View.java:31907)
-	        at android.os.Handler.handleCallback(Handler.java:995)
-	        at android.os.Handler.dispatchMessage(Handler.java:105)
-	        at android.os.Looper.loopOnce(Looper.java:288)
-	        at android.os.Looper.loop(Looper.java:393)
-	        at android.app.ActivityThread.main(ActivityThread.java:9549)
-	        at java.lang.reflect.Method.invoke(Native Method)
-	        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
-	        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
-
-        * */
-
-        /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.b$d3", lpparam.classLoader, "c", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //com.bilibili.ship.theseus.detail.c
-                param.setResult(null);
-
-
-            }
-
-        });*/
-
-        //com.bilibili.playerbizcommonv2.widget.setting.PlayerSettingWidget 常用的 hl5.o
-        //com.bilibili.playerbizcommon.widget.control.PlayerSettingWidget 想要的
-
-        //狸猫换太子
-        /*
-        XposedHelpers.findAndHookMethod("hl5.o", lpparam.classLoader, "showWidget", Class.class, "tv.danmaku.biliplayerv2.widget.IFunctionContainer$LayoutParams", "tv.danmaku.biliplayerv2.widget.AbsFunctionWidget$Configuration", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.args[0] = XposedHelpers.findClass("wd3.i0",lpparam.classLoader);
-            }
-
-        });*/
-
-
-        /*
-        final XC_MethodHook.Unhook[] unhook = {null};
-        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getVideoPlayDirectorService", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                unhook[0] = XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "getDirectorVersion", new XC_MethodHook() {
-
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-                        param.setResult(DirectorVersionV1);
-                    }
-                });
-            }
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                unhook[0].unhook();
-            }
-        });*/
-
-        /*上面欺骗校验 以避免报错
-        * Crash unexpectedly: java.lang.IllegalArgumentException: illegal useVideoDirectorV2:V3
-	at el5.j.getVideoPlayDirectorService(BL:81)
-	at wd3.i0.E(BL:6)
-	at wd3.i0.I(BL:11)
-	at wd3.i0.C(BL:49)
-	at wd3.i0.onWidgetShow(BL:4)
-	at tv.danmaku.biliplayerv2.widget.AbsFunctionWidget.onWidgetShow(BL:2)
-	at hl5.o.L0(BL:172)
-	at hl5.o.showWidget(BL:45)
-	at java.lang.reflect.Method.invoke(Native Method)
-	at d.R.Yx.f.d.z.Ec.dYK.mW.l.cYAG.HookBridge.invokeOriginalMethod(Native Method)
-	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:187)
-	at LSPHooker_.showWidget(Unknown Source:17)
-	at hl5.o.showWidget(BL:22)
-	at tv.danmaku.biliplayerv2.service.SeekService.F(BL:106)
-	at tv.danmaku.biliplayerv2.service.SeekService.k(BL:11)
-	at tv.danmaku.biliplayerv2.service.SeekService.c(BL:1)
-	at tv.danmaku.biliplayerv2.service.j1.run(BL:3)
-	at android.os.Handler.handleCallback(Handler.java:995)
-	at android.os.Handler.dispatchMessage(Handler.java:105)
-	at android.os.Looper.loopOnce(Looper.java:288)
-	at android.os.Looper.loop(Looper.java:393)
-	at android.app.ActivityThread.main(ActivityThread.java:9549)
-	at java.lang.reflect.Method.invoke(Native Method)
-	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
-	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
-        * */
-
-        //想看看 v1(2) 控件在堆栈调用中的不同
-        /*
-        XposedHelpers.findAndHookMethod("el5.j", lpparam.classLoader, "getPlayDirectorServiceV3", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.printStackTrace("getPlayDirectorServiceV3");
-            }
-
-        });*/
-        /*
-        *java.lang.Exception: getPlayDirectorServiceV3
-	at hhsixhhwkhxh.bilibili.Utils.printStackTrace(Utils.java:223)
-	at hhsixhhwkhxh.bilibili.function.bilihook.TestFunctionArea$1.beforeHookedMethod(TestFunctionArea.java:307)
-	at H.EWSn.IKMCeVKfrtWUuuM.XposedBridge$LegacyApiSupport.handleBefore(Unknown Source:24)
-	at org.lsposed.lspd.impl.LSPosedBridge$NativeHooker.callback(Unknown Source:174)
-	at LSPHooker_.getPlayDirectorServiceV3(Unknown Source:8)
-	at el5.j.e(BL:51)
-	at el5.j.onCreate(BL:6)
-	at com.bilibili.ship.theseus.united.player.oldway.playercontainer.TheseusPlayerContainerProvider.b(BL:116)
-	at com.bilibili.ship.theseus.united.player.oldway.playercontainer.l0.a(BL:10)
-	at tv.danmaku.bili.b$d3$a.a(BL:102)
-	at tv.danmaku.bili.b$d3$a.get(BL:23)
-	at zy4.c.get(BL:14)
-	at tv.danmaku.bili.b$d3.d(BL:3)
-	at com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity.onCreate(BL:196)
-	at android.app.Activity.performCreate(Activity.java:9196)
-	at android.app.Activity.performCreate(Activity.java:9168)
-	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1544)
-	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4351)
-	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4574)
-	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:126)
-	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:179)
-	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:114)
-	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:86)
-	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2909)
-	at android.os.Handler.dispatchMessage(Handler.java:112)
-	at android.os.Looper.loopOnce(Looper.java:288)
-	at android.os.Looper.loop(Looper.java:393)
-	at android.app.ActivityThread.main(ActivityThread.java:9549)
-	at java.lang.reflect.Method.invoke(Native Method)
-	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
-	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1005)
-        * */
-
-        Class<?> ScreenModeTypeClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.ScreenModeType",lpparam.classLoader);
-        Object VERTICAL_FULLSCREENObject = XposedHelpers.getStaticObjectField(ScreenModeTypeClass,"VERTICAL_FULLSCREEN");
-
-        Class<?> LayoutParamsClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.widget.IFunctionContainer$LayoutParams",lpparam.classLoader);
-
-        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->setFunctionType(I)V
-        Method setFunctionTypeMethod = LayoutParamsClass.getMethod("setFunctionType",int.class);
-        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->getLayoutType()I
-        Method getLayoutTypeMethod = LayoutParamsClass.getMethod("getLayoutType");
-
-        //Ltv/danmaku/biliplayerv2/widget/IFunctionContainer$LayoutParams;->setLayoutType(I)V
-        Method setLayoutTypeMethod = LayoutParamsClass.getMethod("setLayoutType",int.class);
-
-        Class<?> DpUtilsClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.utils.DpUtils",lpparam.classLoader);
-        Method dp2pxMethod = DpUtilsClass.getMethod("dp2px",Context.class,float.class);
-        XposedHelpers.findAndHookMethod("com.bilibili.playerbizcommonv2.widget.base.RightInsetWithShadowFunctionWidget$a", lpparam.classLoader, "c", "tv.danmaku.biliplayerv2.ScreenModeType", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //tv.danmaku.biliplayerv2.ScreenModeType;
-                /*
-                * ScreenModeType screenModeType;
-        IFunctionContainer.LayoutParams layoutParams;
-        int layoutType;
-        IReporterService reporterService;
-        IControlContainerService controlContainerService;
-        PlayerContainer playerContainer = this.e;
-        if (playerContainer == null) {
-            return;
-        }
-        if (playerContainer != null && (controlContainerService = playerContainer.getControlContainerService()) != null) {
-            screenModeType = controlContainerService.getScreenModeType();
-        } else {
-            screenModeType = null;
-        }
-        ScreenModeType screenModeType2 = ScreenModeType.VERTICAL_FULLSCREEN;
-        if (screenModeType == screenModeType2) {
-            layoutParams = new IFunctionContainer.LayoutParams(-1, (int) DpUtils.dp2px(getContext(), 380.0f));
-        } else {
-            layoutParams = new IFunctionContainer.LayoutParams((int) DpUtils.dp2px(getContext(), 320.0f), -1);
-        }
-        layoutParams.setFunctionType(2);
-        if (screenModeType == screenModeType2) {
-            layoutType = layoutParams.getLayoutType() | 8;
-        } else {
-            layoutType = layoutParams.getLayoutType() | 4;
-        }
-        layoutParams.setLayoutType(layoutType);
-        this.e.getFunctionWidgetService().showWidget(i0.class, layoutParams);
-        PlayerContainer playerContainer2 = this.e;
-        if (playerContainer2 != null && (reporterService = playerContainer2.getReporterService()) != null) {
-            reporterService.report(new NeuronsEvents.NormalEvent("player.player.full-more.entrance.player", new String[0]));
-        }
-        * */
-                Object ScreenModeTypeObject = param.args[0];
-                Object layoutParams;
-                int layoutType;
-                if(ScreenModeTypeObject.equals(VERTICAL_FULLSCREENObject)){
-                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass,-1, ((Float) dp2pxMethod.invoke(null, Utils.getMainActivity(), 380.0f)).intValue());
-
-                }else{
-                    layoutParams = XposedHelpers.newInstance(LayoutParamsClass, ((Float) dp2pxMethod.invoke(null,Utils.getMainActivity(), 320.0f)).intValue(),-1);
-                }
-
-                setFunctionTypeMethod.invoke(layoutParams,2);
-
-                if(ScreenModeTypeObject.equals(VERTICAL_FULLSCREENObject)){
-                    layoutType = (int)getLayoutTypeMethod.invoke(layoutParams) | 8;
-                }else{
-                    layoutType = (int)getLayoutTypeMethod.invoke(layoutParams) | 4;
-                }
-
-                setLayoutTypeMethod.invoke(layoutParams,layoutType);
-
-                param.setResult(layoutParams);
-            }
-
-        });
-
-        /*
-        XposedHelpers.findAndHookMethod("hl5.o", lpparam.classLoader, "f0", "hl5.o$b", boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.printStackTrace("f0 禁止隐藏");
-            }
-
-        });
-        */
-
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.SeekService", lpparam.classLoader, "hideSimpleProgress", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(null);
-            }
-
-        });
-
-
-        //Resources resources = Utils.getModuleResources(Utils.getMainActivity());
-        //resources.getIdentifier("","id", Entrance.TargetPackageName);
-    }
-
-
-    //隐藏视频详情页的竖屏模式入口
-    public void test29(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        //没效果
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setImmersiveVisibleIds", java.util.HashMap.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                HashMap<?,?> hashMap = (HashMap) param.args[0];
-                if(hashMap==null||hashMap.isEmpty()){return;}
-                HashSet set = (HashSet) hashMap.get(1);
-                Iterator<Integer> iterator = set.iterator();
-                while (iterator.hasNext()) {
-                    int id = iterator.next();
-
-                    // 遍历时安全删除
-                    //0x7f090453
-                    if (id==Integer.valueOf(Utils.getViewID("bbplayer_halfscreen_story"))) {
-                        iterator.remove(); // 安全删除当前元素
-                        log("test29 setImmersiveVisibleIds 删除");
-                    }
-
-
-                }
-                set.add(0x0d000721);
-
-                log("setImmersiveVisibleIds test29:"+param.args[0]);
-
-            }
-
-        });
-
-
-        //懒加载报错
-        Class<?> Function0Class = XposedHelpers.findClass("kotlin.jvm.functions.Function0",lpparam.classLoader);
-        Method invokeMethod = Function0Class.getMethod("invoke");
-        /*[ 2025-07-14T00:28:42.327    10338: 32160: 32160 E/LSPosed-Bridge  ] kotlin.UninitializedPropertyAccessException: lateinit property controlContainerService has not been initialized
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setLayoutView", "kotlin.jvm.functions.Function0", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                //super.beforeHookedMethod(param);
-                //param.setResult(null);
-                ViewGroup viewGroup = (ViewGroup) invokeMethod.invoke(param.args[0]);
-                View view = viewGroup.findViewById(0x7f090453);
-                if(view==null){
-                    log("找不到");
-                    return;
-                }
-                view.setVisibility(View.GONE);
-                log("已隐藏");
-            }
-
-        });
-        */
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.ControlContainerConfig", lpparam.classLoader, "setInstance", android.view.View.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                View layoutView = (View) param.args[0];
-                View view = layoutView.findViewById(0x7f090453);
-                if(view==null){
-                    log("setInstance找不到");
-                    return;
-                }
-                //view.setVisibility(View.GONE);
-
-                //log("已隐藏");
-                //view.setLayoutParams(new ViewGroup.LayoutParams(0,0));
-            }
-
-        });
-
-
-
-        // Hook l1() 视图初始化 bili 会重新让控件可见
-        XposedHelpers.findAndHookMethod(
-                "tv.danmaku.biliplayerimpl.controlcontainer.ControlContainer",
-                lpparam.classLoader,
-                "l1",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        if ((boolean) param.getResult()) {
-                            Object config = XposedHelpers.getObjectField(param.thisObject, "d");
-                            View instance = (View) XposedHelpers.callMethod(config, "getInstance");
-                            View view = instance.findViewById(0x7f090453);
-                            if(view==null){
-                                log("l1找不到");
-                                return;
-                            }
-                            //view.setVisibility(View.GONE);
-                            log("viewClass:"+view.getClass());
-                            //[ 2025-07-14T01:48:44.324    10338: 21475: 21475 I/LSPosed-Bridge  ] TestFunctionArea viewClass:class com.bilibili.app.gemini.player.widget.story.GeminiPlayerFullStoryWidget
-                            //view.setLayoutParams(new ViewGroup.LayoutParams(0,0));
-                            //view.setClipBounds(new Rect(0, 0, 0, 0));
-                            ///ViewGroup parent = (ViewGroup) view.getParent();
-                            //parent.removeView(view); // 彻底移除（需重新添加才能显示）
-                            //log("l1已隐藏");
-
-                        }
-                    }
-                }
-        );
-
-
-        /*查找调用堆栈 谁动了我的setVisibility
-        XposedHelpers.findAndHookMethod("android.widget.ImageView", lpparam.classLoader, "setVisibility", int.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("android.view.View", lpparam.classLoader, "setOnClickListener", android.view.View.OnClickListener.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 View view = (View) param.thisObject;
-                if(view.getId()==0x7f090453){
-                    Utils.printStackTrace("0x7f090453 setVisibility "+param.args[0]);
+                if(view.getId()!=2131301979){
+                    return;
                 }
+                Utils.printStackTrace("frame_fav");
+            }
+
+        });*/
+        //	at com.bilibili.app.gemini.ui.UIComponentExtKt$onClickEvent$1.invokeSuspend(BL:38)
+
+        /*
+        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.ui.UIComponentExtKt$onClickEvent$1", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Utils.log("onClick over");
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.ui.UIComponentExtKt$onLongClickEvent$1", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Utils.log("onLongClick over");
+            }
+        });*/
+        Class<?> UIComponentExtKtClass = XposedHelpers.findClass("com.bilibili.app.gemini.ui.UIComponentExtKt$onLongClickEvent$1", lpparam.classLoader);
+        Field viewField = Utils.selectField(UIComponentExtKtClass,View.class);
+        if(viewField==null){
+            return;
+        }
+        viewField.setAccessible(true);
+        XposedHelpers.findAndHookMethod(UIComponentExtKtClass, "invokeSuspend", Object.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                View view = (View) viewField.get(param.thisObject);
+                if(view==null){
+                    return;
+                }
+                Object mListenerInfo = XposedHelpers.getObjectField(view,"mListenerInfo");
+                if(mListenerInfo==null){
+                    return;
+                }
+                View.OnLongClickListener rawOnLongClickListener = (View.OnLongClickListener) XposedHelpers.getObjectField(mListenerInfo,"mOnLongClickListener");
+                if(rawOnLongClickListener==null){
+                    return;
+                }
+                view.setOnClickListener(rawOnLongClickListener::onLongClick);
+                view.setOnLongClickListener(null);
+            }
+        });
+    }
+
+    public void test67(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+
+        /*
+        XposedHelpers.findAndHookMethod("android.widget.TextView", lpparam.classLoader, "setHintInternal", CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                TextView textView = (TextView) param.thisObject;
+                if(textView.getId()!=2131303711){
+                    return;
+                }
+                Utils.printStackTrace("LightPublishEdit");
+            }
+
+        });*/
+
+        Class<?> QJDClass = XposedHelpers.findClass("Qj.d",lpparam.classLoader);
+
+    }
+
+    public void test66(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        Class<?> CollapsableChildFrameLayoutClass = XposedHelpers.findClass("com.bilibili.ship.theseus.united.page.behavior.CollapsableChildFrameLayout",lpparam.classLoader);
+        /*
+        XposedBridge.hookAllConstructors(CollapsableChildFrameLayoutClass, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                View view = (View) param.thisObject;
+                view.setVisibility(View.GONE);
+            }
+        });*/
+
+        XposedHelpers.findAndHookConstructor("ou0.c", lpparam.classLoader, ("com.bilibili.ship.theseus.united.widget.TheseusAncestorLayout"), android.widget.LinearLayout.class, android.widget.LinearLayout.class, ("com.google.android.material.appbar.AppBarLayout"), ("com.bilibili.ship.theseus.united.widget.LockableCollapsingToolbarLayout"), ("com.bilibili.ship.theseus.united.widget.TouchAwareConstraintLayout"), ("androidx.compose.ui.platform.ComposeView"), android.view.View.class, android.widget.ImageView.class, ("com.bilibili.ship.theseus.united.widget.PinnedBottomFrameLayout"), android.widget.FrameLayout.class, android.widget.FrameLayout.class, android.widget.FrameLayout.class, ("com.bilibili.ship.theseus.united.widget.TouchAwareToolbar"), ("com.bilibili.ship.theseus.united.widget.UnitedViewPager"), ("com.bilibili.ogv.infra.widget.RatioLayout"), ("com.bilibili.playerbizcommonv2.view.RoundFrameLayout"), android.view.View.class, android.view.View.class, ("com.bilibili.ship.theseus.united.widget.UnitedTabLayout"), android.widget.ImageView.class, android.view.View.class, android.widget.ImageView.class, ("cv0.F0"), android.widget.TextView.class, ("com.bilibili.ship.theseus.united.page.behavior.CollapsableChildFrameLayout"), android.widget.FrameLayout.class, ("com.bilibili.ogv.infra.widget.RatioLayout"), android.widget.FrameLayout.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                View view = (View) param.args[param.args.length-4];
+                //view.setVisibility(View.GONE);
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+                params.width = 0;
+                params.height = 0;
+                view.setLayoutParams(params);
             }
 
         });
+    }
+    public void test65(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        XposedHelpers.findAndHookConstructor("com.bilibili.ship.theseus.united.page.intro.IntroRecycleViewService", lpparam.classLoader, "kotlinx.coroutines.CoroutineScope", java.util.List.class, "com.bilibili.ship.theseus.united.page.performance.a", "com.bilibili.ship.theseus.united.page.intro.IntroContentSizeRepository", "com.bilibili.ship.theseus.united.page.color.ActivityColorRepository", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //param.args[1] = new ArrayList<>();
+                //Utils.printStackTrace("intro");
+            }
+        });
+        /*
+        at LSPHooker_.constructor(Unknown Source:23)
+	    at tv.danmaku.bili.a$C1$a.a(BL:116)  i=18 return (T) new IntroRecycleViewService(a.C1.b(c1), (List) c1.f1.get(), a.k0.c(k0Var), (IntroContentSizeRepository) k0Var.T1.get(), (ActivityColorRepository) k0Var.u0.get());
+	    at tv.danmaku.bili.a$C1$a.get(BL:21)
+	    at CV0.b.get(BL:14)
+	    at CV0.a.get(BL:5)
+	    at tv.danmaku.bili.a$C1$a.a(BL:139)
+	    at tv.danmaku.bili.a$C1$a.get(BL:21)
+	    at CV0.b.get(BL:14)
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invokeSuspend(BL:114)
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invoke(BL:2)
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invoke(BL:1)
+	     */
 
+        XposedHelpers.findAndHookConstructor("tv.danmaku.bili.a$C1$a", lpparam.classLoader, "tv.danmaku.bili.a$e1", "tv.danmaku.bili.a$k0", "tv.danmaku.bili.a$C1", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                int i = (int) param.args[param.args.length-1];
+                if(i!=18){
+                    return;
+                }
+                //Utils.printStackTrace("a$C1$a");
+            }
+
+        });
+        //a$C1$a(a.e1 e1Var, a.k0 k0Var, a.C1 c1, int i) 关注c1
+        /*
+        * at LSPHooker_.constructor(Unknown Source:24)
+	    at tv.danmaku.bili.a$C1.<init>(BL:1079) c1传的自己
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invokeSuspend(BL:109)
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invoke(BL:2)
+	    at com.bilibili.ship.theseus.detail.BusinessScopeDriverImpl$switchScope$2.invoke(BL:1)
+	    at E81.b.a(BL:22)
+	    */
+
+        //this.f1 = w0.b(e1Var, k0Var, this, 19);
+
+        /*
+        * public final class w0 {
+            public static b b(a.e1 e1Var, a.k0 k0Var, a.C1 c1, int i) {
+                return b.b(new a.C1.a(e1Var, k0Var, c1, i));
+            }
+          }
          */
 
+        //get方法启发
 
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.player.widget.story.GeminiPlayerFullStoryWidget", lpparam.classLoader, "setVisibility", int.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookConstructor("CV0.b", lpparam.classLoader, "dagger.internal.Provider", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                param.args[0] = View.GONE;
+                //Utils.printStackTrace("CV0.b堆栈");
             }
 
         });
-    }
+        /*
+        * LSPHooker_.constructor(Unknown Source:11)
+	    at CV0.b.b(BL:13)
+	    at CV0.b.c(BL:5)
+	    at com.bilibili.lib.gripper.core.internal.producers.e.newRawProducer(BL:5)
+	    at tv.danmaku.bili.a$r$a.b(BL:379)
+	    at tv.danmaku.bili.a$r$a.get(BL:3984)
+	    at CV0.b.get(BL:14)
+	    at com.bilibili.lib.gripper.core.internal.a.get(BL:6)
+	    at com.bilibili.lib.gripper.core.internal.c.get(BL:5)
+	    at R40.a$b.get(BL:10)
+	    at com.bilibili.gripper.bootstrap.BootsStrapKt.bootDynamicView(BL:9)
+	    * */
 
+        //case 19:return (T) A.a((IntroductionTab) c1.w.get(), c1.i());
 
-    //禁用剪切板直接跳转 及每次跳转必须询问 这部分是豆包写的 但是把跳转功能直接整废了
-    public void test28(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        // 1. Hook ClipboardResult的setMode方法，强制将popupMode改为2（弹窗模式）
-        // 原本popupMode=1为直接跳转，改为2后会触发弹窗逻辑（见T方法）
-        Class<?> clipboardResultClass = XposedHelpers.findClass("tv.danmaku.bili.ui.clipboard.ClipboardResult", lpparam.classLoader);
-        XposedHelpers.findAndHookMethod(clipboardResultClass, "setMode", int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                int originalMode = (int) param.args[0];
-                if (originalMode == 1) { // 拦截直接跳转模式
-                    param.args[0] = 2; // 改为弹窗模式
-                }
-            }
-        });
-
-        // 2. Hook ClipboardResult的checkPage方法，强制返回false
-        // 原本checkPage()=true会直接跳转，改为false后会执行弹窗（见V方法）
-        XposedHelpers.findAndHookMethod(clipboardResultClass, "checkPage", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(false); // 强制不直接跳转，走弹窗
-            }
-        });
-
-        // 3. Hook ClipboardChecker的x0方法，让BVNEW/COMMON_JUMP也走弹窗
-        // 原本x0()=true会跳过弹窗直接跳转，改为false后触发弹窗逻辑
-        Class<?> clipboardCheckerClass = XposedHelpers.findClass("tv.danmaku.bili.ui.clipboard.ClipboardChecker", lpparam.classLoader);
-        XposedHelpers.findAndHookMethod(clipboardCheckerClass, "x0", String.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(false); // 禁用BVNEW/COMMON_JUMP的直接跳转特权
-            }
-        });
-    }
-
-    //禁用三连弹幕等
-    public void test27(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        Class<?> DirectorVersionClass = XposedHelpers.findClass("tv.danmaku.biliplayerv2.DirectorVersion",lpparam.classLoader);
-        /*会崩溃 还查不到报错位置
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.PlayerConfiguration", lpparam.classLoader, "setDirectorVersion", "tv.danmaku.biliplayerv2.DirectorVersion", new XC_MethodHook() {
+        //a = gVar.a(introductionTab);
+        XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.di.A", lpparam.classLoader, "a", "com.bapis.bilibili.app.viewunite.v1.IntroductionTab", "mv0.g", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                param.args[0] = XposedHelpers.getStaticObjectField(DirectorVersionClass,"V1");
+
+                //Utils.log("gVar:"+param.args[1]+" 类型"+param.args[1].getClass().getName());
+                //[ 2026-07-02T22:19:38.288    10338:  7468:  7468 I/LSPosed-Bridge  ] gVar:mv0.l@e344a20 类型mv0.l
             }
 
         });
-        */
 
         /*
-        XposedHelpers.findAndHookMethod("com.bapis.bilibili.community.service.dm.v1.DmViewReply", lpparam.classLoader, "getSpecialDmsList", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                XposedHelpers.callMethod(param.thisObject,"clearSpecialDms");
-            }
-
-        });*/
-
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.interact.core.model.DanmakuParams", lpparam.classLoader, "setDmViewReply", "com.bapis.bilibili.community.service.dm.v1.DmViewReply", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                Object commandObject = XposedHelpers.getObjectField(param.args[0],"command_");
-
-                List<?> rawList = (List) XposedHelpers.getObjectField(commandObject,"commandDms_");
-                List<?> newList = (List) XposedHelpers.callMethod(rawList,"mutableCopyWithCapacity",rawList.size());
-                //Lcom/google/protobuf/Internal$ProtobufList;->mutableCopyWithCapacity(I)Lcom/google/protobuf/Internal$ProtobufList;
-
-                for (int i = newList.size()-1; i >= 0; i--) {
-                    Object CommandDmObject = newList.get(i);
-                    String command = (String) XposedHelpers.getObjectField(CommandDmObject,"command_");
-                    if(!command.contains("UP")){
-                        newList.remove(i);
-                    }
-                }
-
-                XposedHelpers.setObjectField(commandObject,"commandDms_",newList);
-            }
-
-        });
-
-
-    }
-
-
-    //草 我这模块在onCreate函数之后才启动 然而这个routesBean函数早在此前就调用完了 排查了半天bug
-    public void test26(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Utils.showToast("test26",0);
-        final Set<String> writtenLines = Collections.synchronizedSet(new HashSet<>());
-        Class<?> BuiltInKtClass = XposedHelpers.findClass("com.bilibili.lib.blrouter.internal.BuiltInKt",lpparam.classLoader);
-        String filename = "/storage/emulated/0/Android/data/tv.danmaku.bili/files/rule"+ UUID.randomUUID() +".txt";
-        for(Method m : BuiltInKtClass.getMethods()){
-            if(m.getName()!="routesBean"){continue;}
-            if(!m.getParameterTypes()[0].equals(String.class)){continue;}
-            XposedBridge.hookMethod(m ,new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    String line = (String) param.args[0];
-                    if(writtenLines.contains(line)){return;}
-                    if(!line.startsWith("bilibili://")){return;}
-                    if(line.contains("_")){return;}
-                    log(line);
-                    writtenLines.add(line);
-                    //Utils.showToast(line,0);
-                    // 每次写入都打开文件（追加模式）并写入一行，然后关闭
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
-                        writer.write(line);
-                        writer.newLine();
-                    } catch (IOException e) {
-                        // 打印异常，方便调试
-                        XposedBridge.log(e);
-                    }
-                }
-            });
-        }
-        /*ClassLoader classLoader = lpparam.classLoader;
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.blrouter.internal.BuiltInKt", classLoader, "routesBean", String.class, classLoader.loadClass("[Lcom/bilibili/lib/blrouter/model/RouteBean;"), classLoader.loadClass("com.bilibili.lib.blrouter.Ordinaler"), classLoader.loadClass("[Lkotlin/Pair;"), classLoader.loadClass("javax.inject.Provider"), classLoader.loadClass("javax.inject.Provider"), classLoader.loadClass("javax.inject.Provider"), classLoader.loadClass("com.bilibili.lib.blrouter.internal.ModuleWrapper"),  new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                String line = (String) param.args[0];
-                log(line);
-                Utils.showToast(line,0);
-                // 每次写入都打开文件（追加模式）并写入一行，然后关闭
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter("/storage/emulated/0/Android/data/tv.danmaku.bili/files/rule.txt", true))) {
-                    writer.write(line);
-                    writer.newLine();
-                } catch (IOException e) {
-                    // 打印异常，方便调试
-                    XposedBridge.log(e);
-                }
-            }
-        });*/
-    }
-
-
-    public void test25(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.p0", lpparam.classLoader, "h", "tv.danmaku.bili.ui.main2.mine.o0", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object o = param.args[0];
-                XposedHelpers.setObjectField(o,"b","bilibili://user_center/favourite?version=1");
-                Object c = XposedHelpers.getObjectField(o,"c");
-                XposedHelpers.setObjectField(c,"uri","bilibili://user_center/favourite?version=1");
-
-            }
-
-        });
-        */
-
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.p0", lpparam.classLoader, "b", "com.bilibili.lib.homepage.mine.MenuGroup$Item", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object MenuGroup$ItemObject = param.args[0];
-                String rawUri = (String) XposedHelpers.getObjectField(MenuGroup$ItemObject,"uri");
-                if(!rawUri.contains("favourite")){return;}
-                String newUri = rawUri.substring(0,rawUri.length()-1)+"1";
-                XposedHelpers.setObjectField(MenuGroup$ItemObject,"uri",newUri);
-            }
-
-        });
-
-
-    }
-
-    //去除收藏夹视频循环列表
-    public void test24(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*失败
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.blrouter.internal.routes.DefaultGlobalLauncher", lpparam.classLoader, "launch", android.content.Context.class, "androidx.fragment.app.Fragment", "com.bilibili.lib.blrouter.RouteRequest", android.content.Intent[].class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object RouteRequestObject = param.args[2];
-
-                Uri uri = (Uri) XposedHelpers.callMethod(RouteRequestObject,"getTargetUri");
-                log("原uri: "+uri.getPath());
-                String path = uri.getPath();
-                if(path==null||!path.contains("playlist/playpage")){return;}
-                String id = path.substring(path.lastIndexOf("/")+1);
-
-                XposedHelpers.setObjectField(RouteRequestObject,"d",Uri.parse("bilibili://united_video/"+id));
-                //XposedHelpers.setObjectField(RouteRequestObject,"d",null);
-                log("现uri: "+XposedHelpers.getObjectField(RouteRequestObject,"d"));
-                param.args[3] = new Intent[]{new Intent(Utils.getMainActivity(),XposedHelpers.findClass("com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity",lpparam.classLoader))} ;
-            }
-
-        });*/
-
-        /*成功 但hook点位怪 代码不雅
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.blrouter.RouteRequest", lpparam.classLoader, "getTargetUri", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("mv0.l", lpparam.classLoader, "a", "com.bapis.bilibili.app.viewunite.v1.IntroductionTab", new XC_MethodHook() {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                Uri uri = (Uri) param.getResult();
-                String path = uri.getPath();
-                if(path==null||!path.contains("playlist/playpage")){return;}
-                Utils.printStackTrace("getTargetUri");
-                //String id = path.substring(path.lastIndexOf("/")+1);
-                Object ExtrasObject = XposedHelpers.callMethod(param.thisObject,"getExtras");
-                String id = (String) XposedHelpers.callMethod(ExtrasObject,"get","sourceid");
-                Bundle bundle = (Bundle) XposedHelpers.getObjectField(ExtrasObject,"a");
-                bundle.putString("aid",id);
-                Uri newUri = Uri.parse("bilibili://united_video/"+id);
-                XposedHelpers.setObjectField(param.thisObject,"d",newUri);
-                param.setResult(newUri);
+                //param.setResult(new ArrayList<>());
+                //Utils.printfList("mv0l",(List<?>) param.getResult());
+
+                Object introductionTabObject = param.args[0];
+                List<?> ModulesList = (List) XposedHelpers.callMethod(introductionTabObject,"getModulesList");
+
+                //Utils.printBoundaryLine();
+                Object immutableMap = XposedHelpers.getObjectField(param.thisObject,"b");
+                for (Object mod:ModulesList){
+                    Object modType = XposedHelpers.callMethod(mod,"getType");
+                    Object hVar = XposedHelpers.callMethod(immutableMap,"get",modType);
+                    log(modType+" hvar:"+hVar+",类型"+hVar.getClass().getName());
+                    //mv0.q
+                }
 
 
             }
-        });
-        */
-        //测试仅凭字符串重定向 成功
-        /*
-        XposedHelpers.findAndHookMethod("ij5.d", lpparam.classLoader, "c", String.class, android.content.Context.class, java.util.Map.class, int.class, Object.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //bilibili://music/playlist/playpage/308614634?page_type=3&oid=114753020107241&otype=2&sourceid=114753020107241&from_spmid=main.my-fav.0.0
-                //param.args[0] = "bilibili://united_video/114753020107241?&aid=114753020107241";
+        });*/
 
-            }
-
-        });
-        */
-
-        //XposedHelpers.callStaticMethod(jsonClass,"parseObject",bigCoverJson,SmallCoverV2ItemClass);
-        //Class<?> targetCls =XposedHelpers.findClass("pf5.e",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("pf5.e", lpparam.classLoader, "getLink", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.intro.module.relate.DetailRelateRepository", lpparam.classLoader, "a", new XC_MethodHook() {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-                String result = (String) param.getResult();
-                Uri rawUri = Uri.parse(result);
-                String sourceId = rawUri.getQueryParameter("sourceid");
-                String newPath = "//united_video/" + sourceId;
-
-                Uri.Builder builder = new Uri.Builder()
-                        .scheme(rawUri.getScheme())
-                        .path(newPath);
-
-
-
-                // 添加新参数aid=123
-                builder.appendQueryParameter("aid", sourceId);
-
-                // 生成最终URI
-                Uri newUri = builder.build();
-                String newResult = newUri.toString();
-                log(newUri);
-                param.setResult(newResult);
+                //param.setResult(new ArrayList<>());
             }
         });
 
-    }
-
-    //禁用输入框的神人提示语 “千山万水总是情，评论两句行不行” “只是一直在等你而已，才不是想被评论呢~” 等
-    public void test23(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-
-        /*
-        XposedHelpers.findAndHookMethod("android.widget.TextView", lpparam.classLoader, "setHint", CharSequence.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                EditText editText = (EditText)param.thisObject;
-                //param.args[0]=(CharSequence)"test";
-                //0x7f091d1f 没开输入法的输入框
-                if(editText.getId()==0x7f091d1f){
-                    Utils.printStackTrace("test23 没开 "+param.args[0]);
-                }
-                //0x7f090e74 开输入法的输入框
-                if(editText.getId()==0x7f090e74){
-                    Utils.printStackTrace("test23 开 "+param.args[0]);
-                }
-            }
-
-        });*/
+        Class<?> ModuleTypeClass = XposedHelpers.findClass("com.bapis.bilibili.app.viewunite.common.ModuleType",lpparam.classLoader);
+        HashSet<Integer> blackList = new HashSet<>();
+        blackList.add(XposedHelpers.getStaticIntField(ModuleTypeClass,"KING_POSITION_VALUE"));
+        blackList.add(XposedHelpers.getStaticIntField(ModuleTypeClass,"OWNER_VALUE"));
 
 
-        /*
-        //阻止kt协程启动
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.ui.view.CommentMainLayer$bind$2", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(null);
-            }
-
-        });
-        //传空的字符串
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comm.opus.lightpublish.compose.PublishInputBoxKt", lpparam.classLoader, "l", "ov.c", "kotlinx.coroutines.CoroutineScope", CharSequence.class, "androidx.compose.runtime.State", "kotlin.jvm.functions.Function1", String.class, "pv.d", android.content.Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //CharSequence charSequence = (CharSequence) param.args[2];
-                param.args[2] = (CharSequence)"";
-            }
-
-        });
-        */
-        //上面是最初的方法 两个hook联合绞杀 可以是可以 但是我不喜欢hook kt自动生成的类
-
-
-        //Landroid/content/Context;->getString(I)Ljava/lang/String;
-        /* 调查getString方法的返回值
-        XposedHelpers.findAndHookMethod(Context.class, "getString", int.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                int resId = (int) param.args[0];
-                Context context = (Context) param.thisObject;
-                String str = (String) param.getResult();
-                if(resId==0x7f114ff7){
-                    String resName = context.getResources().getResourceName(resId);
-                    log("resName:"+resName+"  result:"+str);
-                    //[ 2025-07-10T01:50:44.321    10338: 15057: 15057 I/LSPosed-Bridge  ] TestFunctionArea resName:tv.danmaku.bili:string/comment_global_string_200  result:说点什么吧
-                }
-            }
-        });*/
-
-        /*
-        XposedHelpers.findAndHookMethod("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply$InputConfig", lpparam.classLoader, "getDisabled", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(false);
-            }
-
-        });*/
-
-        /*没效果
-        Class<?> SubjectDescriptionReplyClass = XposedHelpers.findClass("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply",lpparam.classLoader);
-        Method clearInputMethod = SubjectDescriptionReplyClass.getDeclaredMethod("clearInput");
-
-        //Object NullSubjectDescriptionReplyObject = SubjectDescriptionReplyClass.newInstance();
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.data.source.v2.a", lpparam.classLoader, "e", SubjectDescriptionReplyClass, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object SubjectDescriptionReplyObject = param.args[0];
-                clearInputMethod.invoke(SubjectDescriptionReplyObject);
-
-            }
-
-        });*/
-        //最终方案
-        XposedHelpers.findAndHookMethod("com.bapis.bilibili.main.community.reply.v2.SubjectDescriptionReply", lpparam.classLoader, "getInput", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(null);
-            }
-
-        });
-
-
-
-
-
-    }
-
-
-    //在主页推送的更多按钮页添加按钮 供复制卡片json
-    //主页推送有部分fw内容没有过掉 因此 有这个功能可以查看它们的特征 更新过滤代码
-    //调试用
-    public void test22(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        /*
-        *   com.bilibili.pegasus.card.base.CardClickProcessor.q1(@NotNull f<T> fVar, @NotNull View view, boolean z)
-        *   com.bilibili.app.comm.list.common.widget.bottomsheet.drag.ListThreePointMenuDialogFragment.show$default(ListThreePointMenuDialogFragment listThreePointMenuDialogFragment, FragmentManager fragmentManager, List list, Function0 function0, int i, Object obj)
-        * */
-
-        Class<?> ImageTitleDataClass = XposedHelpers.findClass("com.bilibili.app.comm.list.common.widget.bottomsheet.drag.model.ImageTitleData",lpparam.classLoader);
-        Constructor<?> ImageTitleDataConstructor = ImageTitleDataClass.getConstructor(String.class,String.class,String.class,android.graphics.drawable.Drawable.class,boolean.class, XposedHelpers.findClass("kotlin.jvm.functions.Function0",lpparam.classLoader));
-        Class<?> OnClickListenerClass = XposedHelpers.findClass("kotlin.jvm.functions.Function0",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("com.bilibili.pegasus.card.base.CardClickProcessor", lpparam.classLoader, "K", "com.bilibili.pegasus.card.base.f", boolean.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.bapis.bilibili.app.viewunite.v1.IntroductionTab", lpparam.classLoader, "getModulesList", new XC_MethodHook() {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-
-                Object fVarObject = param.args[0];
-                Object BasicIndexItemObject = XposedHelpers.callMethod(fVarObject,"n0");
-                Class<?> BasicIndexItemClass = BasicIndexItemObject.getClass();
-
-                InvocationHandler handler = new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        if ("invoke".equals(method.getName())) {
-
-                            String BasicIndexItemJson = Utils.toJSONString(lpparam,BasicIndexItemObject);
-                            Utils.copyText(BasicIndexItemJson);
-
-                        }
-                        return null; // 方法返回void，返回null即可
-                    }
-                };
-
-                // 创建动态代理实例
-                Object OnMenuClickListenerObject = Proxy.newProxyInstance(
-                        lpparam.classLoader,
-                        new Class<?>[]{OnClickListenerClass},
-                        handler
-                );
-
-                Object NormalMenuItemObject = ImageTitleDataConstructor.newInstance(null,null,"复制json代码 "+BasicIndexItemClass.getSimpleName(),null,false,OnMenuClickListenerObject);
-                List list = (List) param.getResult();
-                if(list==null){list=new ArrayList<>();}
-                list.add(NormalMenuItemObject);
-                //log(list);
-            }
-        });
-    }
-
-
-
-    //禁用原本的收藏点击事件(直接收藏进入默认文件夹) 改为与长按收藏相同的选择收藏文件夹再收藏
-    public void test21(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //常规方法 hook设置长按点击事件的方法 模仿它new出来一个长按点击事件 重新给收藏按钮设置点击事件为调用长按回调方法
-
-        /*
-        Class<?> jClass = XposedHelpers.findClass("com.bilibili.app.gemini.base.ui.j",lpparam.classLoader);
-        Constructor<?> jConstructor = jClass.getConstructor(XposedHelpers.findClass("kotlin.jvm.functions.Function0",lpparam.classLoader),XposedHelpers.findClass("kotlinx.coroutines.channels.ProducerScope",lpparam.classLoader));
-        Method onLongClickMethod = jClass.getMethod("onLongClick",View.class);
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.base.ui.UIComponentExtKt$onLongClickEvent$1", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                View view = (View) XposedHelpers.getObjectField(param.thisObject,"$this_onLongClickEvent");
-                Object function0 = XposedHelpers.getObjectField(param.thisObject,"$condition");
-                Object ProducerScope = XposedHelpers.getObjectField(param.thisObject,"L$0");
-                Object onLongClickCallBackClass = jConstructor.newInstance(function0,ProducerScope);
-                view.setOnClickListener(v -> {
-                    try {
-                        onLongClickMethod.invoke(onLongClickCallBackClass,v);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-        });
-        */
-
-
-
-        //相同的hook点 拿到view后直接使用xposedAPI获取原先设置的长按点击事件 新设置一个点击事件并与之对接
-        //反射了系统类
-        //hook点不够好
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.base.ui.UIComponentExtKt$onLongClickEvent$1", lpparam.classLoader, "invokeSuspend", Object.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Utils.printStackTrace("UIComponentExtKt$onLongClickEvent$1.invokeSuspend");
-                View view = (View) XposedHelpers.getObjectField(param.thisObject,"$this_onLongClickEvent");
-                Object ListenerInfo = XposedHelpers.callMethod(view,"getListenerInfo");
-                Object mOnLongClickListener = XposedHelpers.getObjectField(ListenerInfo,"mOnLongClickListener");
-
-                view.setOnClickListener(v -> {
-                    try {
-
-                        XposedHelpers.callMethod(mOnLongClickListener,"onLongClick",v);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-        });*/
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.base.ui.UIComponentExtKt", lpparam.classLoader, "c", android.view.View.class, "kotlin.jvm.functions.Function0", int.class, Object.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Utils.printStackTrace("com.bilibili.app.gemini.base.ui.UIComponentExtKt.c");
-            }
-
-        });*/
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.base.ui.UIComponentExtKt", lpparam.classLoader, "a", android.view.View.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                View view = (View) param.args[0];
-                TextView proxy = new TextView(view.getContext());
-                param.args[0] = proxy;//狸猫换太子 避免我下面的点击事件被覆盖
-
-
-                AtomicReference<Object> mOnLongClickListenerRef = new AtomicReference<>();;
-                view.setOnClickListener(view1 -> {
-                    if(mOnLongClickListenerRef.get()==null){
-                        Object ListenerInfo = XposedHelpers.callMethod(view,"getListenerInfo");
-                        mOnLongClickListenerRef.set(XposedHelpers.getObjectField(ListenerInfo, "mOnLongClickListener"));
-                    }
-                    XposedHelpers.callMethod(mOnLongClickListenerRef.get(),"onLongClick",view1);
-                });
-
-
-
-            }
-
-        });
-        /*
-        XposedHelpers.findAndHookMethod("com.bilibili.app.gemini.base.ui.UIComponentExtKt", lpparam.classLoader, "b", android.view.View.class, "kotlin.jvm.functions.Function0", new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                View view = (View) param.args[0];
-                Object ListenerInfo = XposedHelpers.callMethod(view,"getListenerInfo");
-                Object mOnLongClickListener = XposedHelpers.getObjectField(ListenerInfo,"mOnLongClickListener");
-                log("mOnLongClickListener"+mOnLongClickListener);
-            }
-        });*/
-    }
-
-
-    //精确评论时间至秒
-    public void test20(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("kntr.base.localization.n0", lpparam.classLoader, "h", long.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Long timestampInMillis = (Long) param.args[0];
-                if(timestampInMillis==null){return;}
-                // 创建日期格式化器（格式可自定义）
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss  ", Locale.getDefault());
-
-                // 设置时区（可选，默认系统时区）
-                sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-
-                param.setResult(sdf.format(new Date(timestampInMillis)));
-            }
-
-        });
-
-
-    }
-
-
-    //去除评论区黄色条状广告
-    public void test19(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("tv.danmaku.android.util.AppBuildConfig$Companion", lpparam.classLoader, "getDebug", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                param.setResult(true);//没用
-            }
-
-        });
-
-        XposedHelpers.findAndHookMethod("com.bilibili.app.comment3.ui.adapter.CommentListAdapter", lpparam.classLoader, "e1", java.util.List.class, boolean.class, boolean.class, String.class, "kotlin.coroutines.Continuation", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                List list = (List) param.args[0];
-                if(list==null||list.isEmpty()){return;}
-                if(list.get(0).toString().contains("CM")){
-                    list.remove(0);
-                }
-            }
-
-        });
-    }
-
-
-
-    //8.51.0版本 简化顶栏 最终hook点
-    public void test18(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.HomeFragmentV2", lpparam.classLoader, "up", java.util.List.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                List a = (List) param.args[0];
-                List b = new ArrayList<>();
-                for(int i =0;i<3;i++){
-                    b.add(a.get(i));
-                }
-                param.args[0]=b;
-            }
-
-        });
-
-    }
-    //吐出顶栏的adapter类型
-    public void test17(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //log("test17");
-
-
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.homepage.widget.SecondaryPagerSlidingTabStrip", lpparam.classLoader, "E", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object viewPagerObject = XposedHelpers.getObjectField(param.thisObject,"g");
-                Object AdapterObject = XposedHelpers.callMethod(viewPagerObject,"getAdapter");
-                log("AdapterClass: "+AdapterObject.getClass());
-
-            }
-
-        });
-    }
-
-    //为8.51.0版本 设计的 简化顶栏 但是有bug 开屏默认直播 而非推荐
-    public void test16(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        final List NeededTags = Arrays.asList(new String[]{"直播","推荐","热门"});
-        XposedHelpers.findAndHookMethod("com.bilibili.lib.homepage.widget.SecondaryPagerSlidingTabStrip", lpparam.classLoader, "r", int.class, CharSequence.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                String name = (String)param.args[1];
-                if(!NeededTags.contains(name)){
-                    param.setResult(null);
-                }
-            }
-
-        });
-    }
-
-    //追查视频详情页的recyclerView的adapter是哪个类 因为不知道为什么test14不能让它自己吐出来adapter
-    public void test15(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-
-        XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.detail.UnitedBizDetailsActivity", lpparam.classLoader, "onKeyDown", int.class, android.view.KeyEvent.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                int keyCode = (int)param.args[0];
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    View view = (View) XposedHelpers.callMethod(param.thisObject,"findViewById",0x7f092854);
-                    log("test15:"+view);
-                    //[ 2025-07-04T18:31:31.449    10338: 24361: 24361 I/LSPosed-Bridge  ] TestFunctionArea test15:com.bilibili.ship.theseus.united.widget.UnitedRecyclerView{8f49583 VFE...... ........ 0,0-1080,1926 #7f092854 app:id/recycler alpha=1.0 viewInfo = }
-                    log("adapter:"+XposedHelpers.callMethod(view,"getAdapter").getClass());
-                    //[ 2025-07-04T18:31:31.452    10338: 24361: 24361 I/LSPosed-Bridge  ] TestFunctionArea adapter:class com.bilibili.app.gemini.base.ui.d
-                }
-            }
-
-        });
-    }
-    //将所有recyclerView的adapter类名绘制出来
-    public void test14(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod(
-                "androidx.recyclerview.widget.RecyclerView", // 支持 AndroidX
-                lpparam.classLoader,
-                "draw",
-                Canvas.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        View recyclerView = (View) param.thisObject;
-                        Canvas canvas = (Canvas) param.args[0];
-
-                        // 原始绘制完成后执行自定义绘制
-                        //drawCenteredText(recyclerView, canvas);
-                        if (recyclerView.getVisibility() != View.VISIBLE) return;
-
-                        // 设置文字内容
-                        String text = "AdapterClass:"+XposedHelpers.callMethod(param.thisObject,"getAdapter").getClass().getName();
-                        //String text = "Class:"+param.thisObject.getClass().getName();
-                        XposedBridge.log(text);
-
-                        // 初始化画笔
-                        Paint paint = new Paint();
-                        paint.setColor(Color.RED);
-                        paint.setTextSize(spToPx(recyclerView, 8)); // 16sp
-                        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-                        paint.setAntiAlias(true);
-                        paint.setTextAlign(Paint.Align.CENTER);
-
-                        // 计算居中位置
-                        float centerX = recyclerView.getWidth() / 2f;
-                        float centerY = recyclerView.getHeight() / 2f;
-
-                        // 计算基线位置（垂直居中）
-                        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-                        float textHeight = fontMetrics.descent - fontMetrics.ascent;
-                        float baseline = centerY - (textHeight / 2f - fontMetrics.descent);
-
-                        // 绘制文字（带半透明背景）
-                        int padding = dpToPx(recyclerView, 8);
-                        int cornerRadius = dpToPx(recyclerView, 4);
-                        float textWidth = paint.measureText(text);
-
-                        // 绘制圆角背景
-                        paint.setColor(Color.argb(128, 0, 0, 0)); // 半透明黑色
-                        canvas.drawRoundRect(
-                                centerX - textWidth / 2 - padding,
-                                baseline + fontMetrics.ascent - padding,
-                                centerX + textWidth / 2 + padding,
-                                baseline + fontMetrics.descent + padding,
-                                cornerRadius,
-                                cornerRadius,
-                                paint
-                        );
-
-                        // 绘制文字
-                        paint.setColor(Color.WHITE);
-                        canvas.drawText(text, centerX, baseline, paint);
-                    }
-                });
-
-    }
-    private int dpToPx(View view, int dp) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                view.getResources().getDisplayMetrics()
-        );
-    }
-
-    // sp转px
-    private float spToPx(View view, float sp) {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                sp,
-                view.getResources().getDisplayMetrics()
-        );
-    }
-    public void test13(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Lcom/bilibili/pegasus/promo/BaseListFragment;->getMRecyclerView()Landroidx/recyclerview/widget/RecyclerView;
-        Class<?> BaseListFragmentClass = XposedHelpers.findClass("com.bilibili.pegasus.promo.BaseListFragment",lpparam.classLoader);
-        Method getMRecyclerViewMethod = BaseListFragmentClass.getDeclaredMethod("getMRecyclerView");
-        getMRecyclerViewMethod.setAccessible(true);
-
-        //Class<?> RecyclerViewClass = XposedHelpers.findClass("androidx.recyclerview.widget.RecyclerView",lpparam.classLoader);
-        XposedHelpers.findAndHookMethod("com.bilibili.pegasus.promo.index.IndexFeedFragmentV2", lpparam.classLoader, "Vt", java.util.List.class, new XC_MethodHook() {
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                Object recyclerView = getMRecyclerViewMethod.invoke(param.thisObject);
-                if(recyclerView!=null){
-
-                    log("Vt方法的recyclerView的id "+XposedHelpers.callMethod(recyclerView,"getId"));
-                    //TestFunctionArea Vt方法的recyclerView的id 2131306595 0x7f092863
-                }else{
-                    log("Vt方法的recyclerView为null");
-                }
-
-
-            }
-        });
-
-    }
-
-
-    //以下是7.69.0版本老代码
-
-    //调查历史记录的滑动列表
-    public void test12(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
-        XposedHelpers.findAndHookMethod("androidx.recyclerview.widget.RecyclerView",lpparam.classLoader,"setAdapter","androidx.recyclerview.widget.RecyclerView$Adapter",new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    View view = (View) param.thisObject;
-                    if(view.getId()==0x7f092854){
-                        Utils.log("setAdapter");
-                        Utils.printStackTrace("setAdapterTest");
-                    }
-                    
-                }
-        });
-    }
-    
-    //搁置 效果不佳 禁用竖屏模式的滑动切换下一个视频
-    public void test11(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Landroidx/viewpager2/widget/ViewPager2;->registerOnPageChangeCallback(Landroidx/viewpager2/widget/ViewPager2$OnPageChangeCallback;)V
-        XposedHelpers.findAndHookMethod("androidx.viewpager2.widget.ViewPager2",lpparam.classLoader,"registerOnPageChangeCallback","androidx.viewpager2.widget.ViewPager2$OnPageChangeCallback",new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    View view = (View) param.thisObject;
-                    if(view.getId()==0x7f091461){
-                        param.setResult(null);
-                    }
-                    Utils.log("registerOnPageChangeCallback "+view.getId());
-                }
-        });
-    }
-    
-    
-    //禁用视频详情页评论区发言编辑框的糖言糖语
-    public void test10(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //com.bilibili.app.comment3.data.source.v2.SubjectDescriptionDataSourceV2
-        final Class<?> SubjectDescriptionDataSourceV2Class = XposedHelpers.findClass("com.bilibili.app.comment3.data.source.v2.SubjectDescriptionDataSourceV2",lpparam.classLoader);
-        final Class<?> SubjectIDClass = XposedHelpers.findClass("com.bilibili.app.comment3.data.model.SubjectId",lpparam.classLoader);
-        final Class<?> ContinuationClass = XposedHelpers.findClass("kotlin.coroutines.Continuation",lpparam.classLoader);
-        //Lcom/bilibili/app/comment3/data/source/v2/SubjectDescriptionDataSourceV2;->a(Lcom/bilibili/app/comment3/data/model/SubjectId;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-        
-        Method setHintMethod = Utils.selectMethod(SubjectDescriptionDataSourceV2Class,Object.class,SubjectIDClass,boolean.class,boolean.class,ContinuationClass);
-        XposedBridge.hookMethod(setHintMethod,new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.setResult(null);
-                }
-        });
-    }
-    
-    //视频详情里显示av号 而非bv
-    public void test9 (XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Lcom/bilibili/droid/BVCompat;->a(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-        final Class<?> BVCompatClass = XposedHelpers.findClass("com.bilibili.droid.BVCompat",lpparam.classLoader);
-        
-        Method AVorBVMethod = Utils.selectMethod(BVCompatClass,String.class,String.class,String.class);
-        XposedBridge.hookMethod(AVorBVMethod,new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.setResult(param.args[0]);
-                }
-        });
-    }
-    
-    //去除开屏广告
-    public void test8(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //Utils.getBLogMessage(lpparam,"Splash");
-        //注释的代码 在MainActivityV2调用add时过早拦截导致广告无法展示和结束
-        /*XposedHelpers.findAndHookMethod("androidx.fragment.app.FragmentTransaction",lpparam.classLoader,"add",int.class,"androidx.fragment.app.Fragment",String.class,new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    String str = (String) param.args[2];
-                    View view =(View) param.args[1];
-                    //ADSplashFragment
-                    if(str.contains("Splash")){
-                        //param.setResult(null);
-                        
-                    }
-                    Utils.log("add "+str);
-                }
-        });*/
-        //Lcom/bilibili/ship/theseus/united/page/TheseusIntroductionFragment;->onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V
-        /*XposedHelpers.findAndHookMethod("com.bilibili.ship.theseus.united.page.TheseusIntroductionFragment",lpparam.classLoader,"onViewCreated",View.class,Bundle.class,new XC_MethodHook(){
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    if(param.getResult()==null){return;}
-                    View view = (View) param.getResult();
-                    view.setVisibility(View.GONE);
-                    Utils.log("TheseusIntroductionFragment;->onViewCreated");
-                }
-        });*/
-        //tv.danmaku.bili.ui.splash.ad.page.BaseSplash
-        
-        final Class<?> BaseSplashClass = XposedHelpers.findClass("tv.danmaku.bili.ui.splash.ad.page.BaseSplash",lpparam.classLoader);
-        final Field handlerField = Utils.selectField(BaseSplashClass,Handler.class);
-        handlerField.setAccessible(true);
-        //Ltv/danmaku/bili/ui/splash/ad/page/BaseSplash;->onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.splash.ad.page.BaseSplash",lpparam.classLoader,"onViewCreated",View.class,Bundle.class,new XC_MethodHook(){
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    Handler handler = (Handler) handlerField.get(param.thisObject);
-                    handler.sendEmptyMessage(2);
-                    Utils.log("message 结束开屏广告");
-                }
-        });
-        
-    }
-    
-    
-    //简化主页顶栏
-    public void test1(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable {
-        final Class<?> MainResourceManager$UpdateInfoClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.resource.MainResourceManager$UpdateInfo",lpparam.classLoader);
-        final Field secondaryPagesField = MainResourceManager$UpdateInfoClass.getField("secondaryPages");
-
-        //tv.danmaku.bili.ui.main2.resource.o
-        final Class<?> secondaryPagesClass =  (Class<?>) ((ParameterizedType)secondaryPagesField.getGenericType()).getActualTypeArguments()[0];
-        
-        final Field tabNameField=Utils.selectFieldAt(secondaryPagesClass,String.class,2);
-        
-        //List<o>
-        Type ListOType = secondaryPagesField.getGenericType();
-        
-        
-        final List NeededTags = Arrays.asList(new String[]{"直播","推荐","热门"});
-        
-        final Class<?> MainResourceManagerClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.resource.MainResourceManager",lpparam.classLoader);
-        for (final Method getTabMethod :MainResourceManagerClass.getMethods()){
-            if(getTabMethod.getParameterCount()==0&&getTabMethod.getGenericReturnType().equals(ListOType)){
-                //Utils.log(getTabMethod.getName());
-                XposedBridge.hookMethod(getTabMethod,new XC_MethodHook(){
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                             List list = (List) param.getResult();
-                            for (int i = list.size()-1; i >=0 ; i--) {
-                                String tabName = (String) tabNameField.get(list.get(i));
-                                if(!NeededTags.contains(tabName)){
-                                    list.remove(i);
-                                }
-                            }
-                        }
-                });
-            }
-        }
-        
-    }
-    
-    //去除私信旁边的按钮
-    public void test5(XC_LoadPackage.LoadPackageParam lpparam){
-        Class<?> HomeFragmentV2$HomeMenuDataProviderClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.HomeFragmentV2$HomeMenuDataProvider",lpparam.classLoader);
-        Method getMenuDataList = Utils.selectMethod(HomeFragmentV2$HomeMenuDataProviderClass,List.class,Context.class);
-        XposedBridge.hookMethod(getMenuDataList,new XC_MethodHook(){
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    ArrayList DataList = (ArrayList) param.getResult();
-                    List newDataList = new ArrayList<>();
-                    newDataList.add(DataList.get(DataList.size()-1));
-                    param.setResult(newDataList);
-                }
-        });
-    }
-    
-    //我的主页简化
-    public void test7(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        //final List<Object> list = new ArrayList<>();
-        //Ltv/danmaku/bili/ui/main2/mine/HomeUserCenterFragment;->ht(Landroid/content/Context;Ljava/util/List;Ltv/danmaku/bili/ui/main2/api/AccountMine;)V
-        final Method HomePageMenuGroupInitMethod = Utils.selectMethod(XposedHelpers.findClass("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment",lpparam.classLoader),void.class,Context.class,List.class,XposedHelpers.findClass("tv.danmaku.bili.ui.main2.api.AccountMine",lpparam.classLoader));
-        XposedBridge.hookMethod(HomePageMenuGroupInitMethod,new XC_MethodHook(){
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    /*if(list.size()==0){
-                        list.add(param.args[1]);
-                    }else{
-                        param.setResult(list.get(0));
-                    }*/
-                    
-                    List list = (List) param.args[1];
-                    if(list.size()<=1){return;}
-                    for (int i = list.size()-2; i >=1; i--) {
-                        list.remove(i);
+                List<?> modList = (List<?>) param.getResult();
+                List<Object> newList = new ArrayList<>();
+                for(Object mod:modList){
+                    Object currentModType = XposedHelpers.callMethod(mod,"getType");
+                    int typeNumber = (int) XposedHelpers.callMethod(currentModType,"getNumber");
+                    if(!blackList.contains(typeNumber)){
+                        newList.add(mod);
                     }
                 }
-        });
-        
-        //Ltv/danmaku/android/util/AppBuildConfig;->isInternationalApp(Landroid/content/Context;)Z
-        //Ltv/danmaku/bili/ui/main2/a;->h(Landroid/content/Context;)Ljava/util/List;
-    }
-    
-    //移除个人页的大会员广告宣传
-    public void test2(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable {
-        //final Class<?> MineVipEntranceViewClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.mine.widgets.MineVipEntranceView",lpparam.classLoader);
-        //for (Constructor constructor : MineVipEntranceViewClass.getConstructors()){
-        XposedHelpers.findAndHookMethod("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment", lpparam.classLoader,
-            "onCreateView", LayoutInflater.class, ViewGroup.class, Bundle.class,
-            new XC_MethodHook() {
-
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    // 在方法调用之后执行的代码
-                    View view = (View) param.getResult();
-                    view.findViewById(Utils.getViewID("mine_vip_layout")).setVisibility(View.GONE);
-                    //log("onCreateView has been called, returning: " + view);
-                }
-            });
-    }
-    
-    //去除特殊弹幕
-    public void test3(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable {
-        //Ltv/danmaku/biliplayerv2/service/interact/core/model/DanmakuParams;->setDmViewReply(Lcom/bapis/bilibili/community/service/dm/v1/DmViewReply;)V
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.interact.core.model.DanmakuParams",
-            lpparam.classLoader,
-            "setDmViewReply",
-            "com.bapis.bilibili.community.service.dm.v1.DmViewReply",
-            new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    // 在方法执行前执行的代码
-                    param.setResult(null);
-                }
-
-
-            });
-    }
-    
-    //拦截OKhttp网络请求
-    public void test4(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable {
-        XposedHelpers.findAndHookMethod(
-            "okhttp3.Request$Builder",
-            lpparam.classLoader,
-            "build",
-            new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    Utils.log("okhttp "+param.getResult().toString());
-                }
-
-
+                param.setResult(newList);
             }
-        );
+        });
     }
-    
-    //锁定弹幕速度
-    public void test6(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        XposedHelpers.findAndHookMethod("tv.danmaku.biliplayerv2.service.interact.biz.y",
-            lpparam.classLoader,
-            "setDanmakuSpeed",
-            float.class,boolean.class,
-            new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Float speed = 100.0f;
-                    param.args[0]=speed;
-                }
 
-
-            });
-    }
 
 
 }

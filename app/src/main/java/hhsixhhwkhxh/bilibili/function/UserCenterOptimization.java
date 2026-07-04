@@ -48,12 +48,13 @@ public class UserCenterOptimization extends FunctionsBase {
         }
 
         if(AllowSweepGrave){
-            AllowSweepGrave(lpparam);
+            //AllowSweepGrave(lpparam);
         }
 
     }
 
     public void UserCenterRemoveExcessiveService(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
+        /*
         final Method HomePageMenuGroupInitMethod = Utils.selectMethod(XposedHelpers.findClass("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment",lpparam.classLoader),void.class, Context.class, List.class,XposedHelpers.findClass("tv.danmaku.bili.ui.main2.api.AccountMine",lpparam.classLoader));
         UnhooksList.add(XposedBridge.hookMethod(HomePageMenuGroupInitMethod,new XC_MethodHook(){
             @Override
@@ -64,7 +65,32 @@ public class UserCenterOptimization extends FunctionsBase {
                     list.remove(i);
                 }
             }
-        }));
+        }));*/
+        Class<?> HomeUserCenterFragmentClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.mine.HomeUserCenterFragment",lpparam.classLoader);
+        Class<?> AccountMineClass = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.api.AccountMine",lpparam.classLoader);
+        Method pfMethod = Utils.selectMethod(HomeUserCenterFragmentClass,void.class,HomeUserCenterFragmentClass,AccountMineClass);
+        if(pfMethod==null){
+            Utils.reportError("UserCenterRemoveExcessiveService pfMethod为空");
+            return;
+        }
+        Field MenuGroupListField = Utils.selectField(HomeUserCenterFragmentClass, List.class);
+        if(MenuGroupListField==null){
+            Utils.reportError("UserCenterRemoveExcessiveService MenuGroupListField为空");
+            return;
+        }
+
+        XposedBridge.hookMethod(pfMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                List<?> MenuGroupList = (List<?>) MenuGroupListField.get(param.args[0]);
+                if(MenuGroupList==null||MenuGroupList.size()<4){
+                    return;
+                }
+                for(int i = MenuGroupList.size()-2;i>=1;i--){
+                    MenuGroupList.remove(i);
+                }
+            }
+        });
     }
 
     public void FavoritesOpenVideoRedirect(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
@@ -98,24 +124,37 @@ public class UserCenterOptimization extends FunctionsBase {
     }
 
     public void ForceEnableV1Favorites(XC_LoadPackage.LoadPackageParam lpparam)throws Throwable{
-        Method bMethod = Utils.getDeConfusionMethod("tv_danmaku_bili_ui_main2_mine_p0_bMethod",lpparam.classLoader);
-        if(bMethod==null){
-            Utils.reportError("UserCenterOptimization tv_danmaku_bili_ui_main2_mine_p0_bMethod为空");
+        Class<?> MinePageManagerClass = Utils.getDeConfusionClass("tv_danmaku_bili_ui_main2_mine_MinePageManager$switchTo$1Class",lpparam.classLoader);
+        if(MinePageManagerClass==null){
+            Utils.reportError("ForceEnableV1Favorites MinePageManagerClass为空");
             return;
         }
-        final Class<?> MenuGroup$ItemClass = XposedHelpers.findClass("com.bilibili.lib.homepage.mine.MenuGroup$Item",lpparam.classLoader);
-        final Field uriField = MenuGroup$ItemClass.getField("uri");
-        XposedBridge.hookMethod(bMethod, new XC_MethodHook() {
+        //final Class<?> MenuGroup$ItemClass = XposedHelpers.findClass("com.bilibili.lib.homepage.mine.MenuGroup$Item",lpparam.classLoader);
+        final Field $targetPageField = Utils.getFieldSafely(MinePageManagerClass,"$targetPage");
+        if($targetPageField==null){
+            Utils.reportError("ForceEnableV1Favorites $targetPageField为空");
+            return;
+        }
+        $targetPageField.setAccessible(true);
+        final Field strField = Utils.selectField($targetPageField.getType(), String.class);
+        if(strField==null){
+            Utils.reportError("ForceEnableV1Favorites strField为空");
+            return;
+        }
+        strField.setAccessible(true);
+        XposedBridge.hookAllConstructors(MinePageManagerClass, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                Object MenuGroup$ItemObject = param.args[0];
-                String rawUri = (String) uriField.get(MenuGroup$ItemObject);
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Object $targetPageObject = $targetPageField.get(param.thisObject);
+                if($targetPageObject==null){
+                    return;
+                }
+                String rawUri = (String) strField.get($targetPageObject);
                 if(rawUri==null){return;}
                 if(!rawUri.contains("favourite")){return;}
                 String newUri = rawUri.substring(0,rawUri.length()-1)+"1";
-                uriField.set(MenuGroup$ItemObject,newUri);
-                //log("uri"+newUri);
+                strField.set($targetPageObject,newUri);
+                log("uri"+newUri);
             }
 
         });
