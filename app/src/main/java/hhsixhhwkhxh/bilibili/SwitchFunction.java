@@ -140,7 +140,7 @@ public class SwitchFunction extends ListItem {
                     SharedPreferences.Editor editor = context.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE).edit();
                     editor.putBoolean(id, isChecked);
                     editor.apply();
-
+                    editor.commit();
                 }
             });
     }

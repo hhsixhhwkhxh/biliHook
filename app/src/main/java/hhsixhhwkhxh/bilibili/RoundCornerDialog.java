@@ -36,6 +36,16 @@ public class RoundCornerDialog extends Dialog {
         this.buttonVisibility = buttonVisibility;
     }
 
+    public RoundCornerDialog(Context context,String title, ListItem listItem,int buttonVisibility) {
+        super(context);
+
+        ChildrenViews.add(listItem.getView(context));
+        listItem.initView(context,null);
+
+        this.Title=title;
+        this.buttonVisibility = buttonVisibility;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +149,7 @@ public class RoundCornerDialog extends Dialog {
                 dpToPx(45),
                 1.0f
         );
-        btnParams.setMargins(dpToPx(5), 0, dpToPx(5), 0);
+        btnParams.setMargins(dpToPx(5), dpToPx(5), dpToPx(5), dpToPx(5));
         buttonLayout.addView(btnCancel, btnParams);
         buttonLayout.addView(btnConfirm, btnParams);
 

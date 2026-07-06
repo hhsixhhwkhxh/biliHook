@@ -148,7 +148,7 @@ public class FunctionCollection extends ListItem{
     @Override
     public View getView(Context context) {
 
-        editor = context.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE).edit();
+        editor = Utils.getFunctionSettingSP(context).edit();
         //return null;
         LinearLayout layout = new LinearLayout(context);
         layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -196,16 +196,7 @@ public class FunctionCollection extends ListItem{
             @Override
             public void onClick(View p1) {
                 RoundCornerDialog dialog = new RoundCornerDialog(context,name,listItems,View.GONE);
-                /*
-                dialog.setConfirmButtonOnClickListener(v->{
-                    for(SwitchFunction item:switchFunctionItems){
-                        editor.putBoolean(item.getId(),item.isEnabled());
-                    }
-                    editor.apply();
-                    editor.commit();
-                    Utils.showToast("已保存", Toast.LENGTH_SHORT);
-                });
-                */
+
                 dialog.show();
 
             }

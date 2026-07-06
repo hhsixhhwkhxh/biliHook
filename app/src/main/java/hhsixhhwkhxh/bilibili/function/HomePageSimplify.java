@@ -8,11 +8,13 @@ import android.widget.TextView;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import hhsixhhwkhxh.bilibili.RegexFilterItem;
 import hhsixhhwkhxh.bilibili.Utils;
 import hhsixhhwkhxh.bilibili.FunctionsBase;
 
@@ -24,7 +26,7 @@ public class HomePageSimplify extends FunctionsBase {
         boolean HomePageNavigationBarRemoveVIPShopSign = sharedPreferences.getBoolean("HomePageNavigationBarRemoveVIPShopSign",false);
 
         boolean HomePageRemoveGameSign = sharedPreferences.getBoolean("HomePageRemoveGameSign",false);
-        boolean HomePageTopBarFilter = sharedPreferences.getBoolean("HomePageTopBarFilter",false);
+        boolean HomePageTopBarFilter = (sharedPreferences.getInt("HomePageTopBarFilter_FilterMode", RegexFilterItem.DISABLED)!=RegexFilterItem.DISABLED);
         boolean HomePageDisableHorizontalScrollable = sharedPreferences.getBoolean("HomePageDisableHorizontalScrollable",false);
 
         if(!HomePageRemoveGameSign&&!HomePageTopBarFilter){return;}
@@ -50,31 +52,9 @@ public class HomePageSimplify extends FunctionsBase {
 
         }
 
+
         if(HomePageTopBarFilter){
-            Class<?> HomeFragmentV2Class = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.HomeFragmentV2",lpparam.classLoader);
-            Method upMethod = Utils.selectMethod(HomeFragmentV2Class, List.class, List.class);
-
-            if(upMethod!=null){
-                //Ltv/danmaku/bili/ui/main2/HomeFragmentV2;->up(Ljava/util/List;)Ljava/util/List;
-                UnhooksList.add(XposedBridge.hookMethod(upMethod, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        List list = (List) param.args[0];
-                        // 假设 list 是原始 List 对象
-                        if (list.size() > 3) {
-                            list.subList(3, list.size()).clear(); // 清除索引 3 之后的所有元素
-                        }
-
-                    }
-
-                }));
-            }else{
-                Utils.reportError("HomePageSimplify中upMethod为空");
-
-            }
-
-
+            safeRun(this::HomePageTopBarFilter,lpparam,"HomePageTopBarFilter");
         }
 
 
@@ -114,6 +94,42 @@ public class HomePageSimplify extends FunctionsBase {
                     param.args[0]=false;
                 }
             });
+        }
+    }
+
+    public void HomePageTopBarFilter(XC_LoadPackage.LoadPackageParam lpparam){
+        Class<?> HomeFragmentV2Class = XposedHelpers.findClass("tv.danmaku.bili.ui.main2.HomeFragmentV2",lpparam.classLoader);
+        Method upMethod = Utils.selectMethod(HomeFragmentV2Class, List.class, List.class);
+        boolean isBlackList = (sharedPreferences.getInt("HomePageTopBarFilter_FilterMode", RegexFilterItem.DISABLED)==RegexFilterItem.BLACKLIST);
+        String regularExpression = sharedPreferences.getString("HomePageTopBarFilter_RegularExpression","");
+        if(regularExpression.isEmpty()){
+            return;
+        }
+        Pattern pattern = Pattern.compile(regularExpression);
+
+        if(upMethod!=null){
+            //Ltv/danmaku/bili/ui/main2/HomeFragmentV2;->up(Ljava/util/List;)Ljava/util/List;
+            UnhooksList.add(XposedBridge.hookMethod(upMethod, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    List<?> list = (List<?>) param.args[0];
+                    if(list==null||list.isEmpty()){
+                        return;
+                    }
+                    for(int i = list.size()-1;i>=0;i--){
+                        Object object = list.get(i);
+                        if(object==null){
+                            continue;
+                        }
+                        if(pattern.matcher(object.toString()).find()==isBlackList){
+                            list.remove(i);
+                        }
+                    }
+                }
+            }));
+        }else{
+            Utils.reportError("HomePageSimplify中upMethod为空");
         }
     }
 }

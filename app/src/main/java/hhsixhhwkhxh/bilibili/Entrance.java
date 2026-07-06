@@ -115,8 +115,10 @@ public class Entrance implements IXposedHookLoadPackage {
                     appContext = (Context) param.args[0];
                 }
 
-                sharedPreferences=appContext.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
-                Utils.sharedPreferences=sharedPreferences;
+                sharedPreferences=Utils.getFunctionSettingSP(appContext);
+
+                //Utils.sharedPreferences=sharedPreferences;
+                //Utils.DeConfusionSP = appContext.getSharedPreferences("DeConfusionMap", Context.MODE_PRIVATE);
                 FunctionsBase.sharedPreferences=sharedPreferences;
 
                 LivePageSimplify function = new LivePageSimplify();
@@ -162,9 +164,8 @@ public class Entrance implements IXposedHookLoadPackage {
 
                     if(sharedPreferences==null){
                         //这通常意味着上面借助Application.attach(Context)初始化失败了
-                        sharedPreferences=MainActivityV2.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
+                        sharedPreferences=Utils.getFunctionSettingSP(MainActivityV2);
                         FunctionsBase.sharedPreferences=sharedPreferences;
-                        Utils.sharedPreferences=sharedPreferences;
 
                         preInitSucceed = false;
                     }
@@ -173,12 +174,13 @@ public class Entrance implements IXposedHookLoadPackage {
 
                     String apkPath = lpparam.appInfo.sourceDir;
                     int beforeVersion = sharedPreferences.getInt("CodeVersion", -1);
-                    //if(beforeVersion!=Utils.getAppVersionCode(MainActivityV2)){
+                    long buildTime = sharedPreferences.getLong("BuildTime",-1);
+                    if(beforeVersion!=Utils.getAppVersionCode(MainActivityV2)||buildTime!=BuildConfig.BUILD_TIME) {
                         Toast.makeText(MainActivityV2, "模块反混淆初始化...", Toast.LENGTH_SHORT).show();
                         //initNeededMethods(apkPath,classLoader);
-                        initResolveConfusionMethods(apkPath,lpparam.classLoader);
+                        initResolveConfusionMethods(apkPath, lpparam.classLoader);
                         //Toast.makeText(context, "模块初始化成功", Toast.LENGTH_SHORT).show();
-                    //}
+                    }
 
 
                     //
@@ -340,7 +342,7 @@ public class Entrance implements IXposedHookLoadPackage {
         
         ItemsList = new ArrayList<>();
         //ItemsList.add(new GroupTitle("壁虎 开源模块 适配8.51.0"));
-        final Class<?> MaterialCheckBoxClass = XposedHelpers.findClass("com.google.android.material.checkbox.MaterialCheckBox",lpparam.classLoader);
+        //final Class<?> MaterialCheckBoxClass = XposedHelpers.findClass("com.google.android.material.checkbox.MaterialCheckBox",lpparam.classLoader);
 
 
         Intent GoToGithubPageIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hhsixhhwkhxh/biliHook/"));
@@ -376,7 +378,22 @@ public class Entrance implements IXposedHookLoadPackage {
 
 
         ItemsList.add(new SwitchFunction("去除游戏按钮", "私信旁边的按钮", "HomePageRemoveGameSign"));
-        ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
+        //ItemsList.add(new SwitchFunction("简化主页顶栏", "仅保留 直播 推荐 热门", "HomePageTopBarFilter"));
+        ItemsList.add(new ButtonFunction("简化主页顶栏", "正则表达式匹配", "HomePageTopBarFilter", new FunctionOnClickListener() {
+            @Override
+            public void onClick() {
+                RegexFilterItem regexFilterItem = new RegexFilterItem("HomePageTopBarFilter","(直播)|(推荐)",RegexFilterItem.WHITELIST);
+                RoundCornerDialog dialog = new RoundCornerDialog(activity,"简化主页顶栏",regexFilterItem,View.VISIBLE);
+                dialog.setConfirmButtonOnClickListener(v->{
+                    SharedPreferences.Editor editor = Utils.getFunctionSettingSP(activity).edit();
+                    editor.putInt(regexFilterItem.getFilterModeKey(),regexFilterItem.getFilterMode());
+                    editor.putString(regexFilterItem.getRegularExpressionKey(),regexFilterItem.getRegularExpression());
+                    editor.apply();
+                });
+                dialog.show();
+            }
+        }));
+
         ItemsList.add(new SwitchFunction("禁用滑动切换tab", "防止误触", "HomePageDisableHorizontalScrollable"));
 
         ItemsList.add(new GroupTitle("主页推送",true));
@@ -606,13 +623,16 @@ public class Entrance implements IXposedHookLoadPackage {
 
     public String initResolveConfusionMethods(String apkPath,ClassLoader classLoader)throws Exception{
         try (DexKitBridge bridge = DexKitBridge.create(apkPath)) {
-            SharedPreferences.Editor editor = MainActivityV2.getSharedPreferences("FunctionPrefs",MainActivityV2.MODE_PRIVATE). edit();
+            SharedPreferences.Editor editor = Utils.getDeConfusionSP(MainActivityV2).edit();
+            editor.clear();
 
-            editor.putInt("CodeVersion",Utils.getAppVersionCode(MainActivityV2));
+            SharedPreferences.Editor editor2 = Utils.getFunctionSettingSP(MainActivityV2).edit();
+            editor2.putInt("CodeVersion",Utils.getAppVersionCode(MainActivityV2));
 
-            editor.putLong("BuildTime",BuildConfig.BUILD_TIME);
+            editor2.putLong("BuildTime",BuildConfig.BUILD_TIME);
 
-
+            editor2.apply();
+            editor2.commit();
 
             List<DeConfusionResult<ClassData>> classDeConfusionResultList = new ArrayList<>();
             List<DeConfusionResult<FieldData>> fieldDeConfusionResultList = new ArrayList<>();
@@ -621,12 +641,13 @@ public class Entrance implements IXposedHookLoadPackage {
 
             //BypassSplash
             //Lsh5/k;->m(Landroid/app/Activity;)V
+            /*
             List<MethodData> sh5_k_mMethods = bridge.findClass(FindClass.create().matcher(new ClassMatcher().usingStrings("[Splash]SplashHelper","checkHotSplash")))
                     .findMethod(FindMethod.create().matcher(
                     MethodMatcher.create().returnType(void.class)
                             .paramTypes("android.app.Activity")));
             methodDeConfusionResultList.add(accessMethodSeekResult(editor,sh5_k_mMethods,"sh5_k_mMethod"));
-
+            */
 
 
 
@@ -668,17 +689,18 @@ public class Entrance implements IXposedHookLoadPackage {
 
             //com.bilibili.bplus.followinglist.model.e7
             //Lcom/bilibili/bplus/followinglist/model/e7;->N0(Z)Lcom/bapis/bilibili/app/dynamic/v2/CardVideoUpList;
+            /*
             List<MethodData> com_bilibili_bplus_followinglist_model_e7_N0Methods = bridge.findClass(new FindClass().searchPackages("com.bilibili.bplus.followinglist.model").matcher(new ClassMatcher()
                     .usingStrings("ModuleVideoUpList(title="))).findMethod(new FindMethod().matcher(new MethodMatcher()
                      .returnType("com.bapis.bilibili.app.dynamic.v2.CardVideoUpList")
                      .paramTypes(boolean.class)));
 
             methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_bplus_followinglist_model_e7_N0Methods,"com_bilibili_bplus_followinglist_model_e7_N0Method"));
-
+            */
 
             //com.bilibili.app.authorspace.ui.AuthorSpaceActivity
             //Lcom/bilibili/app/authorspace/ui/AuthorSpaceActivity;->F9()V
-
+            /*
             List<MethodData> com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods = bridge.getClassData("com.bilibili.app.authorspace.ui.AuthorSpaceActivity").findMethod(new FindMethod().matcher(new MethodMatcher()
                     .returnType(void.class)
                     .usingNumbers(0,8)
@@ -688,14 +710,8 @@ public class Entrance implements IXposedHookLoadPackage {
             ));
 
             methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Methods,"com_bilibili_app_authorspace_ui_AuthorSpaceActivity_F9Method"));
-
-            //Lcom/bilibili/app/comment3/data/model/CommentItem$e$a;->c(Landroid/content/Context;)Ljava/lang/String;
-            List<MethodData> com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods = bridge.findClass(new FindClass().searchPackages("com.bilibili.app.comment3.data.model").matcher(new ClassMatcher().usingStrings("IP属地：")))
-                    .findMethod(new FindMethod().matcher(new MethodMatcher().returnType(String.class).paramTypes(Context.class).usingStrings("")));
-
-            methodDeConfusionResultList.add(accessMethodSeekResult(editor,com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethods,"com_bilibili_app_comment3_data_model_CommentItem$e$a_cMethod"));
-
-
+            */
+            
 
             //qa3.t smallCoverV2
             ClassDataList qa3_tClasses = bridge.findClass(new FindClass().matcher(new ClassMatcher()
@@ -812,12 +828,7 @@ public class Entrance implements IXposedHookLoadPackage {
         }else{
             editor.putString(name,list.get(0).toDexMethod().serialize());
             if(list.size()>1){
-                /*
-                StringBuilder stringBuilder = new StringBuilder(name+"有"+list.size()+"个\n");
-                for(MethodData methodData:list){
-                    stringBuilder.append("同特征方法: ").append(methodData.getClassName()).append(" -> ").append(methodData.getName());
-                    stringBuilder.append("\n");
-                }*/
+
                 return new DeConfusionResult<>(name,DeConfusionResult.NOT_UNIQUE,list);
             }
         }
@@ -848,8 +859,8 @@ public class Entrance implements IXposedHookLoadPackage {
     }
 
     public class DeConfusionResult<T>{
-        private String name;
-        private int result;
+        private final String name;
+        private final int result;
         public static final int ONLY = 0;
         public static final int NOT_UNIQUE = 1;
         public static final int NOT_FOUND = 2;

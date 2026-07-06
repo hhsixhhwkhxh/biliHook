@@ -231,13 +231,13 @@ public class UserCenterOptimization extends FunctionsBase {
         //Class<?> b9Class = XposedHelpers.findClass("com.bilibili.bplus.followinglist.model.b9",lpparam.classLoader);
         Class<?> b9Class = Utils.getDeConfusionClass("com_bilibili_bplus_followinglist_model_b9Class",lpparam.classLoader);
         if(b9Class==null){
-            Utils.reportError("Entrance 错误 com_bilibili_bplus_followinglist_model_b9Class类未找到");
+            Utils.reportError("SweepGrave 错误 com_bilibili_bplus_followinglist_model_b9Class类未找到");
             return;
         }
 
         Constructor<?> b9Constructor = Utils.getConstructorWithParamCount(b9Class,22,false);
         if(b9Constructor==null){
-            Utils.reportError("Entrance 错误 b9Constructor类未找到");
+            Utils.reportError("SweepGrave 错误 b9Constructor类未找到");
             return;
         }
         Object b9Object = b9Constructor.newInstance(
@@ -274,14 +274,14 @@ public class UserCenterOptimization extends FunctionsBase {
         //Class<?> e7Class = Utils.getDeConfusionClass("com_bilibili_bplus_followinglist_model_e7Class",lpparam.classLoader);
         Method N0Method = Utils.getDeConfusionMethod("com_bilibili_bplus_followinglist_model_e7_N0Method",lpparam.classLoader);
         if(N0Method==null){
-            Utils.reportError("Entrance 错误 N0Method方法未找到");
+            Utils.reportError("SweepGrave 错误 N0Method方法未找到");
             return;
         }
         Class<?> e7Class = N0Method.getDeclaringClass();
 
         Constructor<?> e7Constructor = Utils.getConstructorWithParamCount(e7Class,14,false);
         if(e7Constructor==null){
-            Utils.reportError("Entrance 错误 e7Constructor类未找到");
+            Utils.reportError("SweepGrave 错误 e7Constructor类未找到");
             return;
         }
         Object e7Object = e7Constructor.newInstance(

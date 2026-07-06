@@ -34,6 +34,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.lifecycle.SavedStateHandle;
+
 import org.luckypray.dexkit.wrap.DexClass;
 import org.luckypray.dexkit.wrap.DexField;
 import org.luckypray.dexkit.wrap.DexMethod;
@@ -71,7 +73,8 @@ public class Utils {
 
     private static final HashMap<String,Class<?>> DeConfusionClassCacheMap = new HashMap<>();
 
-    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences FunctionSettingSP,DeConfusionSP;
+    //public static SharedPreferences.Editor FunctionSettingSPE,DeConfusionSPE;
 
     public static StringBuilder errorsBeforeInit = new StringBuilder();
 
@@ -111,7 +114,8 @@ public class Utils {
             logManager = LogManager.getInstance(activity.getExternalFilesDir("biliHook"));
         }
 
-
+        getDeConfusionSP(activity);
+        getFunctionSettingSP(activity);
     }
     public static String toJSONString(final XC_LoadPackage.LoadPackageParam lpparam,Object o)throws Throwable{
         return (String)(toJSONStringMethod.invoke(null,o));
@@ -492,11 +496,11 @@ public class Utils {
     }
 
     public static Method getDeConfusionMethod(String name,ClassLoader classLoader)throws NoSuchMethodException{
-        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
+        if(DeConfusionSP==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionMethodCacheMap.containsKey(name)){
             return DeConfusionMethodCacheMap.get(name);
         }else{
-            String descriptor = sharedPreferences.getString(name,"");
+            String descriptor = DeConfusionSP.getString(name,"");
             if(descriptor.isEmpty()){
                 return null;
             }
@@ -507,11 +511,11 @@ public class Utils {
     }
 
     public static Class<?> getDeConfusionClass(String name,ClassLoader classLoader) throws ClassNotFoundException {
-        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
+        if(DeConfusionSP==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionClassCacheMap.containsKey(name)){
             return DeConfusionClassCacheMap.get(name);
         }else{
-            String descriptor = sharedPreferences.getString(name,"");
+            String descriptor = DeConfusionSP.getString(name,"");
             if(descriptor.isEmpty()){
                 return null;
             }
@@ -522,11 +526,11 @@ public class Utils {
     }
 
     public static Field getDeConfusionField(String name,ClassLoader classLoader) throws NoSuchFieldException {
-        if(sharedPreferences==null||name==null|| name.isEmpty()){return null;}
+        if(DeConfusionSP==null||name==null|| name.isEmpty()){return null;}
         if(DeConfusionFieldCacheMap.containsKey(name)){
             return DeConfusionFieldCacheMap.get(name);
         }else{
-            String descriptor = sharedPreferences.getString(name,"");
+            String descriptor = DeConfusionSP.getString(name,"");
             if(descriptor.isEmpty()){
                 return null;
             }
@@ -739,4 +743,20 @@ public class Utils {
 
         });
     }
+
+    public static SharedPreferences getFunctionSettingSP(Context context){
+        if(FunctionSettingSP==null){
+            FunctionSettingSP = context.getSharedPreferences("FunctionPrefs", Context.MODE_PRIVATE);
+        }
+        return FunctionSettingSP;
+    }
+
+    public static SharedPreferences getDeConfusionSP(Context context){
+        if(DeConfusionSP==null){
+            DeConfusionSP = context.getSharedPreferences("DeConfusionMap", Context.MODE_PRIVATE);
+        }
+        return DeConfusionSP;
+    }
+
+
 }
